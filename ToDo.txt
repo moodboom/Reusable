@@ -318,6 +318,39 @@
 // MDM	1/2/2003 12:23:21 AM
 			Looking into PSI (Jabber IM) and Zinf (MP3 player) sources...
 
+// OLD NOTES man this file is OLD...
+
+            Palm file manager suite (with source!) at http://sourceforge.net/projects/palmboxer
+            Update it to convert text to pdoc, and to synch!  see notes on visor
+
+            Reusable MP3 code at:
+            http://www.xaudio.com/licensing/
+
+            P2P from Sun in Java:
+                http://www.jxta.org/project/www/docs/DomainFAQ.html
+            "Needs Java JDK 1.1.4 or later, so it runs on Windows 98/ME/2000 with IE 4.0 or higher"
+            InstantP2P is a jumpstart example:
+                http://downloads.jxta.org/
+            Uses Port 80.
+
+            .net uses Port 80.
+
+            SOAP uses Port 80.  Soap appears very web-centric.
+            
+            What does Gnutella use?
+
+            Check out Java Swing classes - (nev mind, they are for UI)
+
+            Check out OpenNap
+
+            Distributed Technologies: 
+                DCOM                MS-based
+                SOAP                XML- and Web-based *spec*, not implementation
+                                        implementations exist on freshmeat
+                CORBA               not an implementation either, i believe?
+                Java RMI            "Remote Machine interface" or something like that
+                .net                XML- and Web-based
+
 // MDM 11/10/2010
     Been a while!  Hi!
     had to update STLContainer.h to use the typename keyword
@@ -331,36 +364,3 @@
 ^ DONE
 v TO DO
 =======================================================================================================================
-
-			Palm file manager suite (with source!) at http://sourceforge.net/projects/palmboxer
-			Update it to convert text to pdoc, and to synch!  see notes on visor
-
-			Reusable MP3 code at:
-			http://www.xaudio.com/licensing/
-
-			P2P from Sun in Java:
-				http://www.jxta.org/project/www/docs/DomainFAQ.html
-			"Needs Java JDK 1.1.4 or later, so it runs on Windows 98/ME/2000 with IE 4.0 or higher"
-			InstantP2P is a jumpstart example:
-				http://downloads.jxta.org/
-			Uses Port 80.
-
-			.net uses Port 80.
-
-			SOAP uses Port 80.  Soap appears very web-centric.
-			
-			What does Gnutella use?
-
-			Check out Java Swing classes - (nev mind, they are for UI)
-
-			Check out OpenNap
-
-			Distributed Technologies: 
-				DCOM				MS-based
-				SOAP				XML- and Web-based *spec*, not implementation
-										implementations exist on freshmeat
-				CORBA				not an implementation either, i believe?
-				Java RMI			"Remote Machine interface" or something like that
-				.net				XML- and Web-based
-
-
