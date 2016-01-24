@@ -72,7 +72,7 @@ public:
     // For the first, initial work can be done by the base class.
     // Create a set of static html that mirrors the API structure and the base will read from them.
     // This also allows us to browse the static html directly, essential when working on the html/css/js skeleton.
-    inline void load_static_html();
+    inline bool load_static_html();
 
     // Overload this to get the work done!
     virtual bool handle_call(reply& rep) { return false; }
@@ -88,10 +88,10 @@ public:
 };
 
 
-void API_call::load_static_html()
+bool API_call::load_static_html()
 {
     if (types_.empty() || types_[0] != "html")
-        return;
+        return false;
 
     string filename = "htdocs";
     for (auto& token : path_tokens_)
@@ -106,7 +106,17 @@ void API_call::load_static_html()
         filename += string("/") + token;
     }
     filename += string(".") + types_[0];
-    static_html_ = read_file(filename);
+
+    try
+    {
+        static_html_ = read_file(filename);
+    }
+    catch (...)
+    {
+        log(LV_ERROR,string("Unable to load static html:") + filename);
+        return false;
+    }
+    return true;
 }
 
 

@@ -49,11 +49,12 @@ public:
 	    vpAPI_(vpAPI),
         max_body_size_(max_body_size)
 	{
+	    load_favicon();
         set_html_includes(includes);
 	    for (auto& pAPI : vpAPI_)
 	    {
-	        pAPI->load_static_html();
-	        inject_includes(*pAPI);
+	        if (pAPI->load_static_html())
+	            inject_includes(*pAPI);
 	    }
 	}
 
@@ -67,14 +68,6 @@ public:
 
 	virtual void operator() (const request& req, reply& rep)
 	{
-		// Here's an example that returns a generic header and no body.
-	    /*
-		rep.status = reply::ok;
-		rep.headers.resize(1);
-		rep.headers[0].name = "Content-Type";
-		rep.headers[0].value = mime_types::extension_to_type("xml");
-		*/
-
 	    // Let's see what type of request we got.
 	    // Slice up the URL and switch on the pieces.
 	    // Our tokenizer will validate that the url was in the correct format.
@@ -102,8 +95,22 @@ public:
 
 	    if (rep.status == reply::bad_request)
 	    {
-	        rep.content = "<p>A better Trader API</p>";
-	        rep.content += get_API_html("<button>","</button>","<button>","</button>","<button>","</button>","<br />");
+	        // There is one hardcoded request that we handle by hand, the annoying favicon.ico.
+	        if (req.uri.substr(req.uri.size()-11,11) == "favicon.ico")
+	        {
+	            rep.content = favicon_;
+	            type = "ico";
+                rep.status = reply::ok;
+
+	        } else
+	        {
+	            // We respond to all bad requests with the API html.
+	            // Note that this is no place to prevent DDOS - DDOS'ing to legit API calls is trivial.
+	            // Help the user out.
+                log(LV_ERROR,string("Received unrecognized request: ") + req.method + " " + req.uri);
+                rep.content = "<p>A better Trader API</p>";
+                rep.content += get_API_html("<button>","</button>","<button>","</button>","<button>","</button>","<br />");
+	        }
 	    }
 
 	    // Build the headers.
@@ -115,66 +122,85 @@ public:
 
 	    if (rep.status == reply::bad_request)
 	    {
-	        // Reduce the logging here if needed...
-	        cout << "Received unrecognized request: " << req.method << " " << req.uri << endl;
 	    }
 	}
 
-    // We provide a means to inject include files into html.
+	inline void load_favicon()
+	{
+	    try
+	    {
+	        favicon_ = read_file("htdocs/favicon.ico");
+	    }
+	    catch(...)
+	    {
+            log(LV_WARNING,"WARNING: No favicon.ico file was found in [htdocs/].");
+
+            // TODO add an encoded default
+	    }
+	}
+
+	// We provide a means to inject include files into html.
     // This should be done for all our preloaded html on startup.
     inline void set_html_includes(const vector<string>& includes)
     {
         // We receive a series of filenames.
-        // KISS: We support css, js, ico.
         // We take the filename and preload it from the local file system.
         // We also save the search string that should be replaced by the preloaded data in load_static_html().
+        // KISS: We support css and js, that's it for now.
 
-        for (auto& filename : includes)
+        try
         {
-            if (filename.substr(filename.size()-4,4) == ".css")
+            for (auto& filename : includes)
             {
-                includes_.push_back(
-                    pair<string,string>(
-                        string("<script src=\"") + filename + "\"></script>",
-                        read_file(string("htdocs/") + filename)
-                    )
-                );
+                if (filename.substr(filename.size()-4,4) == ".css")
+                {
+                    includes_.push_back(
+                        pair<string,string>(
+                            string("<script src=\"") + filename + "\"></script>",
+                            read_file(string("htdocs/") + filename)
+                        )
+                    );
 
-            } else if (filename.substr(filename.size()-3,3) == ".js")
-            {
-                includes_.push_back(
-                    pair<string,string>(
-                        string("<link href=\"") + filename + "\" rel=\"stylesheet\">",
-                        read_file(string("htdocs/") + filename)
-                    )
-                );
-            } else if (filename.substr(filename.size()-4,4) == ".ico")
-            {
-                includes_.push_back(
-                    pair<string,string>(
-                        string("<link rel=\"icon\" href=\"") + filename + "\">",
-                        read_file(string("htdocs/") + filename)
-                    )
-                );
-            } else
-            {
-                // A file was requested to be inline-included but the type is not understood yet.
-                // Add another handler as needed!
-                assert(false);
+                } else if (filename.substr(filename.size()-3,3) == ".js")
+                {
+                    includes_.push_back(
+                        pair<string,string>(
+                            string("<link href=\"") + filename + "\" rel=\"stylesheet\">",
+                            read_file(string("htdocs/") + filename)
+                        )
+                    );
+
+                } else
+                {
+                    // A file was requested to be inline-included but the type is not understood yet.
+                    // Add another handler as needed!
+                    assert(false);
+                }
             }
+        }
+        catch(...)
+        {
+            log(LV_ERROR,"ERROR: Some HTML includes were not found.");
         }
     }
 
     void inject_includes(API_call& ac)
     {
-        // We need to build the relative path back to the root, based on the depth of the ac path.
+        // We may need to build the relative path back to the root, based on the depth of the ac path.
         string relative_path;
-        for (int n=0; n < ac.path_tokens_.size(); ++n)
+        int steps = ac.path_tokens_.size() - 1;
+        for (int n=0; n < steps; ++n)
             relative_path += "../";
 
         for (auto& include : includes_)
         {
-            replace(ac.static_html_, relative_path + include.first, include.second);
+            // Update any path to include the proper relative path.
+            string target = include.first;
+            replace(target,"href=\"",string("href\"") + relative_path);
+            replace(target,"src=\"",string("src\"") + relative_path);
+
+            // NOTE that this uses "replace" from utilities.hpp.
+            replace(ac.static_html_, target, include.second);
         }
     }
 
@@ -182,8 +208,6 @@ public:
     {
         if (!strings_are_equal(acDefinition.method_,ac.method_))                                    return false;
         if (acDefinition.path_tokens_.size() != ac.path_tokens_.size())                             return false;
-        // if (!acDefinition.action_.empty() && !strings_are_equal(acDefinition.action_,ac.action_))   return false;
-        // if (!acDefinition.type_  .empty() && !strings_are_equal(acDefinition.type_  ,ac.type_  ))   return false;
 
         for (int n = 0; n < ac.path_tokens_.size(); ++n)
         {
@@ -411,7 +435,7 @@ protected:
 
     const vector<API_call*>& vpAPI_;
     vector<pair<string,string>> includes_;
-
+    string favicon_;
 };
 
 
