@@ -1,3 +1,7 @@
+REUSABLE LOG
+this has been around a LONG time :-)
+search for [^ D] to jump to TODO
+
 // MDM	5/16/01 10:33:46 AM
 
 			++++++++++
@@ -360,7 +364,10 @@
     here's a description:
         http://pages.cs.wisc.edu/~driscoll/typename.html
 
+2016/01/24 posted to github with MIT license; why not, life is short...
+
 =======================================================================================================================
 ^ DONE
 v TO DO
 =======================================================================================================================
+
