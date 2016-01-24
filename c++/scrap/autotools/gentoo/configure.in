@@ -1,0 +1,45 @@
+AC_INIT(src/main.cpp)
+
+# MDM This is the way to keep config files outside main dir.
+AC_CONFIG_AUX_DIR(config)
+
+# MDM or this will do what we need directly..
+AC_DEFINE(LINUX,1,[This is a Linux system])
+
+# MDM Allow angle bracket #include of Reusable headers.
+CPPFLAGS="${CPPFLAGS} -I/home/m/development/Reusable"
+
+# MDM Let's try to get by without this, I think we can... nope...
+#
+# MDM Fedora put boost here.  I should probably default this somehow,
+# instead of adding to the project.
+# MDM Update: now trying CVS build which is 1_33...
+# MDM Update: now using CVS 1_35...
+#CPPFLAGS="${CPPFLAGS} -I/usr/local/include/boost-1_35"
+
+AM_INIT_AUTOMAKE(scrap, 1.0)
+
+AC_PROG_CXX
+AC_PROG_CC
+AC_PROG_CPP
+AC_PROG_INSTALL
+AC_PROG_LN_S
+AC_PROG_MAKE_SET
+AC_PROG_RANLIB
+
+dnl Checks for libraries.
+AM_PROG_LIBTOOL
+
+dnl Checks for header files.
+AC_HEADER_STDC
+AC_CHECK_HEADERS(sys/ioctl.h sys/time.h unistd.h)
+
+dnl Checks for typedefs, structures, and compiler characteristics.
+AC_C_CONST
+AC_TYPE_SIZE_T
+
+dnl Checks for library functions.
+AC_FUNC_VPRINTF
+AC_CHECK_FUNCS(select)
+
+AC_OUTPUT(Makefile src/Makefile)

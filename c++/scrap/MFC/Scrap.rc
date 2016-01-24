@@ -1,0 +1,331 @@
+// Microsoft Visual C++ generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// Chinese (P.R.C.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_CHS)
+#ifdef _WIN32
+LANGUAGE LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED
+#pragma code_page(936)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_SCRAP_DIALOG DIALOGEX 0, 0, 320, 466
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_APPWINDOW
+CAPTION "Browser Tester"
+FONT 8, "MS Shell Dlg 2", 0, 0, 0x1
+BEGIN
+    LTEXT           "&Enter a URL...",IDC_STATIC,9,7,46,8
+    EDITTEXT        IDC_INPUT,8,21,225,15,ES_MULTILINE | ES_AUTOHSCROLL
+    LTEXT           "&Output",IDC_STATIC,7,45,22,8,NOT WS_VISIBLE | NOT WS_GROUP
+    DEFPUSHBUTTON   "&Fire up browser!",IDC_GO,240,22,69,14
+    EDITTEXT        IDC_OUTPUT,7,57,231,399,ES_MULTILINE | ES_AUTOVSCROLL | ES_AUTOHSCROLL | WS_VSCROLL | NOT WS_TABSTOP
+    DEFPUSHBUTTON   "&Done",IDOK,257,115,50,14
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO 
+BEGIN
+    IDD_SCRAP_DIALOG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 313
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 459
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+#endif    // Chinese (P.R.C.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_ABOUTBOX DIALOG  0, 0, 235, 55
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "About Scrap"
+FONT 8, "MS Shell Dlg 2"
+BEGIN
+    ICON            IDR_MAINFRAME,IDC_STATIC,11,17,20,20
+    LTEXT           "Scrap Version 1.0",IDC_STATIC,40,10,119,8,SS_NOPREFIX
+    LTEXT           "Copyright (C) 2001",IDC_STATIC,40,25,119,8
+    DEFPUSHBUTTON   "OK",IDOK,178,7,50,14,WS_GROUP
+END
+
+IDD_SCRAP_DIALOG_BACKUP DIALOGEX 0, 0, 320, 143
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_APPWINDOW
+CAPTION "Scrap"
+FONT 8, "MS Shell Dlg 2", 0, 0, 0x1
+BEGIN
+    LTEXT           "&Input",IDC_STATIC,9,7,17,8
+    EDITTEXT        IDC_INPUT,8,21,241,51,ES_MULTILINE | ES_AUTOHSCROLL
+    LTEXT           "&Output",IDC_STATIC,7,76,22,8
+    EDITTEXT        IDC_OUTPUT,7,85,242,43,ES_MULTILINE | ES_AUTOHSCROLL
+    DEFPUSHBUTTON   "&Go!",IDC_GO,258,22,50,14
+    DEFPUSHBUTTON   "&Done",IDOK,257,115,50,14
+END
+
+IDD_SCRAP_DIALOG_WITH_FONT_CONTROL DIALOGEX 0, 0, 407, 466
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_APPWINDOW
+CAPTION "Browser Tester"
+FONT 8, "MS Shell Dlg 2", 0, 0, 0x1
+BEGIN
+    LTEXT           "&Enter a URL...",IDC_STATIC,9,7,46,8
+    EDITTEXT        IDC_INPUT,8,21,225,15,ES_MULTILINE | ES_AUTOHSCROLL
+    LTEXT           "&Output",IDC_STATIC,7,45,22,8,NOT WS_VISIBLE | NOT WS_GROUP
+    DEFPUSHBUTTON   "&Fire up browser!",IDC_GO,240,22,69,14
+    EDITTEXT        IDC_OUTPUT,7,57,231,399,ES_MULTILINE | ES_AUTOVSCROLL | ES_AUTOHSCROLL | WS_VSCROLL | NOT WS_TABSTOP
+    DEFPUSHBUTTON   "&Done",IDOK,257,115,50,14
+    CONTROL         "",IDC_FONTPERFORMANCETESTERCTRL1,
+                    "{BF7C66A3-6141-4814-9580-1274877DEC48}",WS_TABSTOP,247,137,149,320
+END
+
+IDD_SCRAP_DIALOG DIALOGEX 0, 0, 315, 466
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_APPWINDOW
+CAPTION "Browser Tester"
+FONT 8, "MS Shell Dlg 2", 0, 0, 0x1
+BEGIN
+    LTEXT           "&Enter a URL...",IDC_STATIC,9,7,46,8
+    EDITTEXT        IDC_INPUT,8,21,225,15,ES_MULTILINE | ES_AUTOHSCROLL
+    LTEXT           "&Output",IDC_STATIC,7,45,22,8,NOT WS_VISIBLE | NOT WS_GROUP
+    DEFPUSHBUTTON   "&Fire up browser!",IDC_GO,240,22,69,14
+    EDITTEXT        IDC_OUTPUT,7,57,231,72,ES_MULTILINE | ES_AUTOVSCROLL | ES_AUTOHSCROLL | WS_VSCROLL | NOT WS_TABSTOP
+    DEFPUSHBUTTON   "&Done",IDOK,257,115,50,14
+    CONTROL         "",IDC_EXPLORER2,"{8856F961-340A-11D0-A96B-00C04FD705A2}",WS_TABSTOP,7,160,301,299
+    CONTROL         "",IDC_SLIDER1,"msctls_trackbar32",TBS_BOTH | TBS_NOTICKS | WS_TABSTOP,7,137,301,15
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO 
+BEGIN
+    IDD_ABOUTBOX, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 228
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 48
+    END
+
+    IDD_SCRAP_DIALOG_BACKUP, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 313
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 136
+    END
+
+    IDD_SCRAP_DIALOG_WITH_FONT_CONTROL, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 400
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 459
+    END
+
+    IDD_SCRAP_DIALOG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 308
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 459
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE 
+BEGIN
+    "#define _AFX_NO_SPLITTER_RESOURCES\r\n"
+    "#define _AFX_NO_OLE_RESOURCES\r\n"
+    "#define _AFX_NO_TRACKER_RESOURCES\r\n"
+    "#define _AFX_NO_PROPERTY_RESOURCES\r\n"
+    "\r\n"
+    "#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)\r\n"
+    "#ifdef _WIN32\r\n"
+    "LANGUAGE 9, 1\r\n"
+    "#pragma code_page(1252)\r\n"
+    "#endif //_WIN32\r\n"
+    "#include ""res\\Scrap.rc2""  // non-Microsoft Visual C++ edited resources\r\n"
+    "#include ""afxres.rc""         // Standard components\r\n"
+    "#endif\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDR_MAINFRAME           ICON                    "res\\Scrap.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 1,0,0,1
+ PRODUCTVERSION 1,0,0,1
+ FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x4L
+ FILETYPE 0x1L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904B0"
+        BEGIN
+            VALUE "FileDescription", "Scrap MFC Application"
+            VALUE "FileVersion", "1, 0, 0, 1"
+            VALUE "InternalName", "Scrap"
+            VALUE "LegalCopyright", "Copyright (C) 2001"
+            VALUE "OriginalFilename", "Scrap.EXE"
+            VALUE "ProductName", "Scrap Application"
+            VALUE "ProductVersion", "1, 0, 0, 1"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1200
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog Info
+//
+
+IDD_SCRAP_DIALOG_WITH_FONT_CONTROL DLGINIT
+BEGIN
+    IDC_FONTPERFORMANCETESTERCTRL1, 0x376, 20, 0
+0x0000, 0x0000, 0x0000, 0x0001, 0x1727, 0x0000, 0x35be, 0x0000, 0x0000, 
+0x0000, 
+    0
+END
+
+IDD_SCRAP_DIALOG DLGINIT
+BEGIN
+    IDC_EXPLORER2, 0x376, 160, 0
+0x0000, 0x0000, 0x004c, 0x0000, 0x2eb7, 0x0000, 0x323b, 0x0000, 0x0000, 
+0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 
+0x0000, 0x0000, 0x004c, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0001, 
+0x0000, 0xd0e0, 0x0057, 0x3573, 0x11cf, 0x69ae, 0x0008, 0x2e2b, 0x6212, 
+0x000c, 0x0000, 0x0000, 0x0000, 0x004c, 0x0000, 0x1401, 0x0002, 0x0000, 
+0x0000, 0x00c0, 0x0000, 0x0000, 0x4600, 0x0080, 0x0000, 0x0000, 0x0000, 
+0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 
+0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0001, 0x0000, 
+0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 
+    0
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE 
+BEGIN
+    IDS_ABOUTBOX            "&About Scrap..."
+END
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+#define _AFX_NO_SPLITTER_RESOURCES
+#define _AFX_NO_OLE_RESOURCES
+#define _AFX_NO_TRACKER_RESOURCES
+#define _AFX_NO_PROPERTY_RESOURCES
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE 9, 1
+#pragma code_page(1252)
+#endif //_WIN32
+#include "res\Scrap.rc2"  // non-Microsoft Visual C++ edited resources
+#include "afxres.rc"         // Standard components
+#endif
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

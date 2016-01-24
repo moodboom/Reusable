@@ -1,0 +1,43 @@
+
+[executer]
+RunInTerminal=true
+
+[Project State]
+clean before build=false
+
+[File View]
+filter.file.unmatch=*.so *.o *.a *.la
+filter.file.ignore.hidden=0
+filter.dir.ignore.hidden=0
+
+[filenumbers]
+0=279
+1=12
+2=186
+3=21
+4=121
+5=16
+
+[filemarkers]
+0=
+1=
+2=
+3=
+4=
+5=
+
+[filelist]
+0=/home/m/development/boost_cvs/boost/libs/serialization/example/demo.cpp
+1=/home/m/development/boost_cvs/boost/libs/serialization/example/demo_xml_save.cpp
+2=/home/m/development/boost_cvs/boost/libs/serialization/example/demo_xml.hpp
+3=/home/m/development/boost_cvs/boost/libs/serialization/example/demo_xml_load.cpp
+4=/home/m/development/tdm_cvs_view/gcc_Scrap/src/main.cpp
+5=/home/m/development/tdm_cvs_view/gcc_Scrap/src/main.h
+
+[Project Tree]
+0=0
+1=0:0
+2=0:1
+
+[File Tree]
+0=0

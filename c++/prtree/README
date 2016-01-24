@@ -1,0 +1,17 @@
+
+PR/
+
+This directory contains the implementation of the PR-tree
+(ami_PRtree.H) and TGS-tree (ami_TGStree.H).  build_PRtree.C and
+query_PRtree.C are examples to use the PR-tree in your code.
+
+include/
+TPIE header files
+
+lib/
+TPIE library
+
+rstartree/
+Jan Vahrenhold's code for Hilbert R-tree and  R*-tree.
+
+The code compiles under FreeBSD.  It should also work under Linux.

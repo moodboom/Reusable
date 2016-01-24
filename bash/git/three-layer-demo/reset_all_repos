@@ -1,0 +1,17 @@
+
+rm -rf top_repo_pristine && git init top_repo_pristine
+
+cd top_repo_pristine && echo "newly minted" > test.txt && git add test.txt && git commit -a -m "newly minted repos" && cd ..
+
+rm -rf middle_repo_for_collecting_and_rebasing && git clone top_repo_pristine middle_repo_for_collecting_and_rebasing
+
+cd middle_repo_for_collecting_and_rebasing && git branch daily_grind && cd ..
+
+rm -rf bottom_repo_for_working && git clone middle_repo_for_collecting_and_rebasing bottom_repo_for_working
+
+cd bottom_repo_for_working && git branch --set-upstream daily_grind origin/daily_grind && git checkout daily_grind && cd ..
+
+rm -rf bottom_repo_for_working_2 && git clone middle_repo_for_collecting_and_rebasing bottom_repo_for_working_2
+
+cd bottom_repo_for_working_2 && git branch --set-upstream daily_grind origin/daily_grind && git checkout daily_grind && cd ..
+

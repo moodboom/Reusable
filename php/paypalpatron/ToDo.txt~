@@ -1,0 +1,7 @@
+Eventually I would like to build a "donation-based request system" so "patrons" can fund development of software projects (or whatever).
+
+There are at least three ways to integrate PayPal's IPN (instant payment notification):
+
+    1) paypay's php sample code
+    2) "paypal IPN agent" on sourceforge
+    3) website tutorial walkthrough:

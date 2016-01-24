@@ -1,0 +1,137 @@
+{\rtf1\ansi\ansicpg1252\uc1 \deff0\deflang1033\deflangfe1033{\fonttbl{\f0\froman\fcharset0\fprq2{\*\panose 02020603050405020304}Times New Roman;}{\f1\fswiss\fcharset0\fprq2{\*\panose 020b0604020202020204}Arial;}}{\colortbl;\red0\green0\blue0;\red0\green0\blue255;\red0\green255\blue255;\red0\green255\blue0;\red255\green0\blue255;\red255\green0\blue0;\red255\green255\blue0;\red255\green255\blue255;\red0\green0\blue128;\red0\green128\blue128;\red0\green128\blue0;\red128\green0\blue128;\red128\green0\blue0;\red128\green128\blue0;\red128\green128\blue128;\red192\green192\blue192;}{\stylesheet{\nowidctlpar\widctlpar\adjustright \fs20\cgrid \snext0 Normal;}{\s1\sb240\sa60\keepn\nowidctlpar\widctlpar\adjustright \b\f1\fs28\kerning28\cgrid \sbasedon0 \snext0 heading 1;}{\s2\li360\sb240\sa60\keepn\nowidctlpar\widctlpar\adjustright \b\f1\cgrid \sbasedon0 \snext0 heading 2;}{\s3\li720\sb240\sa60\keepn\nowidctlpar\widctlpar\adjustright \b\f1\cgrid \sbasedon0 \snext0 heading 3;}{\s4\li1080\sb240\sa60\keepn\nowidctlpar\widctlpar\adjustright \b\f1\cgrid \sbasedon0 \snext0 heading 4;}{\s5\li1440\sb240\sa60\nowidctlpar\widctlpar\adjustright \b\f1\cgrid \sbasedon0 \snext0 heading 5;}{\*\cs10 \additive Default Paragraph Font;}{\s15\nowidctlpar\widctlpar\tqc\tx4320\tqr\tx8640\adjustright \fs20\cgrid \sbasedon0 \snext15 header;}{\s16\nowidctlpar\widctlpar\tqc\tx4320\tqr\tx8640\adjustright \fs20\cgrid \sbasedon0 \snext16 footer;}}{\info{\title Earthmover Class Heirarchy}{\author Michael Behrns-Miller}{\operator John Carpenter}{\creatim\yr1997\mo6\dy2\hr15\min22}{\revtim\yr1997\mo6\dy2\hr15\min22}{\printim\yr1997\mo6\dy2\hr15\min12}{\version2}{\edmins0}{\nofpages6}{\nofwords725}{\nofchars4133}{\*\company  }{\nofcharsws5075}{\vern71}}\margl864\margr864\margt864\margb864 \widowctrl\ftnbj\aenddoc\lytprtmet\formshade\viewkind2\viewscale100\pgbrdrhead\pgbrdrfoot \fet0\sectd \psz1\linex0\endnhere\sectdefaultcl {\footer \pard\plain \s16\nowidctlpar\widctlpar\tqc\tx5220\tqr\tx10440\adjustright \fs20\cgrid {\tab \tab }{\field{\*\fldinst { FILENAME  \\* MERGEFORMAT }}{\fldrslt {\lang1024 Earthmover Class Heirarchy.doc}}}{, Page }{\field{\*\fldinst { PAGE  \\* MERGEFORMAT }}{\fldrslt {\lang1024 6}}}{of }{\field{\*\fldinst { NUMPAGES  \\* MERGEFORMAT }}{\fldrslt {\lang1024 6}}}{
+\par \tab \tab Version }{\field{\*\fldinst { REVNUM  \\* MERGEFORMAT }}{\fldrslt {\lang1024 6}}}{ by }{\field{\*\fldinst { LASTSAVEDBY  \\* MERGEFORMAT }}{\fldrslt {\lang1024 John Carpenter}}}{
+\par \tab \tab }{\field{\*\fldinst { FILESIZE  \\* MERGEFORMAT }}{\fldrslt {\lang1024 15872}}}{ bytes, }{\field{\*\fldinst { SAVEDATE  \\* MERGEFORMAT }}{\fldrslt {\lang1024 06/02/97 3:12 PM}}}{
+\par }}{\*\pnseclvl1\pnucrm\pnstart1\pnindent720\pnhang{\pntxta .}}{\*\pnseclvl2\pnucltr\pnstart1\pnindent720\pnhang{\pntxta .}}{\*\pnseclvl3\pndec\pnstart1\pnindent720\pnhang{\pntxta .}}{\*\pnseclvl4\pnlcltr\pnstart1\pnindent720\pnhang{\pntxta )}}{\*\pnseclvl5\pndec\pnstart1\pnindent720\pnhang{\pntxtb (}{\pntxta )}}{\*\pnseclvl6\pnlcltr\pnstart1\pnindent720\pnhang{\pntxtb (}{\pntxta )}}{\*\pnseclvl7\pnlcrm\pnstart1\pnindent720\pnhang{\pntxtb (}{\pntxta )}}{\*\pnseclvl8\pnlcltr\pnstart1\pnindent720\pnhang{\pntxtb (}{\pntxta )}}{\*\pnseclvl9\pnlcrm\pnstart1\pnindent720\pnhang{\pntxtb (}{\pntxta )}}\pard\plain \s1\sb240\sa60\keepn\nowidctlpar\widctlpar\outlinelevel0\adjustright \b\f1\fs28\kerning28\cgrid {Earthmover Class Heirarchy
+\par Version 1.0
+\par }\pard\plain \s2\li360\sb240\sa60\keepn\nowidctlpar\widctlpar\outlinelevel1\adjustright \b\f1\cgrid {Persistent
+\par }\pard\plain \li360\nowidctlpar\widctlpar\adjustright \fs20\cgrid {The base class for persistent objects.  Persistent objects are maintained by the Parody database mechanism.
+\par }\pard\plain \s3\li720\sb240\sa60\keepn\nowidctlpar\widctlpar\outlinelevel2\adjustright \b\f1\cgrid {Manufacturer
+\par }\pard\plain \li720\nowidctlpar\widctlpar\adjustright \fs20\cgrid {This class defines the data contained in a manufacturer object.
+\par }\pard\plain \s3\li720\sb240\sa60\keepn\nowidctlpar\widctlpar\outlinelevel2\adjustright \b\f1\cgrid {Compound
+\par }\pard\plain \li720\nowidctlpar\widctlpar\adjustright \fs20\cgrid {This class defines the data contained in a compound object.
+\par }\pard\plain \s3\li720\sb240\sa60\keepn\nowidctlpar\widctlpar\outlinelevel2\adjustright \b\f1\cgrid {Tread
+\par }\pard\plain \li720\nowidctlpar\widctlpar\adjustright \fs20\cgrid {This class defines the data contained in a tread object.
+\par }\pard\plain \s3\li720\sb240\sa60\keepn\nowidctlpar\widctlpar\outlinelevel2\adjustright \b\f1\cgrid {Tire
+\par }\pard\plain \li720\nowidctlpar\widctlpar\adjustright \fs20\cgrid {This class defines the data contained in a tire object.
+\par }\pard\plain \s2\li360\sb240\sa60\keepn\nowidctlpar\widctlpar\outlinelevel1\adjustright \b\f1\cgrid {CMDIChildWnd
+\par }\pard\plain \s3\li720\sb240\sa60\keepn\nowidctlpar\widctlpar\outlinelevel2\adjustright \b\f1\cgrid {BaseNoDocFrame
+\par }\pard\plain \li720\nowidctlpar\widctlpar\adjustright \fs20\cgrid {This class defines an MDI child window that does not require a corresponding CDocument.  This class allows us to avoid having to define a full-blown template for our MDI child windows.
+\par }\pard\plain \s4\li1080\sb240\sa60\keepn\nowidctlpar\widctlpar\outlinelevel3\adjustright \b\f1\cgrid {DBPropFrame
+\par }\pard\plain \li1080\nowidctlpar\widctlpar\adjustright \fs20\cgrid {This class frames DBPropertySheet objects, and provides them with needed frame support, such as displaying the navigation toolbar, and handling the navigation toolbar and keyboard accelerator commands.
+\par }\pard\plain \s4\li1080\sb240\sa60\keepn\nowidctlpar\widctlpar\outlinelevel3\adjustright \b\f1\cgrid {DBTreeFrame
+\par }\pard\plain \li1080\nowidctlpar\widctlpar\adjustright \fs20\cgrid {This class frames DBTreeControl objects, handling keyboard accelerator commands and sizing the control to fill the frame.
+\par }\pard\plain \s2\li360\sb240\sa60\keepn\nowidctlpar\widctlpar\outlinelevel1\adjustright \b\f1\cgrid {CTreeControl
+\par }\pard\plain \s3\li720\sb240\sa60\keepn\nowidctlpar\widctlpar\outlinelevel2\adjustright \b\f1\cgrid {OleTreeControl
+\par }\pard\plain \li720\nowidctlpar\widctlpar\adjustright \fs20\cgrid {This class provides a tree control that can handle dragging and dropping across the tree boundary by using OLE items.  It also provides additional tree contol functionality such as moving items and traversing across leaves.
+\par }\pard\plain \s4\li1080\sb240\sa60\keepn\nowidctlpar\widctlpar\outlinelevel3\adjustright \b\f1\cgrid {DBTreeControl
+\par }\pard\plain \li1080\nowidctlpar\widctlpar\adjustright \fs20\cgrid {This class provides the common functionality for all tree controls used to access persistent objects.  This includes loading and displaying objects from the parody database, creating and displaying new property sheets for objects, and handling sorting.
+\par }\pard\plain \s5\li1440\sb240\sa60\nowidctlpar\widctlpar\outlinelevel4\adjustright \b\f1\cgrid {MfrTreeControl
+\par CompoundTreeControl
+\par TreadTreeControl
+\par TireTreeControl
+\par }\pard\plain \s4\li1080\sb240\sa60\keepn\nowidctlpar\widctlpar\outlinelevel3\adjustright \b\f1\cgrid {DBSortTreeControl
+\par }\pard\plain \li1080\nowidctlpar\widctlpar\adjustright \fs20\cgrid {This class is used to specify sorting order.
+\par }\pard\plain \s2\li360\sb240\sa60\keepn\nowidctlpar\widctlpar\outlinelevel1\adjustright \b\f1\cgrid {CPropertySheet
+\par }\pard\plain \s3\li720\sb240\sa60\keepn\nowidctlpar\widctlpar\outlinelevel2\adjustright \b\f1\cgrid {DBPropertySheet
+\par }\pard\plain \li720\nowidctlpar\widctlpar\adjustright \fs20\cgrid {This class provides the common functionality for all property sheets that are used to access the data of persistent objects.   This includes loading objects from the data available in the tree control, maintaining the \lquote dirty\rquote  status of the sheet, and saving the data when requested.
+\par }\pard\plain \s4\li1080\sb240\sa60\keepn\nowidctlpar\widctlpar\outlinelevel3\adjustright \b\f1\cgrid {MfrPropertySheet
+\par CompoundPropertySheet
+\par TreadPropertySheet
+\par TirePropertySheet
+\par }\pard\plain \s2\li360\sb240\sa60\keepn\nowidctlpar\widctlpar\outlinelevel1\adjustright \b\f1\cgrid {CPropertyPage
+\par }\pard\plain \s3\li720\sb240\sa60\keepn\nowidctlpar\widctlpar\outlinelevel2\adjustright \b\f1\cgrid {DBPropertyPage
+\par }\pard\plain \li720\nowidctlpar\widctlpar\adjustright \fs20\cgrid {This class provides handling of control change notification messages for all pages representing persistent object data.  It sets the dirty flag upon any change to any type of control.
+\par }\pard\plain \s4\li1080\sb240\sa60\keepn\nowidctlpar\widctlpar\outlinelevel3\adjustright \b\f1\cgrid {MfrGeneralPage
+\par CompoundGeneralPage
+\par TreadGeneralPage
+\par TireGeneralPage
+\par TireTypePage
+\par TirePricePage
+\par TireConstantsPage
+\par }\pard\plain \s2\li360\sb240\sa60\keepn\nowidctlpar\widctlpar\outlinelevel1\adjustright \b\f1\cgrid {
+\par CMDIFrameWnd
+\par }\pard\plain \s3\li720\sb240\sa60\keepn\nowidctlpar\widctlpar\outlinelevel2\adjustright \b\f1\cgrid {MainFrame
+\par }\pard\plain \li720\nowidctlpar\widctlpar\adjustright \fs20\cgrid {This is the main application frame.  It handles creation and display of the main toolbars and menus, and processes commands from them.  It also handles creation of the main database trees.
+\par }\pard\plain \s2\li360\sb240\sa60\keepn\nowidctlpar\widctlpar\outlinelevel1\adjustright \b\f1\cgrid {CMenu
+\par }\pard\plain \s3\li720\sb240\sa60\keepn\nowidctlpar\widctlpar\outlinelevel2\adjustright \b\f1\cgrid {MergeMenu
+\par }\pard\plain \li720\nowidctlpar\widctlpar\adjustright \fs20\cgrid {This class adds functionality to the menu class to allow it to be more easily merged with other CMenu\rquote s.  This allows us to create our custom menus by always starting with the default application menu, and then adding and subtracting from it, improving maintainability.
+\par }\pard\plain \s2\li360\sb240\sa60\keepn\nowidctlpar\widctlpar\outlinelevel1\adjustright \b\f1\cgrid {CDialogBar
+\par }\pard\plain \s3\li720\sb240\sa60\keepn\nowidctlpar\widctlpar\outlinelevel2\adjustright \b\f1\cgrid {ColorToolbar
+\par }\pard\plain \li720\nowidctlpar\widctlpar\adjustright \fs20\cgrid {This class uses a dialog template to load 256-color buttons.  It requires a bit more manual operation than a CToolBar.  For example, the positions of the buttons have to be specified in the dialog template.  However, CToolBar does not allow us to get 256 colors.  It is currently worth the effort.
+\par }\pard\plain \s2\li360\sb240\sa60\keepn\nowidctlpar\widctlpar\outlinelevel1\adjustright \b\f1\cgrid {CToolBar
+\par }\pard\plain \s3\li720\sb240\sa60\keepn\nowidctlpar\widctlpar\outlinelevel2\adjustright \b\f1\cgrid {MinToolbar
+\par }\pard\plain \li720\nowidctlpar\widctlpar\adjustright \fs20\cgrid {This class works with BaseFrame, intercepting the frame minimize request and, instead of minimizing, hiding the frame and placing a button in the toolbar that will restore the frame when clicked.
+\par }\pard\plain \s2\li360\sb240\sa60\keepn\nowidctlpar\widctlpar\outlinelevel1\adjustright \b\f1\cgrid {
+\par }\pard\plain \nowidctlpar\widctlpar\adjustright \fs20\cgrid {The following classes provide OLE functionality.  These will be used in the future for the top-level windows, such as project and comparison windows.  They are windows that can be the source or target of OLE drag and drop operations, and can be displayed externally in container documents.
+\par }\pard\plain \s2\li360\sb240\sa60\keepn\nowidctlpar\widctlpar\outlinelevel1\adjustright \b\f1\cgrid {COleServerDoc
+\par }\pard\plain \s3\li720\sb240\sa60\keepn\nowidctlpar\widctlpar\outlinelevel2\adjustright \b\f1\cgrid {BaseDoc
+\par }\pard\plain \s2\li360\sb240\sa60\keepn\nowidctlpar\widctlpar\outlinelevel1\adjustright \b\f1\cgrid {CScrollView
+\par }\pard\plain \s3\li720\sb240\sa60\keepn\nowidctlpar\widctlpar\outlinelevel2\adjustright \b\f1\cgrid {BaseView
+\par }\pard\plain \s2\li360\sb240\sa60\keepn\nowidctlpar\widctlpar\outlinelevel1\adjustright \b\f1\cgrid {COleDataSource
+\par }\pard\plain \s3\li720\sb240\sa60\keepn\nowidctlpar\widctlpar\outlinelevel2\adjustright \b\f1\cgrid {BaseDataSource
+\par }\pard\plain \s2\li360\sb240\sa60\keepn\nowidctlpar\widctlpar\outlinelevel1\adjustright \b\f1\cgrid {CMdiChildWnd
+\par }\pard\plain \s3\li720\sb240\sa60\keepn\nowidctlpar\widctlpar\outlinelevel2\adjustright \b\f1\cgrid {BaseFrame
+\par }\pard\plain \s2\li360\sb240\sa60\keepn\nowidctlpar\widctlpar\outlinelevel1\adjustright \b\f1\cgrid {COleIPFrameWnd
+\par }\pard\plain \s3\li720\sb240\sa60\keepn\nowidctlpar\widctlpar\outlinelevel2\adjustright \b\f1\cgrid {BaseIPFrame
+\par }\pard\plain \s2\li360\sb240\sa60\keepn\nowidctlpar\widctlpar\outlinelevel1\adjustright \b\f1\cgrid {
+\par }\pard\plain \nowidctlpar\widctlpar\adjustright \fs20\cgrid {The following classes are the simple data types that will be stored within the Earthmover database.  These classes include their own database ReadObject and WriteObject member functions strOutput functions for converting them to straight CStrings.
+\par }\pard\plain \s2\li360\sb240\sa60\keepn\nowidctlpar\widctlpar\outlinelevel1\adjustright \b\f1\cgrid {DataSource
+\par }\pard\plain \nowidctlpar\widctlpar\adjustright \fs20\cgrid {This is the base class of every piece of data that gets stored in the database.  It tracks the published source of the data.  This class is in need of some development.
+\par }\pard\plain \s3\li720\sb240\sa60\keepn\nowidctlpar\widctlpar\outlinelevel2\adjustright \b\f1\cgrid {DataString
+\par }\pard\plain \nowidctlpar\widctlpar\adjustright \fs20\cgrid {Holds strings.
+\par }\pard\plain \s3\li720\sb240\sa60\keepn\nowidctlpar\widctlpar\outlinelevel2\adjustright \b\f1\cgrid {DataEnum
+\par }\pard\plain \nowidctlpar\widctlpar\adjustright \fs20\cgrid {Similar to the concept of an enumerated type.  Contains an index into a list of strings.  The list of strings is treated as a sort of units type that can be used with any DataEnum.
+\par }\pard\plain \s3\li720\sb240\sa60\keepn\nowidctlpar\widctlpar\outlinelevel2\adjustright \b\f1\cgrid {DataItem
+\par }\pard\plain \nowidctlpar\widctlpar\adjustright \fs20\cgrid {Can express any value as a double and an associated numerator and denominator units type.  Has lots of options with how the value is converted into a string for output.  The DataItem notes in Source Safe are a tad out of date but will still be very helpful in using this class.
+\par }\pard\plain \s2\li360\sb240\sa60\keepn\nowidctlpar\widctlpar\outlinelevel1\adjustright \b\f1\cgrid {
+\par }\pard\plain \nowidctlpar\widctlpar\adjustright \fs20\cgrid {The following classes are controls that are linked to one of the data classes above.  Use them with a dialog by adding a member variable, choosing \ldblquote control\rdblquote  instead of \ldblquote value\rdblquote , and picking the below class that applies.  You will then need to add an initializing line of code to the DDX member function in the dialog class.  See the Tread property sheet pages for examples of all the below classes.  Using these controls automatically enables the right click functionality for editing the DataSource of the associated data.
+\par }\pard\plain \s2\li360\sb240\sa60\keepn\nowidctlpar\widctlpar\outlinelevel1\adjustright \b\f1\cgrid {CComboBox_DataEnum
+\par }\pard\plain \nowidctlpar\widctlpar\adjustright \fs20\cgrid {A combo box that contains all the possible values of a specific DataEnum \ldblquote units type\rdblquote .  The current value of the DataEnum is the one that is first selected in the combo box.
+\par }\pard\plain \s2\li360\sb240\sa60\keepn\nowidctlpar\widctlpar\outlinelevel1\adjustright \b\f1\cgrid {CComboBox_DataString
+\par }\pard\plain \nowidctlpar\widctlpar\adjustright \fs20\cgrid {A combo box that contains all the possible values of a specific DataEnum \ldblquote units type\rdblquote  that also allows the user to enter his own value as a string.  The results are stored in the associated DataString.
+\par }\pard\plain \s2\li360\sb240\sa60\keepn\nowidctlpar\widctlpar\outlinelevel1\adjustright \b\f1\cgrid {CComboBox_TreeCtrl
+\par }\pard\plain \nowidctlpar\widctlpar\adjustright \fs20\cgrid {A combo box that is filled with the items from the argument DBTreeControl.  An example of this is a manufacturers combo box built with all the manufacturers in the manufacturer tree control.  This control is going to need some kind of filtering mechanism in the future, to, say, filter out all manufacturers but the makers of a given product.
+\par }\pard\plain \s2\li360\sb240\sa60\keepn\nowidctlpar\widctlpar\outlinelevel1\adjustright \b\f1\cgrid {CStatic_DataItem
+\par }\pard\plain \nowidctlpar\widctlpar\adjustright \fs20\cgrid {Used to display the units of a DataItem, next to an edit box that is displaying the value of that DataItem.  Right clicking on this static control brings up a popup menu that allows you to change the units.
+\par }\pard\plain \s2\li360\sb240\sa60\keepn\nowidctlpar\widctlpar\outlinelevel1\adjustright \b\f1\cgrid {CEdit_DataItem
+\par }\pard\plain \nowidctlpar\widctlpar\adjustright \fs20\cgrid {An edit box that displays the value of the associated DataItem and allows the user to edit it.  This class allows some further functionality that allows the programmer to specify min and max values in the constructor.  You can\rquote t use the build in windows min/max stuff because the min/max values need to be converted for a change in units.
+\par }\pard\plain \s2\li360\sb240\sa60\keepn\nowidctlpar\widctlpar\outlinelevel1\adjustright \b\f1\cgrid {CEdit_DataString
+\par }\pard\plain \nowidctlpar\widctlpar\adjustright \fs20\cgrid {An edit box that displays a DataString and allows the user to edit it.
+\par }\pard\plain \s2\li360\sb240\sa60\keepn\nowidctlpar\widctlpar\outlinelevel1\adjustright \b\f1\cgrid {
+\par CGraphicsBase
+\par }\pard\plain \nowidctlpar\widctlpar\adjustright \fs20\cgrid {A base class that objects are derived from that need to display graphics within a SpecView.  The derived class overrides one of the graphics functions in Cgraphics base, such as Draw2D or Draw3D.
+\par }\pard\plain \s2\li360\sb240\sa60\keepn\nowidctlpar\widctlpar\outlinelevel1\adjustright \b\f1\cgrid {COpenGLBase
+\par }\pard\plain \nowidctlpar\widctlpar\adjustright \fs20\cgrid {A base class for use with OpenGL graphics routines.  This base class automatically intializes the OpenGL engine, creates a DIB to draw into, and creates a rendering context to draw into the DIB with.  This ensures that the correct rendering context is always selected before the derived class refreshes the display.  Handles switching to print preview automatically.
+\par }\pard\plain \s2\li360\sb240\sa60\keepn\nowidctlpar\widctlpar\outlinelevel1\adjustright \b\f1\cgrid {CSimpleDIB
+\par }\pard\plain \nowidctlpar\widctlpar\adjustright \fs20\cgrid {Used with the OpenGL schtuff.  Could be used generically, but has been modified slightly from it\rquote s original form to fit with OpenGL.
+\par }\pard\plain \s2\li360\sb240\sa60\keepn\nowidctlpar\widctlpar\outlinelevel1\adjustright \b\f1\cgrid {
+\par CSpecTable
+\par }\pard\plain \nowidctlpar\widctlpar\adjustright \fs20\cgrid {This class is the workhorse of the Specification sheets.  Each CSpecView (described below) has a CspecTable member that is uses to create and draw the spec sheet.
+\par }\pard\plain \s3\li720\sb240\sa60\keepn\nowidctlpar\widctlpar\outlinelevel2\adjustright \b\f1\cgrid {CSpecTableAddItem
+\par }\pard\plain \nowidctlpar\widctlpar\adjustright \fs20\cgrid {Not a separate class, but just the \ldblquote Add Item\rdblquote  functions of CspecTable ported out to a separate file.
+\par }\pard\plain \s3\li720\sb240\sa60\keepn\nowidctlpar\widctlpar\outlinelevel2\adjustright \b\f1\cgrid {CSpecTable_Settings
+\par }\pard\plain \nowidctlpar\widctlpar\adjustright \fs20\cgrid {Simple object used to save/load the spec table ordering / sequence information from the database.
+\par }\pard\plain \s3\li720\sb240\sa60\keepn\nowidctlpar\widctlpar\outlinelevel2\adjustright \b\f1\cgrid {CSpecTreeDialog
+\par }\pard\plain \nowidctlpar\widctlpar\adjustright \fs20\cgrid {The dialog that puts up a multiselecting drag and drop tree for changing the ordering / sequence of the items of a spec sheet.
+\par }\pard\plain \s3\li720\sb240\sa60\keepn\nowidctlpar\widctlpar\outlinelevel2\adjustright \b\f1\cgrid {CMultiTreeCtrl
+\par }\pard\plain \nowidctlpar\widctlpar\adjustright \fs20\cgrid {The tree control used within CSpecTreeDialog.
+\par }\pard\plain \s2\li360\sb240\sa60\keepn\nowidctlpar\widctlpar\outlinelevel1\adjustright \b\f1\cgrid {
+\par CSpecView
+\par }\pard\plain \nowidctlpar\widctlpar\adjustright \fs20\cgrid {The view class associated with specification sheets.  To make a new spec sheet, just derive from this class and override the Clear / Add / Refresh functions to customize it to your new objects.  Some examples to work from:
+\par }\pard\plain \s3\li720\sb240\sa60\keepn\nowidctlpar\widctlpar\outlinelevel2\adjustright \b\f1\cgrid {CSpecView_Tread
+\par CSpecView_Compound
+\par }\pard\plain \s2\li360\sb240\sa60\keepn\nowidctlpar\widctlpar\outlinelevel1\adjustright \b\f1\cgrid {
+\par CSystemFonts
+\par }\pard\plain \nowidctlpar\widctlpar\adjustright \fs20\cgrid {Allows you to create reusable and user editable font sets for use in different modules.  See how they are used in SpecTable and SpecView for an example.  The CsystemFonts write up in Source Safe is a tad out of date but still mostly accurate.
+\par }\pard\plain \s3\li720\sb240\sa60\keepn\nowidctlpar\widctlpar\outlinelevel2\adjustright \b\f1\cgrid {Font List.h
+\par }\pard\plain \nowidctlpar\widctlpar\adjustright \fs20\cgrid {Add new default font sets here.  Details in the CsystemFonts doc.
+\par }\pard\plain \s3\li720\sb240\sa60\keepn\nowidctlpar\widctlpar\outlinelevel2\adjustright \b\f1\cgrid {CsystemFontsDlg
+\par }\pard\plain \nowidctlpar\widctlpar\adjustright \fs20\cgrid {Dialog box for editing font sets.
+\par }\pard\plain \s2\li360\sb240\sa60\keepn\nowidctlpar\widctlpar\outlinelevel1\adjustright \b\f1\cgrid {
+\par Conversion.cpp
+\par }\pard\plain \nowidctlpar\widctlpar\adjustright \fs20\cgrid {Contains all the units information and routines.  The units stuff is going to be overhauled soon (like today….).  You should rarely have to use this stuff because it is all handled through DataItem, but you can consult the Conversion docs in Source Safe if you need to.
+\par }\pard\plain \s3\li720\sb240\sa60\keepn\nowidctlpar\widctlpar\outlinelevel2\adjustright \b\f1\cgrid {CUnitsDialog
+\par }\pard\plain \nowidctlpar\widctlpar\adjustright \fs20\cgrid {Dialog for user modification of units settings.  Also allows for addition of new currency units.
+\par }\pard\plain \s3\li720\sb240\sa60\keepn\nowidctlpar\widctlpar\outlinelevel2\adjustright \b\f1\cgrid {CUnitsSettings
+\par }\pard\plain \nowidctlpar\widctlpar\adjustright \fs20\cgrid {Class for interfacing the units settings with the database.
+\par }}

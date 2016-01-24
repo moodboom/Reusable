@@ -1,0 +1,30 @@
+D:\Michael's Data\Software Development\Samples\NetSet\ToDo.txt
+//
+
+D:\Michael's Data\Software Development\Samples\NetSet\ToDo.txt
+#include "NetSet.h"
+
+D:\Michael's Data\Software Development\Samples\NetSet\ToDo.txt
+#include "NetSetView.h"
+
+D:\Michael's Data\Software Development\Samples\NetSet\ToDo.txt
+#define new DEBUG_NEW
+#undef THIS_FILE
+D:\Michael's Data\Software Development\Samples\NetSet\ToDo.txt
+#endif
+
+D:\Michael's Data\Software Development\Samples\NetSet\ToDo.txt
+// CNetSetView
+
+D:\Michael's Data\Software Development\Samples\NetSet\ToDo.txt
+
+BEGIN_MESSAGE_MAP(CNetSetView, CView)
+D:\Michael's Data\Software Development\Samples\NetSet\ToDo.txt
+	ON_WM_CREATE()
+			ON_WM_SIZE()
+			D:\Michael's Data\Software Development\Samples\NetSet\ToDo.txt
+						// Standard printing commands
+										ON_COMMAND(ID_FILE_PRINT, CView::OnFilePrint)
+										D:\Michael's Data\Software Development\Samples\NetSet\ToDo.txt
+															ON_COMMAND(ID_FILE_PRINT_PREVIEW, CView::OnFilePrintPreview)
+																				END_MESSAGE_MAP()

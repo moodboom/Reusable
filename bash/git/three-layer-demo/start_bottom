@@ -1,0 +1,24 @@
+cd /home/m/development/git/test/bottom_repo_for_working
+
+# make sure user is using daily_grind
+branch_name=$(git symbolic-ref HEAD 2>/dev/null | cut -d"/" -f 3)
+if [ "$branch_name" != "daily_grind" ]; then
+    echo "where is the [daily_grind] branch?" && kill -SIGINT $$;
+fi
+
+# make sure daily_grind is clean
+[[ $(git diff --shortstat 2> /dev/null | tail -n1) != "" ]] && echo "[daily_grind] is dirty, bailing out of update..." && kill -SIGINT $$;
+
+# update - this does all branches!
+git pull origin 
+
+# This resets us to the origin (which may have been rebased!)
+# SUPER COOL :-)
+git reset --hard origin/daily_grind
+
+# and now, we don't need to do this...
+#
+# now we want to KILL the daily_grind!
+# it may have been rebased into master and become something completely diff
+# so we check out master, kill daily_grind, repull it, and check it out!  whoop!
+#git checkout master && git branch -D daily_grind && git pull origin daily_grind:daily_grind && git checkout daily_grind

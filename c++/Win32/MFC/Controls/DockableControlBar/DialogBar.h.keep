@@ -1,0 +1,54 @@
+//-------------------------------------------------------------------//
+// DialogBar.h interface															//
+//-------------------------------------------------------------------//
+//
+//	Copyright © 2001 A better Software.
+//-------------------------------------------------------------------//
+
+#ifndef DIALOG_BAR_H
+#define DIALOG_BAR_H
+
+#if _MSC_VER > 1000
+#pragma once
+#endif // _MSC_VER > 1000
+
+#include "scbarcf.h"					// Base class - sizing control bar with gripper, caption
+
+
+class DialogBar : public CSizingControlBarCF
+{
+	typedef CSizingControlBarCF inherited;
+
+	DECLARE_DYNAMIC(DialogBar);
+
+public:
+	DialogBar(
+		CFrameWnd*	pParent,
+		CDialog*		pDlg,
+		UINT			nIDTemplate,
+		TCHAR*		pszTitle,
+		int			nID,
+		DWORD			dwDockStyle		= CBRS_ALIGN_LEFT | CBRS_ALIGN_RIGHT
+	);
+	virtual ~DialogBar();
+
+protected:
+
+// Overrides
+	// ClassWizard generated virtual function overrides
+	//{{AFX_VIRTUAL(CViewBar)
+	public:
+	//}}AFX_VIRTUAL
+
+	//{{AFX_MSG(CViewBar)
+	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
+	//}}AFX_MSG
+	DECLARE_MESSAGE_MAP()
+
+	CDialog*		m_pDlg;
+	UINT			m_nIDTemplate;
+	CFrameWnd*	m_pParent;
+
+};
+
+#endif	// DIALOG_BAR_H

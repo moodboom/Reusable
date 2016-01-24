@@ -1,0 +1,54 @@
+Here's the original codeproject project (probably with updates):
+http://www.codeproject.com/KB/system/xyntservice.aspx
+
+
+// MDM	6/16/2005 9:57:41 AM
+			Working on NT service that can keep Ormap running in "UBLF loop mode".
+			
+			Not working, do we need to install as admin?
+				Resetting the admin password on this box.
+				Found the fucking password complexity requirements editor.
+				control panel->admin tools->local security policy
+					(there is an equivalent "domain security policy" for the domain admin, it seems)
+				security settings->account policies->password policy
+				then disable all the bullshit!
+
+			Not the problem.  
+			
+			Here's how to INSTALL:
+
+				e:
+				cd E:\Michael's Data\Software Development\Samples\XYNTService\Debug
+				xyntservice -i
+					log should say #ServiceTitle# installed
+				open Control Panel->Admin Tools->Services, #ServiceTitle# should be there.
+				select and start the service
+				all the apps defined in the INI file should start
+
+			To REMOVE the service:
+				open Control Panel->Admin Tools->Services, #ServiceTitle# should be there.
+				kill all apps that the service started
+				select and stop the service (before it restarts the apps)
+
+				e:
+				cd E:\Michael's Data\Software Development\Samples\XYNTService\Debug
+				xyntservice -u
+					log should say #ServiceTitle# removed
+					if you refresh services list, it should be gone
+
+			awesome!
+			you can also add command line parameters to the command.
+			just what we need.
+			you can also change the user that the server runs under, but be careful, it
+				may prevent access to registry/network shares/etc.
+
+			It's all done in this project:
+				E:\Michael's Data\Software Development\Samples\XYNTService\Debug
+			
+			which currently sets up this service:
+				"Michael's Wee Little Notepad Server"
+
+			new service:
+                ORMapService
+                E:\Michael's Data\Software Development\Samples\MFC\Temp\Reusable\Win32\WindowsServer
+            

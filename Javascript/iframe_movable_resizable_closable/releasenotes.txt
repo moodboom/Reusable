@@ -1,0 +1,83 @@
+
+                                     **** Release Notes ****
+
+Popup Windows
+Author: Brian Gosselin
+Site URL: http://scriptasylum.com
+
+Browser compatibility:
+IE5+, NS4+, NS6+, Mozilla1+ (with limited functionality in some older browsers)
+
+Supported Features:
+
+(V 4.5)
+> Added the ability to specify the image URLs for the min, max, close, and resize icons. If the 
+  icons reside in a different directory, show the path relative to where the script file
+  is stored. 
+
+
+(V 4.4)
+> Added fadeboxin() and fadeboxout() functions which gradually fade in/out popups. To fade
+  them in, they must be hidden; to fade them out, they must be visible. Only one popup can
+  be faded in or out of view at one time due to browser rendering speed. If there are mul-
+  tiple popups on one page, the scrollbars of the other popups flicker in IE as a popup
+  is faded in/out. As a result, all popups will have their scrollbars temporarily disabled
+  until the fading in/out is complete. This only effect IE browsers.
+
+
+(V 4.3)
+> Added functions to move and resize any popup dynamically via link or script, similar to how
+  you can use a function to show/hide a popup.
+
+
+(V 4.2)
+> Added function to allow the content (or URL) of a popup to be changed dynamically via link or
+  script, similar to how you can use a function to show/hide a popup.
+> Fixed bug: When a window is created initially hidden, then shown via link, the windows now gain
+  focus.
+
+
+(V 4.1)
+> Removed the arrays for element references for better readability.
+> Fixed an IFRAME bug for external URL windows.
+> Cleaned up the code a little.
+> Removed most of the comments and instructions from the script file. These now appear in
+  this "releasenotes" text file. 
+
+
+(V 4.0)
+> Can now load external HTML files, even when using "old-browser" mode. Thanks to
+  DynamicDrive.com for a workaround for dragging when using an iframe.
+> Added cookie functionality so popups will not reappear if the user goes back to
+  the page (selectable). Thanks to DynamicDrive.com for this idea.
+> Removed minimize/maximize buttons if popup is non-resizeable.
+> Optimized "old-browser" mode to utilize more of the user defined settings such as
+  window position and resizability. Also supports the selectable "external page mode".
+> Added a wizard to set up your window parameters. Just plug in the values you want, test
+  by creating a popup, then paste the generated code into your page! Easy as that!
+
+
+(V 3.1)
+> Added resizability to the windows.
+> Popups can be created in their hidden/visible state and then opened/closed via
+  javascript function if desired.
+> Degrades gracefully in older browsers by creating normal browser windows (selectable).
+> Thanks to Robert V. Zwink for a tweak which adds better compliance for Netscape 3.04
+
+
+(V 3.0)
+> New look and feel to make the windows look more like real windows.
+
+
+(V 2.0)
+> Fixed several bugs, mostly with the drag-n-drop functionality.
+
+
+(v 1.0)
+> Initial release.
+> Seperate Drag and Drop, minimize/restore/close, and fonts/colors/dimensions/placement
+  for each popup.
+> Allows any number of popups per page limited only by browser/computer performance.
+> Popups are created *after* page loadtime allowing for truly dynamic windows. For
+  popups that appear when the page is loaded, put the popup constructor in a window.onload
+  function.

@@ -1,0 +1,90 @@
+SPECIFICATION SHEET UPDATE - 9/4/97
+
+Add_Comparison()
+
+To implement the good / average / bad font flavors for specification sheet
+line items, I added a new function to SpecTableAddItem.cpp called
+Add_Comparison().  This is a quick sheet that outlines how to use this new
+functionality.
+
+The header comments for Add_Comparison() are as follows:
+
+//-------------------------------------------------------------------//
+// Add_Comparison()																	//
+//-------------------------------------------------------------------//
+// This function is a "follow-up" function to the Add_DataItem			//
+// function that adds comparison capabilities to a given DataItem		//
+// line item in a spec sheet.  As such, this function MUST follow		//
+// an Add_DataItem call.															//
+//																							//
+// This function is used to cause comparisions between DataItems,		//
+// the result of which is some of the DataItems may be displayed		//
+// in the GOOD or the POOR fonts instead of the NORMAL fonts.			//
+//																							//
+// The eType argument is detailed in SpecTable.h in the					//
+// ADD_CMP typedef.																	//
+//-------------------------------------------------------------------//
+void CSpecTable::Add_Comparison(
+	ADD_CMP				eType,	// Which type of comparison.
+	DataItem				diCmp1,	// Comparison DataItem 1 (if needed).
+	DataItem				diCmp2	// Comparison DataItem 2 (if needed).
+) {
+
+
+The eType argument enum definition from SpecTable.h is as follows:
+
+//-------------------------------------------------------------------//
+// Defines for Add_Comparison() arguments										//
+//-------------------------------------------------------------------//
+typedef enum {
+
+	// These compare the DataItems to each other.
+	GOOD_MAX,				// Use GOOD font on the max val.
+	GOOD_MIN,				// Use GOOD font on the min val.
+	BAD_MIN,					// Use BAD font on the min val.
+	BAD_MAX,					// Use BAD font on the max val.
+	GOOD_MAX__BAD_MIN,	// Use GOOD/BAD font on the max/min val.
+	GOOD_MIN__BAD_MAX,	// Use GOOD/BAD font on the min/max val.
+
+	// These compare the DataItems to a passed value.
+	GOOD_GREATER_THAN,	// Use GOOD font on values greater than passed value.
+	GOOD_LESSER_THAN,		// Use GOOD font on values lesser than passed value.
+	BAD_GREATER_THAN,		// Use BAD font on values greater than passed value.
+	BAD_LESSER_THAN,		// Use BAD font on values lesser than passed value.
+	GOOD_GREATER_THAN__BAD_LESSER_THAN,		// Combination of the above.
+	GOOD_LESSER_THAN__BAD_GREATER_THAN,		// Combination of the above.
+
+} ADD_CMP;
+
+
+An example of how this Add_Comparison() function is used:
+
+void RimSize::SpecScript( CSpecTable *pTable, bool bIsFull, bool bIsSection ){
+	CString strName;
+	GetDisplayName( &strName );
+
+	pTable->SetFullQuick		( bIsFull										);
+	if ( bIsSection )
+		pTable->Enable		  	( AI_ENABLE, AI_ENABLE						);
+	pTable->Add_Label			( ITEM_LEVEL_SECTION, IDS_SPEC_RIM_SIZE_TITLE );
+	pTable->Add_CString		( strName + _T(" in")						);
+	pTable->Add_DataItem		( di[	RimSize_Width						]	);
+	pTable->Add_Comparison	( GOOD_MAX										);
+	pTable->Add_DataItem		( GetRimDia()									);
+	pTable->Add_Comparison	( GOOD_MAX__BAD_MIN							);
+	pTable->Add_DataItem		( di[	RimSize_FlangeHt					]	);
+	pTable->Add_Comparison	( GOOD_GREATER_THAN__BAD_LESSER_THAN,
+										 DataItem( 100, SI_MM ),
+										 DataItem( 50, SI_MM ) 					);
+}
+
+
+Dell, you may wish to go into "Font List.h" and change the Change Fonts tab
+names for the different fonts - I just used "Poor", "Average" and "Good" for
+the defaults.  You may wish to change to fonts themselves, or their colors, as
+well.
+
+Note that for dual eType cases like GOOD_GREATER_THAN__BAD_LESSER_THAN, the
+first DataItem argument applies for the first case (GOOD_GREATER_THAN) and the
+second argument applies to the second case (BAD_LESSER_THAN).
+

@@ -1,0 +1,153 @@
+<!doctype html public "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1">
+<meta name="Author" content="Brian Gosselin">
+
+<title>Popup Creation Wizard</title>
+
+<script language="javascript" src="popup.js"></script>
+
+<style type="text/css">
+a, a:active, a:visited {
+color:#00436e;
+font:bold 10pt sans-serif;
+text-decoration:none;
+}
+
+a:hover {
+color:black;
+font:bold 10pt sans-serif;
+text-decoration:overline underline;
+}
+
+body {
+background-color:white;
+font-size:10pt;
+font-family:sans-serif;
+color:black;
+}
+
+input {
+font-size:9pt;
+font-style:sans-serif;
+color:black;
+}
+
+textarea {
+font-size:8pt;
+font-family:sans-serif;
+color:black;
+background-color:white;
+scrollbar-base-color:lightgrey;
+}
+
+td {
+font-size:8pt;
+font-family:sans-serif;
+color:black;
+}
+
+
+</style>
+
+<script language="javascript">
+
+var p=new Array();
+
+function buildcode(){
+var d=document.f;
+p[0]=parseInt(d.x.value);
+p[1]=parseInt(d.y.value);
+p[2]=parseInt(d.w.value);
+p[3]=parseInt(d.h.value);
+p[4]=d.id.value;
+p[5]=escapeQuotes(d.content.value);
+p[6]=d.contentbgc.value;
+p[7]=d.contenttextc.value;
+p[8]=d.contentstyleset.value;
+p[9]=d.titlebartext.value;
+p[10]=d.titlebarbgc.value;
+p[11]=d.titlebartextc.value;
+p[12]=d.borderc.value;
+p[13]=d.scrollbarc.value;
+p[14]=d.shadowc.value;
+p[15]=(d.hidden[0].checked)?false:true;
+p[16]=(d.drag[0].checked)?true:false;
+p[17]=(d.resize[0].checked)?true:false;
+p[18]=(d.oldbrowser[0].checked)?true:false;
+p[19]=(d.isext[0].checked)?true:false;
+p[20]=(d.cookie[0].checked)?false:true;
+p[21]=d.min.value;
+p[22]=d.max.value;
+p[23]=d.cls.value;
+p[24]=d.rs.value;
+d.showcode.value="new popUp("+p[0]+" , "+p[1]+" , "+p[2]+" , "+p[3]+" , \""+p[4]+"\" , \""+p[5]+"\" , \""+p[6]+"\" , \""+p[7]+"\" , \""+p[8]+"\" , \""+p[9]+"\" , \""+p[10]+"\" , \""+p[11]+"\" , \""+p[12]+"\", \""+p[13]+"\" , \""+p[14]+"\" , "+p[15]+" , "+p[16]+" , "+p[17]+" , "+p[18]+" , "+p[19]+" , "+p[20]+" , "+p[21]+" , "+p[22]+" , "+p[23]+" , "+p[24]+");";
+}
+
+//THIS FUNCTION "ESCAPES" SINGLE AND DOUBLE QUOTES AUTOMATICALLY TO PREVENT ERRORS
+function escapeQuotes(str){
+var s1=str.split("'"); var s2='';
+for(i=0;i<s1.length;i++)s2=s2+s1[i]+"\\'";
+s2=s2.substring(0,s2.length-2);
+var s1=s2.split('"'); s2='';
+for(i=0;i<s1.length;i++)s2=s2+s1[i]+'\\"';
+s2=s2.substring(0,s2.length-2);
+return s2;
+}
+
+</script>
+
+</head>
+
+<body>
+<center>
+
+<h1>Popup Creation Wizard</h1>
+
+<form name="f">
+
+<table cellspacing=0 cellpadding=0 border=1 bgcolor="#6DBAF3" width="700"><tr><td>
+<table cellspacing=0 cellpadding=8 border=0>
+<tr><td align="left" colspan="2">
+Use the form below to try different settings. When you are happy with the results, paste the wizard generated code from the text box at the bottom of this form into your page. When making color choices, use CSS approved color names or HEX color values (eg: #FFFFFF for white).<br><br>
+Important Note: Make sure you change the <b>ID</b> value in the form for each popup if you make multiple popups. Failure to do so will cause errors or the popups will not work correctly. Simply "closing" the popup will not work because the popup is never closed, just hidden.<br><br>
+Due to the number of support questions I have received on this subject, I have added a routine to automatically adjust the output code to allow for single and double quotes. Before, you had to manually escape those quotes or not use them at all. Now you can have any HTML content and not worry about making sure the content text will display right!
+<br><br><hr><br>
+</td></tr>
+<tr><td align="left">Popup horizontal position in pixels (X value):</td> <td align="left"><input type="text" name="x" size="5" value="50"></td></tr>
+<tr><td align="left">Popup vertical position in pixels (Y value):</td> <td align="left"><input type="text" name="y" size="5" value="100"></td></tr>
+<tr><td align="left">Popup width in pixels:</td> <td align="left"><input type="text" name="w" size="5" value="300"></td></tr>
+<tr><td align="left">Popup height in pixels:</td> <td align="left"><input type="text" name="h" size="5" value="300"></td></tr>
+<tr><td align="left">Popup <i><b>unique</b></i> element ID (no spaces):</td> <td align="left"><input type="text" name="id" size="10" value="Div1"></td></tr>
+<tr><td align="left" valign="top">Popup content. Can be lots of HTML text or a site URL. To display the site URL contents, the <b>external</b> flag below must be set, otherwise the popup will simply display the URL text.<br><br>Do NOT escape single or double quotes, the script automatically does this for you. If you do not know what this means, don't worry about it. :) </td> <td align="left"><textarea name="content" cols="60" rows="10">Your content or site URL here...</textarea></td></tr>
+<tr><td align="left">Popup content text color:</td> <td align="left"><input type="text" name="contenttextc" size="20" value="black"></td></tr>
+<tr><td align="left">Popup content background color:</td> <td align="left"><input type="text" name="contentbgc" size="20" value="white"></td></tr>
+<tr><td align="left">Popup content font style set. This value should be in <i>valid</i> CSS style sheet format:</td> <td align="left" valign="top"><input type="text" name="contentstyleset" size="40" value="10pt sans-serif"></td></tr>
+<tr><td align="left">Popup titlebar text:</td> <td align="left"><input type="text" name="titlebartext" size="20" value="Title"></td></tr>
+<tr><td align="left">Popup titlebar background color:</td> <td align="left"><input type="text" name="titlebarbgc" size="20" value="#0F72BB"></td></tr>
+<tr><td align="left">Popup titlebar text color:</td> <td align="left"><input type="text" name="titlebartextc" size="20" value="white"></td></tr>
+<tr><td align="left">Popup border color:</td> <td align="left"><input type="text" name="borderc" size="20" value="lightgrey"></td></tr>
+<tr><td align="left">Popup scrollbar color in IE5+ only. This value is also the titlebar background color when the popup &quot;loses focus&quot;:</td> <td align="left" valign="top"><input type="text" name="scrollbarc" size="20" value="#6DBAF3"></td></tr>
+<tr><td align="left">Popup shadow color (black works best):</td> <td align="left"><input type="text" name="shadowc" size="20" value="black"></td></tr>
+<tr><td align="left">Will the popup be initially hidden?<br>Note: If this is set to <b>yes</b>, you will not be able to see the popup. Refer to the demo for more details.</td> <td align="left"><input type="radio" name="hidden"> Yes &nbsp; &nbsp; &nbsp; &nbsp; <input type="radio" name="hidden" checked> No</td></tr>
+<tr><td align="left">Will the popup be draggable?</td> <td align="left"><input type="radio" name="drag" checked> Yes &nbsp; &nbsp; &nbsp; &nbsp; <input type="radio" name="drag"> No</td></tr>
+<tr><td align="left">Will the popup be resizable?</td> <td align="left"><input type="radio" name="resize" checked> Yes &nbsp; &nbsp; &nbsp; &nbsp; <input type="radio" name="resize"> No</td></tr>
+<tr><td align="left">Should older browsers simply display &quot;normal&quot; popup windows?</td> <td align="left"><input type="radio" name="oldbrowser" checked> Yes &nbsp; &nbsp; &nbsp; &nbsp; <input type="radio" name="oldbrowser"> No</td></tr>
+<tr><td align="left">Is the <b>content area</b> an external HTML page?</td> <td align="left"><input type="radio" name="isext"> Yes &nbsp; &nbsp; &nbsp; &nbsp; <input type="radio" name="isext" checked> No</td></tr>
+<tr><td align="left">Should this popup appear if the user returns to this page?</td> <td align="left"><input type="radio" name="cookie" checked> Yes &nbsp; &nbsp; &nbsp; &nbsp; <input type="radio" name="cookie"> No</td></tr>
+<tr><td align="left">Image URL for the minimize icon relative to where the script file is stored:</td> <td align="left"><input type="text" name="min" size="20" value="'min.gif'"></td></tr>
+<tr><td align="left">Image URL for the maximize icon relative to where the script file is stored:</td> <td align="left"><input type="text" name="max" size="20" value="'max.gif'"></td></tr>
+<tr><td align="left">Image URL for the close icon relative to where the script file is stored:</td> <td align="left"><input type="text" name="cls" size="20" value="'close.gif'"></td></tr>
+<tr><td align="left">Image URL for the resize icon relative to where the script file is stored:</td> <td align="left"><input type="text" name="rs" size="20" value="'resize.gif'"></td></tr>
+<tr><td align="center" colspan="2"><br><br><input type="button" value="Show Code" onclick="buildcode()"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <input type="button" value="Create Popup" onclick="buildcode();eval(document.f.showcode.value)"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <input type="reset" value="Reset Values"><br><br></td></tr>
+<tr><td align="center" colspan="2"><br>Enter the values in the form above, click the <b>Show Code</b> button, select all the text that appears here, and paste into your page:<br><br><textarea cols="110" rows="6" name="showcode"></textarea><br></td></tr>
+
+
+
+
+</table></td></tr></table>
+</form>
+</center>
+</body>
+</html>

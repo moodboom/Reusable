@@ -1,0 +1,101 @@
+buildtree.o: buildtree.C /usr/include/float.h app_config.H \
+ ../include/config.H /usr/include/unistd.h /usr/include/sys/cdefs.h \
+ /usr/include/sys/types.h /usr/include/sys/inttypes.h \
+ /usr/include/machine/ansi.h /usr/include/machine/types.h \
+ /usr/include/machine/endian.h /usr/include/sys/unistd.h \
+ /usr/include/sys/_posix.h ../include/tpie_log.H \
+ ../include/portability.H /usr/include/stdio.h /usr/include/sys/stat.h \
+ /usr/include/sys/time.h /usr/include/time.h /usr/include/fcntl.h \
+ /usr/include/errno.h /usr/include/stdlib.h /usr/include/assert.h \
+ /usr/include/sys/times.h ../include/vararray.H /usr/include/string.h \
+ /usr/include/sys/resource.h ../include/bte_err.H \
+ /usr/include/sys/mman.h ../include/logstream.H \
+ /usr/include/g++/fstream /usr/include/g++/fstream.h \
+ /usr/include/g++/iostream.h /usr/include/g++/streambuf.h \
+ /usr/include/g++/libio.h /usr/include/g++/_G_config.h \
+ /usr/include/stddef.h ../include/tpie_assert.H \
+ /usr/include/g++/iostream bulkloader.H /usr/include/math.h \
+ /usr/include/g++/algorithm /usr/include/g++/stl_algobase.h \
+ /usr/include/g++/stl_config.h /usr/include/g++/stl_relops.h \
+ /usr/include/g++/stl_pair.h /usr/include/g++/type_traits.h \
+ /usr/include/limits.h /usr/include/machine/limits.h \
+ /usr/include/sys/syslimits.h /usr/include/g++/new.h \
+ /usr/include/g++/new /usr/include/g++/exception \
+ /usr/include/g++/stl_iterator.h /usr/include/g++/stl_construct.h \
+ /usr/include/g++/stl_uninitialized.h /usr/include/g++/stl_tempbuf.h \
+ /usr/include/g++/stl_algo.h /usr/include/g++/stl_heap.h \
+ /usr/include/g++/queue /usr/include/g++/stl_alloc.h \
+ /usr/include/g++/stl_vector.h /usr/include/g++/stl_bvector.h \
+ /usr/include/g++/stl_deque.h /usr/include/g++/stl_function.h \
+ /usr/include/g++/stl_queue.h /usr/include/g++/utility \
+ ../include/ami_scan.H ../include/ami_err.H ../include/ami_stream.H \
+ ../include/versions.H ../include/ami_stream_base.H \
+ ../include/persist.H ../include/ami_device.H \
+ ../include/ami_stream_single.H ../include/bte_stream.H \
+ ../include/bte_stream_base.H ../include/tpie_stats_stream.H \
+ ../include/tpie_stats.H ../include/mm.H ../include/mm_base.H \
+ ../include/mm_register.H ../include/bte_stream_ufs.H \
+ ../include/tpie_tempnam.H ../include/ami_sort.H \
+ ../include/ami_sort_single.H ../include/quicksort.H \
+ ../include/comparator.H ../include/pqueue_heap.H \
+ ../include/ami_merge.H ../include/ami_optimized_merge.H \
+ ../include/mergeheap.H ../include/ami_optimized_sort.H \
+ ../include/ami_sort_single_dh.H ../include/apm_dh.H \
+ ../include/mergeheap_dh.H rectangle.H rstartree.H \
+ /usr/include/g++/list /usr/include/g++/stl_list.h \
+ /usr/include/g++/vector ../include/ami_coll.H \
+ ../include/ami_coll_base.H ../include/ami_coll_single.H \
+ ../include/bte_coll.H ../include/bte_coll_base.H \
+ ../include/stdio_stack.H ../include/bte_stream_stdio.H \
+ ../include/tpie_stats_coll.H ../include/bte_coll_mmap.H \
+ ../include/bte_coll_ufs.H ../include/ami_block.H \
+ ../include/ami_block_base.H ../include/b_vector.H \
+ ../include/ami_stack.H rstarnode.H hilbert.H hilbert4.H
+queryrtree.o: queryrtree.C /usr/include/g++/iostream \
+ /usr/include/g++/iostream.h /usr/include/g++/streambuf.h \
+ /usr/include/g++/libio.h /usr/include/g++/_G_config.h \
+ /usr/include/stddef.h /usr/include/machine/ansi.h \
+ /usr/include/sys/cdefs.h /usr/include/g++/list \
+ /usr/include/g++/stl_algobase.h /usr/include/g++/stl_config.h \
+ /usr/include/g++/stl_relops.h /usr/include/g++/stl_pair.h \
+ /usr/include/g++/type_traits.h /usr/include/string.h \
+ /usr/include/limits.h /usr/include/sys/_posix.h \
+ /usr/include/machine/limits.h /usr/include/sys/syslimits.h \
+ /usr/include/stdlib.h /usr/include/g++/new.h /usr/include/g++/new \
+ /usr/include/g++/exception /usr/include/g++/stl_iterator.h \
+ /usr/include/g++/stl_alloc.h /usr/include/assert.h \
+ /usr/include/g++/stl_construct.h /usr/include/g++/stl_uninitialized.h \
+ /usr/include/g++/stl_list.h app_config.H ../include/config.H \
+ /usr/include/unistd.h /usr/include/sys/types.h \
+ /usr/include/sys/inttypes.h /usr/include/machine/types.h \
+ /usr/include/machine/endian.h /usr/include/sys/unistd.h \
+ ../include/tpie_log.H ../include/portability.H /usr/include/stdio.h \
+ /usr/include/sys/stat.h /usr/include/sys/time.h /usr/include/time.h \
+ /usr/include/fcntl.h /usr/include/errno.h /usr/include/sys/times.h \
+ ../include/vararray.H /usr/include/sys/resource.h \
+ ../include/bte_err.H /usr/include/sys/mman.h ../include/logstream.H \
+ /usr/include/g++/fstream /usr/include/g++/fstream.h \
+ ../include/tpie_assert.H ../include/ami_block.H \
+ ../include/ami_block_base.H ../include/ami_err.H \
+ ../include/ami_coll.H ../include/ami_coll_base.H \
+ ../include/ami_coll_single.H ../include/persist.H \
+ ../include/bte_coll.H ../include/bte_coll_base.H ../include/mm.H \
+ ../include/mm_base.H ../include/mm_register.H \
+ ../include/stdio_stack.H ../include/bte_stream_stdio.H \
+ ../include/bte_stream_base.H ../include/tpie_stats_stream.H \
+ ../include/tpie_stats.H ../include/tpie_stats_coll.H \
+ ../include/bte_coll_mmap.H ../include/bte_coll_ufs.H \
+ ../include/tpie_tempnam.H ../include/b_vector.H rstartree.H \
+ /usr/include/g++/algorithm /usr/include/g++/stl_tempbuf.h \
+ /usr/include/g++/stl_algo.h /usr/include/g++/stl_heap.h \
+ /usr/include/g++/utility /usr/include/g++/vector \
+ /usr/include/g++/stl_vector.h /usr/include/g++/stl_bvector.h \
+ ../include/ami_stream.H ../include/versions.H \
+ ../include/ami_stream_base.H ../include/ami_device.H \
+ ../include/ami_stream_single.H ../include/bte_stream.H \
+ ../include/bte_stream_ufs.H ../include/ami_stack.H rectangle.H \
+ rstarnode.H ../include/cpu_timer.H ../include/timer.H
+hilbert.o: hilbert.C hilbert.H /usr/include/assert.h \
+ /usr/include/sys/cdefs.h
+hilbert4.o: hilbert4.C hilbert4.H /usr/include/string.h \
+ /usr/include/machine/ansi.h /usr/include/sys/cdefs.h

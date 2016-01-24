@@ -1,0 +1,167 @@
+<!doctype html public "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<title>Popup Windows (V 4.5)</title>
+<script language="javascript" src="popup.js"></script>
+
+<style type="text/css">
+
+a, a:active, a:visited {
+color:#00436e;
+font:bold 8pt verdana;
+text-decoration:none;
+}
+
+a:hover {
+color:black;
+font:bold 8pt verdana;
+text-decoration:underline;
+}
+
+body {
+background-color:white;
+font-size:8pt;
+font-family:verdana;
+color:black;
+padding:10 20 10 20;
+}
+
+td{
+font-size:9pt;
+font-family:verdana;
+color:black;
+}
+
+pre, .pre{
+font-size:10px;
+font-family:courier;
+color:black;
+font-weight:normal;
+}
+
+</style>
+
+
+<script language="javascript">
+
+//*****************************
+//****** EXAMPLE WINDOWS ******
+//*****************************
+
+window.onload=function(){
+
+// POPUP EXAMPLE 2
+new popUp(200, 480, 370, 175, "Div2", "OK, so these things are pretty neat, but of course they <b>do</b> have a few limitations.<br><br><ol><li>These only work in IE5+ and NS6+. In NS4.x and IE4.x, the script will just open a regular window with most of the settings you specified.<br><br><li>Any windows that are pre-defined have to be created <b>once the page is done loading</b>.<br>So, put all your pre-defined ones in a window.onload function.<li>Technically, there are no limits to the number of windows on a page, but the browser may get sluggish if there are too many, so use judgement.<br><br><li>The minimum width allowed is 100 pixels and the minimum height allowed is 80 pixels. Any attempt to go smaller will be ignored. Any titlebar text that exceeds the allotted width will be chopped to fit.</ol>Any other information can be found by reading this demo page in its entirety.<br>", "#00385c", "lightgrey", "9pt sans-serif", "Div2", "#0084d8", "lightgrey", "gray", "#00468c", "black", true, true, true, true, false, false,'min.gif','max.gif','close.gif','resize.gif');
+
+// POPUP EXAMPLE 1
+new popUp(10, 520, 250, 150, "Div1", "Each of these popup windows can have very different settings. For instance, this window cannot be dragged or resized, but the others can. Take a look at the various colors and fonts used in each one. Read below for the features and instructions.", "white", "#00385c", "16pt serif", "Div1", "#00385c", "white", "lightgrey", "#00568c", "black", true, false, false, true, false, false,'','','cir_close.gif','resize.gif');
+
+// POPUP EXAMPLE 3
+new popUp(450, 520, 300, 200, "Div3", "test_1.html", "white", "#00385c", "16pt serif", "Div3 (External HTML Page)", "#00385c", "white", "lightgrey", "#00568c", "black", true, true, true, true, true, false,'ar_min.gif','ar_max.gif','ar_close.gif','resize.gif');
+}
+</script>
+
+</head>
+<body>
+<center>
+<h2>Popup Windows (V 4.5)</h2>
+</center>
+
+These popups have the appearance of regular popup windows, but aren't. They are actually just a collection of DIV and SPAN elements made to emulate most of a real popup's features such as resize, drag, min/max/close, etc. If the content of the popup is an external site, the content area is an IFRAME element instead, but the rest of the popup are DIV and SPAN elements. You can see a few examples of these popups on this page. <br><br>
+These popup windows are totally transparent to any "popup stopper" programs out there since they are not popups at all. I personally hate popups when excessively used, but there are times where they make sense in a page's design.<br><br>
+Along with the ability to control just about every aspect of their appearance, I created a number of javascript functions you can use to control them via link or timer. Examples of these functions can be found in the table below. They are explained in greater detail further down this page.<br><br>
+<center>
+<br>
+<table cellpadding=3 cellspacing=0 border=1 width="850">
+<tr><td align="center" width="250"><b>Div1 Window</b></td><td align="center" width="250"><b>Div2 Window</b></td><td align="center"><b>Div3 Window</b></td></tr>
+<tr><td><a href="javascript:showbox('Div1')"><span class="pre">showbox('Div1')</span></a></td><td><a href="javascript:showbox('Div2')"><span class="pre">showbox('Div2')</span></a></td><td><a href="javascript:showbox('Div3')"><span class="pre">showbox('Div3')</span></a></td></tr>
+<tr><td><a href="javascript:hidebox('Div1')"><span class="pre">hidebox('Div1')</span></a></td><td><a href="javascript:hidebox('Div2')"><span class="pre">hidebox('Div2')</span></a></td><td><a href="javascript:hidebox('Div3')"><span class="pre">hidebox('Div3')</span></a></td></tr>
+<tr><td><a href="javascript:changecontent('Div1','Popup Example 1 content has changed...')"><span class="pre">changecontent('Div1','text')</span></a></td><td><a href="javascript:changecontent('Div2','Popup Example 2 content has changed...')"><span class="pre">changecontent('Div2','text')</span></a></td><td><a href="javascript:changecontent('Div3','test_2.html')"><span class="pre">changecontent('Div3','page.html')</span></a></td></tr>
+<tr><td><a href="javascript:movePopup('Div1',250,250)"><span class="pre">movePopup('Div1',250,250)</span></a></td><td><a href="javascript:movePopup('Div2',350,300)"><span class="pre">movePopup('Div2',350,300)</span></a></td><td><a href="javascript:movePopup('Div3',450,350)"><span class="pre">movePopup('Div3',450,350)</span></a></td></tr>
+<tr><td><b>Resize disabled</b></td><td><a href="javascript:resizePopup('Div2',300,300)"><span class="pre">resizePopup('Div2',300,300)</span></a></td><td><a href="javascript:resizePopup('Div3',150,150)"><span class="pre">resizePopup('Div3',150,150)</span></a></td></tr>
+<tr><td><a href="javascript:fadeboxin('Div1')"><span class="pre">fadeboxin('Div1')</span></a></td><td><a href="javascript:fadeboxin('Div2')"><span class="pre">fadeboxin('Div2')</span></a></td><td><a href="javascript:fadeboxin('Div3')"><span class="pre">fadeboxin('Div3')</span></a></td></tr>
+<tr><td><a href="javascript:fadeboxout('Div1')"><span class="pre">fadeboxout('Div1')</span></a></td><td><a href="javascript:fadeboxout('Div2')"><span class="pre">fadeboxout('Div2')</span></a></td><td><a href="javascript:fadeboxout('Div3')"><span class="pre">fadeboxout('Div3')</span></a></td></tr>
+</table>
+
+</center>
+
+<br><br>
+
+<br>
+<span style="padding:5px; background-color:#00b4f8; border:1px; border-style:solid; bolder-color:black;">
+<b>*** WIZARD ***</b> You can use the wizard, found <a href="popwiz.html" target="_blank" style="color:#FFFFFF">here</a> to assist in the initial creation of these popups.</span><br>
+
+<div style="height:250px;"></div>
+
+<h2>Script features/usage:</h2>
+
+<ul>
+<li>Each of these popups operate independently. So, all values can be different for each one, and each can behave differently.<br><br><br>
+<li>You can drag these popups around by using the titlebar. This feature can also be disabled for windows that stay put. You can also move windows dynamically (even though the manual drag is disabled) through the function:<br><br><b>movePopup( <i>'ID'</i> , <i>leftPos</i> , <i>topPos</i> )</b><br><br><b><i>'ID'</i></b> &nbsp;= The ID of the popup.<br><b><i>leftPos</i></b> &nbsp;= Left corner pixel coordinate.<br><b><i>topPos</i></b> &nbsp;= Top corner pixel coordinate.<br><br><br>
+<li>You can resize them by clicking the little triangle icon in the lower right corner of each popup and dragging to the desired size. You can also resize windows dynamically through the function:<br><br><b>resizePopup( <i>'ID'</i> , <i>width</i> , <i>height</i> )</b><br><br><b><i>'ID'</i></b> &nbsp;= The ID of the popup.<br><b><i>width</i></b> &nbsp;= Width in pixels.<br><b><i>height</i></b> &nbsp;= Height in pixels.<br><br>
+This feature can be disabled. If it is disabled, the little resize handle and the minimize/maximize buttons will not appear and the function will not resize the windows.<br><br><br>
+<li>To close the popup, just click the box in the corner. This actually just &quot;hides&quot; the popup. They can also be hidden or shown again through 2 functions:<br><br><b>hidebox( <i>'ID'</i> )</b> and <b>showbox( <i>'ID'</i> )</b>.<Br><br><b><i>'ID'</i></b> = The ID of the popup you want to hide/show.<br><br>Examples:<br><pre>&lt;a href=&quot;javascript:showbox('Div_ID1')&quot;&gt;Show Div_ID1&lt;/a&gt;<br>&lt;a href=&quot;javascript:hidebox('Div_ID1')&quot;&gt;Hide Div_ID1&lt;/a&gt;</pre>You cannot create links like this to control popups created dynamically because you dont know what their <i>ID</i> will be.<br><br><br>
+<li>You can make the popups fade into and out of view through the functions:<br><br><b>fadeboxin( <i>'ID'</i> )</b> and <b>fadeboxout( <i>'ID'</i> )</b><br><br><b><i>'ID'</i></b> = The ID of the popup you want to fade into/out of view.<br><br>Examples:<br><pre>&lt;a href=&quot;javascript:fadeboxin('Div_ID1')&quot;&gt;Fade In Div_ID1&lt;/a&gt;<br>&lt;a href=&quot;javascript:fadeboxout('Div_ID1')&quot;&gt;Fade Out Div_ID1&lt;/a&gt;</pre>Popups can be faded into view only when they are already hidden, and faded out of view when they are visible. <u>You can only have one popup fading in or out at one time.</u> This is intentional because of browser rendering speed. You cannot create links like this to control popups created dynamically because you dont know what their <i>ID</i> will be.<br><br>Due to an IE quirk where scrollbars flicker during fade in/out, all popups scrollbars will be temporarily disabled during the fade in/out duration.<br><br><br>
+<li>You can change the content (or URL source for external types) of any windows dynamically through the function:<br><br><b>changecontent( <i>'ID'</i> , <i>'content (or URL)'</i> )</b><br><br><b><i>'ID'</i></b> &nbsp;= The ID of the popup.<br><b><i>'content (or URL)'</i></b> &nbsp;= The new content. If the popup is set up as an external window, then this text will be interpreted as the new URL.<br><br><br>
+<li>To &quot;minimize&quot; the popup, click the minimize box. This will shrink the popup so just the titlebar shows. You can still drag the box around too. This icon only appears if resize is enabled for this popup.<br><br><br>
+<li>To &quot;restore&quot; the popup, click the restore box. This will restore the popup to its original height. This icon only appears if resize is enabled for this popup.<br><br><br>
+<li>If one popup is under another one, simply clicking anywhere on a popup underneath brings it to the top. Any new popup that is created will be above all the others. This does not hold true when displaying another sites contents in a popup when using Netscape6 (NS7 is ok). Read further on for details.<br><br><br>
+<li>Scrollbars will automatically appear if the content inside the popup exceeds the dimensions. In IE5.5+, these scrollbars can be set to a color.<br><br><br>
+<li>These popups can be set to start in their &quot;closed&quot; state so they can be made to appear via a javascript pseudo link. This is preferable to creating a new popup via a link due to some technical reasons. Read the installation instructions for more information on this.<br><br><br>
+<li>There is a semi-transparent (IE5+,NS6+ only) shadow under the popups which can be set to any color (although black looks best) to give them a sense of depth.<br><br><br>
+<li>You can display another page's contents in the popup by entering the site URL and setting a flag.<br><br><br>
+<li>You can configure the popups to appear or not appear if the user returns to the page. This is accomplished by the use of cookies. Obviously, if the user has cookies disabled, this won't function properly, but should not generate errors. Thanks to DynamicDrive.com for this idea, which I implemented from their fix to this script that appears on their site.
+</ul>
+
+<br><br>
+
+<h2>To install this script, follow the steps below:</h2>
+<ul>
+<li>Paste the code below somewhere in between the &lt;HEAD&gt; and &lt;/HEAD&gt; tags:<pre><b>&lt;script language=&quot;JavaScript&quot; src=&quot;popup.js&quot;&gt;&lt;/script&gt;</b></pre>
+<li>You will need to have the file &quot;popup.js&quot; uploaded to your server.<br><br><li>Then, you'll need to create the popups using lists of parameters. Use the example below to see the format:
+<pre><b>new popUp(left_position, top_position, width, height, id_of_box, content_text, content_bgcolor, content_text_color, content_font_stylestring, title_text, title_bgcolor, title_text_color, border_color,  scrollbar_color, shadow_color, is_hidden_on_start, is_draggable, is_resizeable, show_old, is_external, disable_on_return , min_image, max_image, close_image, resize_image);</b></pre>
+<ul>
+<li><b>left_position</b> - Left pixel coordinate from left edge of browser window. Number.
+<li><b>top_position</b> - Top  pixel coordinate from left edge of browser window. Number.
+<li><b>width</b> - Width of popup in pixels. Number.
+<li><b>height</b> - Height of popup in pixels. Number.
+<li><b>id_of_box</b> - <i>Unique</i> arbitrary ID value given to the popup. String.
+<li><b>content_text</b> - HTML string inside popup. Because the content is in string form, watch for quotes syntax! Use the wizard (at top of page) for help.
+<li><b>content_bgcolor</b> - Content area background color. Hex color triplet or valid color name string.
+<li><b>content_text_color</b> - Content text color, obviously. Hex color triplet or valid color name string.
+<li><b>content_font_stylestring</b> - Font style set using CSS type syntax. Hex color triplet or valid color name string.
+<li><b>title_text</b> - Text to appear in the titlebar. String.
+<li><b>title_bgcolor</b> - Background color of the titlebar when active. Hex color triplet or valid color name string.
+<li><b>title_text_color</b> - Color of the titlebar text. Hex color triplet or valid color name string.
+<li><b>border_color</b> - Color of the popup borders. Hex color triplet or valid color name string.
+<li><b>scrollbar_color</b> - Color of the scrollbar (IE5.5 only) and the color of the titlebar when not in focus. Hex color triplet or valid color name string.
+<li><b>shadow_color</b> - Semi-transparent shadow color (IE5+, NS6+ only). Hex color triplet or valid color name string.
+<li><b>is_hidden_on_start</b> - Specifies whether the popup is initially &quot;closed&quot;. true or false.
+<li><b>is_draggable</b> - Specifies whether popup is draggable. true or false.
+<li><b>is_resizeable</b> - Specifies whether popup is resizeable. If not, resize handle and the minimize/maximize buttons will not be present. true or false.
+<li><b>show_old</b> - Specifies whether the popup will show up in &quot;non-standards&quot; browsers. The popup appears as normal windows in these types of browsers if this value is enabled. true or false.
+<li><b>is_external</b> - Specifies whether the text in the content area is a link to an external website or simply text to display in the popup. If this is not set, the URL in the content area will not be loaded, it will just be displayed as text. true or false.
+<li><b>disable_on_return</b> - Specifies whether the popups will reappear if the user returns to the page. This option uses cookies, so the user must have cookies enabled for this to work. true or false.
+<li><b>min_image</b> - Specifies the image URL and path (if applicable) where the minimize image is stored. Example: 'min.gif'
+<li><b>max_image</b> - Specifies the image URL and path (if applicable) where the maximize image is stored. Example: 'max.gif'
+<li><b>close_image</b> - Specifies the image URL and path (if applicable) where the close image is stored. Example: 'close.gif'
+<li><b>resize_image</b> - Specifies the image URL and path (if applicable) where the resize image is stored. Example: 'resize.gif'
+</ul><br>
+<br><br>
+
+<li>The neat thing about this script is that none of the popups have to be pre-defined. They can be created on-the-fly, just like in the popup wizard (link for that is in the blue box near the top of the page)! <i>But</i>, if you do have pre-defined windows you wish to use, you'll have to create them once the page finishes loading. This is done by putting them in a <b>window.onload</b> event handler. The code would look something like:<pre><b>window.onload=function(){<br>new popUp(250, 50, 350, 175, "box1"...<br>new popUp(250, 50, 350, 175, "box2"...<br>}</b></pre>
+<li><i>If you are using a link to dynamically create a popup, please read:</i><br>Because a user can click a link repeatedly, the link you use to create the popup will be using the same <b>id_of_box</b>, which will <u>not</u> work. You must find some way of ensuring all popup id's are unique. Using a counter and appending the counter value to a base id string works well ( 'id' + 1 = 'id1' , 'id' + 2 = 'id2', and so on). Here is a quick script example:<pre><b>var counter=0;<br>function createPopup(){<br>counter++;<br>new popUp(50, 75, 200, 200, ('popupID'+counter), 'Content' , other parameters...);<br>}</b></pre>This is why it may be better to have a popup predefined and use a link to make it appear instead of using a link to create a new one.<br><br>
+<li>Do NOT use any spaces in the ID name, errors will result. Errors will also appear if you use an invalid color name (such as &quot;blakc&quot;). You can avoid this by using hex color triplet values instead (ex: &quot;#FFFFFF&quot; instead of &quot;white&quot;), or make sure the color names you use are CSS approved.<br><br>
+<li>Even though these windows can load external sites, Netscape 6 acts funny when there are more than one popup. For some reason, the popup with external page content will <b>always</b> appear on top of the other popups. The effect isn't too pleasing. I would recommend using only one popup window if you plan on using the script in this way. This effect isn't noticeable when there is only one popup.
+</ul>
+
+Thanks go out to the many people who have contributed suggestions to make this script better. Some people wanted to evolve this into a full scale GUI!. While possible, the amount of needed parameters would make it very non-intuitive. Unfortunately, I was unable to use all their suggestions, but I have implemented the most commonly requested ones.<br><br>
+Some people have asked me why I don't simply use style sheets to govern these popups' appearance. There are two reasons:
+<ol>
+<li>When used in "old browser" mode, the script couldn't read the values from a style sheet.
+<li>It makes the script more "fool-proof" by not exposing certain style values to the end user. My scripts are designed to be as modular and easy to implement as possible, although this one can be difficult for a "newbie" to configure.</ol>
+If anyone has a way to make an IFRAME element follow the z-order rules in NS6, PLEASE e-mail me! I have tried all kinds of work-arounds which don't seem to work.<br><br>
+The release notes are included in the downloadable zip file for those who are interested in the evolution of this script.
+
+</body>
+</html>

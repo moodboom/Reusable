@@ -1,0 +1,16 @@
+<?php
+
+require 'jsmin-1.1.1.php';
+
+if ( !isset($_GET['file']) )
+{
+    echo "Usage: php ./minify.php file=[filename] >newfilename \n";
+    exit;
+}
+    
+$file = $_GET['file'];
+
+// Output a minified version of example.js.
+echo JSMin::minify(file_get_contents($file));
+
+?>

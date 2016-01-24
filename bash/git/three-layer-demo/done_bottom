@@ -1,0 +1,28 @@
+
+
+
+
+
+cd /home/m/development/git/test/bottom_repo_for_working
+
+
+
+# this had better already be done before we start working
+# git checkout daily_grind
+# errr, we HAVE to make sure!  or we'll end up damaging master, DOH
+branch_name=$(git symbolic-ref HEAD 2>/dev/null | cut -d"/" -f 3)
+if [ "$branch_name" != "daily_grind" ]; then
+    echo "Where is the [daily_grind] branch?" && kill -SIGINT $$;
+fi
+
+# if it's not dirty, no need to go forward
+[[ $(git diff --shortstat 2> /dev/null | tail -n1) = "" ]] && echo "this branch is clean, no need to push..." && kill -SIGINT $$;
+
+# this script is just doing a push, and we can keep working after.
+git commit -a && git push origin daily_grind:daily_grind 
+
+# we don't kill - that way, if we REALLY want, we can work without a starting pull
+# (and deal with the merge later)
+# && git checkout master && git branch -D daily_grind
+
+

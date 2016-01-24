@@ -1,0 +1,15 @@
+cd /home/m/development/git/test/middle_repo_for_collecting_and_rebasing
+
+git checkout daily_grind #|| echo "checkout failed"; kill -SIGINT $$;
+
+# make sure we are clean
+[[ $(git diff --shortstat 2> /dev/null | tail -n1) != "" ]] && echo "dirty, bailing out of update..." && kill -SIGINT $$;
+
+git rebase -i master #|| echo "rebase failed"; kill -SIGINT $$;        # rebase everything since we forked from master
+git checkout master  #|| echo "checkout master failed"; kill -SIGINT $$;
+
+# make sure we are clean
+[[ $(git diff --shortstat 2> /dev/null | tail -n1) != "" ]] && echo "master dirty, bailing out of update..." && kill -SIGINT $$;
+
+git merge daily_grind #|| echo "merge failed"; kill -SIGINT $$;
+

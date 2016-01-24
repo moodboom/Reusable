@@ -1,0 +1,171 @@
+I thought I would try to use BitSet in the TransferredObject class.
+Having problems...
+       typedef error, very weird
+	       small sample code worked fine
+	       changed use of typedef'ed BitReg to int - I do NOT like this solution!
+	       
+Now I broke the build.  Need to work with autoconf tools more.
+Original notes (from when I got it first working):
+
+// MDM	11/25/2004 11:09:30 PM
+			Working on ShareTheDJ.
+
+			Want to start with ehs_https sample and make into a new separate program.
+			Need to link up with ehs library.  From EHS/Makefile.am:
+			
+				_LDADD=libehs.la
+
+			make: *** No rule to make target `libehs.a', needed by `sharethedj'.  Stop.
+			[m@thedigitalmachine ShareTheDJ]$
+
+			OK SOMEwhere I found a note that statically linked libs should use full path.
+			So I started using this:
+
+				sharethedj_LDADD = /usr/local/lib/libehs.la
+
+			And now I don't get the "libehs.so shared lib not found" error.  Whee!
+
+			I actually have a working binary now, using a class derived from EHS.
+
+			I had to go back and compile EHS again, adding this:
+
+				./configure --with-ssl
+				make
+				make install
+
+			Now it fires right up.  But I am having trouble getting the certificate
+			loaded and running.  I can run non-ssl EHS samples just fine.
+
+			Next:
+
+				clean up source code
+				x	move code into src dir
+				x	move config into config dir
+				x	clean out temp files and make into a cvs module
+
+				Extend ShareTheDJ to "talk" with HangTheDJ.
+
+
+I wanted to add [#define LINUX] somewhere.
+At first I thought the most logical place was in a globals.h, but then you have
+to include that everywhere.  Better: make it a part of the makefile.
+
+So... how do I add a #define to the makefile?
+Looks like a few end up in "configure".
+Looks like they sprang from AC_DEFINE() macros in configure.ac.
+Looks like my first try of adding AC_SUBST(LINUX, 1) was not only wrong, 
+but now it's stuck something bad in Makefile and Makefile.in.
+Also tried adding LINUX=1 directly into Makefile.am, that was wrong too.
+
+ok, needed to redo all those automake, autoconf steps... let's document them.
+
+rrr.. what happened to them?  didn't I put the steps SOMEWHERE?  guess not...
+redoing it all at tdm2...
+
+I am inside Anjuta now.  I am reading the automake book from redhat.  Summary:
+
+	./configure generates:
+		config.cache
+		config.log
+		config.status
+		config.h			(added #include reference in ShareTheDJ.h)
+		Makefile
+		
+	most useful make targets:
+		make all			builds package
+		make check			runs any self-checks
+		make install		installs
+		make clean			removes all derived files
+
+	`Makefile.am' is an input to automake
+	`configure.in' is an input to autoconf
+
+did this and it seemed to work:
+    aclocal
+    autoconf
+    automake --add-missing
+    ./configure
+    make
+
+
+==============================
+ BUILDING ShareTheDJ FROM CVS
+==============================
+
+ install PCRE 
+  http://www.pcre.org/
+  seems already available under gentoo, skip this step
+
+ install PME, EHS
+  both are in my CVSROOT, also at http://xaxxon.slackworks.com/pme/index.html 
+  just do a ./configure && make, then make install (as root), on both
+
+ get ShareTheDJ via CVS and build:
+  aclocal
+  autoconf
+  automake --add-missing
+  ./configure
+  make
+  (or just see "bootstrap" and "setup_new_project.sh" scripts)
+
+ to run
+  cd src
+  su -
+  sharethedj 700 blah blah
+
+==============================
+
+Got search path to Reusable angle-bracket headers included automatically:
+  configure.in
+    # MDM Allow angle bracket #include of Reusable headers.
+    CPPFLAGS="${CPPFLAGS} -I/home/m/development/tdm_cvs_view/Reusable"
+
+Trying to #define LINUX in the automake stuff now...
+I assume in configure.in...
+
+
+===================
+AUTOTOOLS REFRESHER
+===================    
+    all you need is Makefile.am and configure.in
+    then run my [autoconfiscate] script from your project dir!
+===================
+
+
+Setting up scrap for further examples.
+    my autoconfiscate is not working on a fresh scrap checkout
+            needed to [mkdir config], added this to the script
+            also needed to touch a few files that autotools refused to make, yet requires
+                fucking thing, pita.
+                touch NEWS, README, AUTHORS, ChangeLog in script
+            now it complains: 
+                configure.in:41: required file `config/ltmain.sh' not found
+            I touched that, it got further, then barfed:
+                *** libtool.m4 and ltmain.sh have a version mismatch! ***
+                *** (libtool.m4 = 1.5.26, ltmain.sh = ) ***
+                Please run:
+                    libtoolize --copy --force
+            Ran it, no change.
+            Ran it again a couple times and it's working??? WFT?/
+                libtoolize -c -f -i -n (dryrun)
+                    "no -i option" - googled, a newer option??
+                libtoolize -c -f
+            I will add that last line to the script and retest...
+        seems to work now!  whatever...
+
+struct "set notation" initialization test
+    updated scrap on tdm2 - check it out and then use [autoconfiscate]!
+    trying the advice from here:
+        http://linuxprograms.wordpress.com/2008/03/07/c-structure-initialization-advanced/
+    Ha!  it's C-only (no C++).  From the newer C99 spec.  
+    confirmed w gcc and VS C++.  weirdness.  I posted a comment on the blog.
+
+//----------------------------------------------------------------------------------------------------//
+//  ^ DONE ^
+//  v WORK v
+//---------------------------------------------------------------------------------------------------//
+
+//---------------------------------------------------------------------------------------------------//
+//  ^ WORK ^
+//  v TODO v
+//---------------------------------------------------------------------------------------------------//

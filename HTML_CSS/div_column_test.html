@@ -1,0 +1,84 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD>
+	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=iso-8859-1">
+	<TITLE></TITLE>
+<STYLE>
+
+#left_fixed 
+{ 
+    float:left; width:100px; background-color:#eeeeee; 
+}
+
+#right_liquid 
+{ 
+    width:100%; background-color:#dddddd; 
+}
+
+/* From http://www.alistapart.com/articles/holygrail */
+body {
+  min-width: 550px;      /* 2x LC width + RC width */
+}
+#container {
+  padding-left: 200px;   /* LC width */
+  padding-right: 150px;  /* RC width */
+}
+#container .column {
+  position: relative;
+  float: left;
+}
+#center {
+  width: 100%;
+  background-color:#dddddd; 
+}
+#left {
+  width: 200px;          /* LC width */
+  right: 200px;          /* LC width */
+  margin-left: -100%;
+  background-color:#ffff33; 
+}
+#right {
+  width: 150px;          /* RC width */
+  margin-right: -150px;  /* RC width */
+  background-color:#33ffff; 
+}
+#footer {
+  clear: both;
+}
+/*** IE6 Fix ***/
+* html #left {
+  left: 150px;           /* RC width */
+}
+
+</STYLE>
+</HEAD>
+<BODY LANG="en-US" DIR="LTR">
+
+
+<DIV ID="right_liquid">
+    <DIV ID="left_fixed">
+left left left left left left left left left left left left left left left left left left left left left left left left left left left left left left left left left left left left left left left left left left left left left left left left left left left left left left left left left left left left left left left left left left left left left left left left left 
+    </DIV>
+<iframe src="http://news.thedigitalmachine.com" />
+</DIV>
+
+
+<br clear=both />
+
+<div id="header"></div>
+
+<div id="container">
+  <div id="center" class="column">
+center center center center center center center center center center center center center center center center center center center center center center center center center center center center center center center center center center center center center center center center center center center center center center center center center center center center center center center center center center center center center center 
+  </div>
+  <div id="left" class="column">
+left left left left left left left left left left left left left left left left left left left left left left left left left left left left left left left left left left left left left left left left left left left left left left left left left left left left left left left left left left left left left left left left left left left left left left left left left 
+  </div>
+  <div id="right" class="column">
+right right right right right right right right right right right right right right right right right right right right right right right right right right right right right right right right right right right right right right 
+  </div>
+</div>
+
+<div id="footer"></div>
+</BODY>
+</HTML>

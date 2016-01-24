@@ -1,0 +1,22 @@
+Eventually I would like to build a "donation-based request system" so "patrons" can fund development of software projects (or whatever).
+
+    sign up for IPN here:
+        Account->Profile->SellingPreferences->Instant Payment Notification Prefs->Edit
+    URL to receive notification: 
+        http://thedigitalmachine.com/googleresultswalker/justgotpaid.php
+
+    There are at least three ways to integrate PayPal's IPN (instant payment notification):
+
+        freshmeat's Paypal IPN agent - php+mysql, nice if it works - circa 2006
+            http://outflux.net/software/pkgs/ipn-agent/
+            it's here: googleresultswalker/ipn-agent-1.2.1
+        Paypal PHP sample code: 
+            http://www.paypal.com/us/cgi-bin/webscr?cmd=p/pdn/ipn-codesamples-pop-outside
+            dumped here: googleresultswalker/justgotpaid_paypalsample.php
+            copied here: googleresutlswalker/justgotpaid.php
+            if it's working, it's supposed to add a timestamp to ~m/paypal_ipn_hit.txt rofl
+        this nice writeup:
+            http://www.web-bureau.com/modules/free-php-paypal-ipn-script.php
+            http://www.officetrio.com/modules/free-php-paypal-ipn-script.php
+            "If, for example, the transaction you just processed didn't originate with PayPal, but was an attempted hack"
+
