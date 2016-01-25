@@ -156,8 +156,8 @@ public:
                 {
                     includes_.push_back(
                         pair<string,string>(
-                            string("<script src=\"") + filename + "\"></script>",
-                            read_file(string("htdocs/") + filename)
+                            string("<link href=\"") + filename + "\" rel=\"stylesheet\">",
+                            string("<style type=\"text/css\">") + read_file(string("htdocs/") + filename) + "</style>"
                         )
                     );
 
@@ -165,8 +165,8 @@ public:
                 {
                     includes_.push_back(
                         pair<string,string>(
-                            string("<link href=\"") + filename + "\" rel=\"stylesheet\">",
-                            read_file(string("htdocs/") + filename)
+                            string("<script src=\"") + filename + "\"></script>",
+                            string("<script type=\"text/javascript\">") + read_file(string("htdocs/") + filename) + "</script>"
                         )
                     );
 
@@ -196,8 +196,8 @@ public:
         {
             // Update any path to include the proper relative path.
             string target = include.first;
-            replace(target,"href=\"",string("href\"") + relative_path);
-            replace(target,"src=\"",string("src\"") + relative_path);
+            replace(target,"href=\"",string("href=\"") + relative_path);
+            replace(target,"src=\"",string("src=\"") + relative_path);
 
             // NOTE that this uses "replace" from utilities.hpp.
             replace(ac.static_html_, target, include.second);
