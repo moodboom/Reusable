@@ -66,6 +66,12 @@ public:
 	    }
 	}
 
+    virtual string get_API_html() = 0;
+    rep.content = "<p>A better Trader API</p>";
+    rep.content += get_API_html("<button>","</button>","<button>","</button>","<button>","</button>","<br />");
+
+protected:
+
 	virtual void operator() (const request& req, reply& rep)
 	{
 	    // Let's see what type of request we got.
@@ -108,8 +114,7 @@ public:
 	            // Note that this is no place to prevent DDOS - DDOS'ing to legit API calls is trivial.
 	            // Help the user out.
                 log(LV_ERROR,string("Received unrecognized request: ") + req.method + " " + req.uri);
-                rep.content = "<p>A better Trader API</p>";
-                rep.content += get_API_html("<button>","</button>","<button>","</button>","<button>","</button>","<br />");
+                rep.content = get_API_html();
 	        }
 	    }
 
@@ -125,6 +130,7 @@ public:
 	    }
 	}
 
+	// Called on startup
 	inline void load_favicon()
 	{
 	    try
@@ -139,8 +145,7 @@ public:
 	    }
 	}
 
-	// We provide a means to inject include files into html.
-    // This should be done for all our preloaded html on startup.
+    // Called on startup using a constructor parameter
     inline void set_html_includes(const vector<string>& includes)
     {
         // We receive a series of filenames.
@@ -184,6 +189,8 @@ public:
         }
     }
 
+    // Called on startup for each preloaded html file.
+    // Search for any include files, and replace with the full script or style.
     void inject_includes(API_call& ac)
     {
         // We may need to build the relative path back to the root, based on the depth of the ac path.
@@ -277,6 +284,7 @@ public:
     }
 
 
+    // Helper
     bool tokenize_API_url(const std::string& url, std::string& protocol, std::string& host, API_call& ac)
     {
         // This is not the ultimate URL parser (there are libraries for that when you need it - google-url, StrTk, etc.).
@@ -430,9 +438,6 @@ public:
     }
 
     std::size_t max_body_size_;
-
-protected:
-
     const vector<API_call*>& vpAPI_;
     vector<pair<string,string>> includes_;
     string favicon_;
