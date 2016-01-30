@@ -30,23 +30,61 @@
 #include "quick_http_components/reply.hpp"
 #include "quick_http_components/request.hpp"
 
-
 using namespace QuickHttp;
 
+
+class html_wrappers_for_docs
+{
+public:
+
+    // Someone please suggest a (C++17?) fix for this redundancy.
+
+    html_wrappers_for_docs(
+        const string method1,
+        const string method2,
+        const string path1,
+        const string path2,
+        const string param1,
+        const string param2,
+        const string endline
+    ) :
+        // init vars
+        method1_(method1),
+        method2_(method2),
+        path1_  (path1),
+        path2_  (path2),
+        param1_ (param1),
+        param2_ (param2),
+        endline_(endline)
+    {}
+
+    const string method1_;
+    const string method2_;
+    const string path1_;
+    const string path2_;
+    const string param1_;
+    const string param2_;
+    const string endline_;
+};
+
 // This functor creates the server reply for the given request.
-// You must override it to provide custom server replies.
-class base_server_handler
+// The caller will provide custom server replies via the vpAPI parameter.
+class server_handler
   : private boost::noncopyable
 {
 public:
 
-	explicit base_server_handler(
+	explicit server_handler(
 	    const vector<string>& includes,
         const vector<API_call*>& vpAPI,
+        const string& title,
+        const html_wrappers_for_docs& wrappers,
         int max_body_size = 100000
 	) :
         // init vars
 	    vpAPI_(vpAPI),
+	    title_(title),
+	    wrappers_(wrappers),
         max_body_size_(max_body_size)
 	{
 	    load_favicon();
@@ -58,19 +96,13 @@ public:
 	    }
 	}
 
-	virtual ~base_server_handler()
+	virtual ~server_handler()
 	{
 	    for (auto& pcall : vpAPI_)
 	    {
 	        delete pcall;
 	    }
 	}
-
-    virtual string get_API_html() = 0;
-    rep.content = "<p>A better Trader API</p>";
-    rep.content += get_API_html("<button>","</button>","<button>","</button>","<button>","</button>","<br />");
-
-protected:
 
 	virtual void operator() (const request& req, reply& rep)
 	{
@@ -129,6 +161,10 @@ protected:
 	    {
 	    }
 	}
+
+    std::size_t max_body_size_;
+
+protected:
 
 	// Called on startup
 	inline void load_favicon()
@@ -252,17 +288,17 @@ protected:
     }
 
 
-    string get_API_html(const string& method1, const string& method2, const string& path1, const string& path2, const string& param1, const string& param2, const string& endline)
+    string get_API_html()
     {
         string html;
         for (auto& ac : vpAPI_)
         {
-            html += method1 + ac->method_ + method2 + " /";
+            html += wrappers_.method1_ + ac->method_ + wrappers_.method2_ + " /";
             for (int n = 0; n < ac->path_tokens_.size(); ++n)
             {
                 const string& path = ac->path_tokens_[n];
                 if (!path.empty() && path[0] == ':')
-                    html += path1 + path + path2;
+                    html += wrappers_.path1_ + path + wrappers_.path2_;
                 else
                     html += path;
                 if (n < ac->path_tokens_.size() - 1)
@@ -275,9 +311,9 @@ protected:
                 if (n==0) html += " ? ";
                 else      html += " & ";
                 html += tokenpair.first + "=";
-                html += param1 + tokenpair.second + param2;
+                html += wrappers_.param1_ + tokenpair.second + wrappers_.param2_;
             }
-            html += endline;
+            html += wrappers_.endline_;
         }
 
         return html;
@@ -437,9 +473,10 @@ protected:
         return false;
     }
 
-    std::size_t max_body_size_;
     const vector<API_call*>& vpAPI_;
     vector<pair<string,string>> includes_;
+    const string& title_;
+    const html_wrappers_for_docs& wrappers_;
     string favicon_;
 };
 

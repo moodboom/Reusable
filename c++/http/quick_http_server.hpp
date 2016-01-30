@@ -10,7 +10,7 @@
 //
 // There are two main requirements:
 //
-//      1) Derive a class from base_server_handler to do your processing.
+//      1) Create a server_handler to do your processing that includes vectors for your includes, and your RESTful API calls.
 //      2) Use one of the server constructors below, with your derived processing class, using boost::asio standards, to start the server.
 //
 //          Server<HTTP>    HTTP-specific socket handling
@@ -42,7 +42,7 @@ namespace QuickHttp
     public:
         inline Server(
             boost::asio::io_service& io_service,
-            base_server_handler& custom_handler,
+            server_handler& handler,
             const std::string& address,
             const std::string& port,
             std::size_t thread_pool_size
@@ -58,7 +58,7 @@ namespace QuickHttp
     public:
         inline Server(
             boost::asio::io_service& io_service,
-            base_server_handler& custom_handler,
+            server_handler& handler,
             const std::string& address,
             const std::string& port,
             std::size_t thread_pool_size,
@@ -78,13 +78,13 @@ namespace QuickHttp
 
     Server<HTTP>::Server(
         boost::asio::io_service& io_service,
-        base_server_handler& custom_handler,
+        server_handler& handler,
         const std::string& address,
         const std::string& port,
         std::size_t thread_pool_size
     ) :
         // Call base class
-        ServerBase<HTTP>::ServerBase(io_service, custom_handler, address, port, thread_pool_size)
+        ServerBase<HTTP>::ServerBase(io_service, handler, address, port, thread_pool_size)
     {
         start_accept();
     }
@@ -94,7 +94,7 @@ namespace QuickHttp
     void Server<HTTP>::start_accept()
     {
         // Give the connection both our service and our handler, and it will be ready to go.
-        new_connection_.reset(new connection(io_service_, m_custom_handler));
+        new_connection_.reset(new connection(io_service_, m_handler));
 
         acceptor_.async_accept(new_connection_->socket(),
           boost::bind(&Server<HTTP>::handle_accept, this,
@@ -114,7 +114,7 @@ namespace QuickHttp
 
     Server<HTTPS>::Server(
         boost::asio::io_service& io_service,
-        base_server_handler& custom_handler,
+        server_handler& handler,
         const std::string& address,
         const std::string& port,
         std::size_t thread_pool_size,
@@ -123,7 +123,7 @@ namespace QuickHttp
         const std::string& verify_file
     ) :
         // Call base class
-        ServerBase<HTTPS>::ServerBase(io_service, custom_handler, address, port, thread_pool_size),
+        ServerBase<HTTPS>::ServerBase(io_service, handler, address, port, thread_pool_size),
 
         // Init vars
         context(boost::asio::ssl::context::sslv23)
@@ -142,7 +142,7 @@ namespace QuickHttp
     {
         /*
         // Give the connection both our service and our handler, and it will be ready to go.
-        new_connection_.reset(new connection(io_service_, m_custom_handler));
+        new_connection_.reset(new connection(io_service_, m_handler));
 
         acceptor_.async_accept(new_connection_->socket(),
           boost::bind(&Server<HTTPS>::handle_accept, this,

@@ -47,7 +47,7 @@ namespace QuickHttp
         /// Construct a connection with the given io_service.
         inline explicit connection(
             boost::asio::io_service& io_service,
-            base_server_handler& handler
+            server_handler& handler
         );
 
         /// Get the socket associated with the connection.
@@ -71,7 +71,7 @@ namespace QuickHttp
         boost::asio::ip::tcp::socket socket_;
 
         /// The handler used to process the incoming request.
-        base_server_handler& request_handler_;
+        server_handler& request_handler_;
 
         /// Buffer for incoming data.
         boost::array<char, 8192> buffer_;
@@ -93,7 +93,7 @@ namespace QuickHttp
 
     connection::connection(
         boost::asio::io_service& io_service,
-        base_server_handler& handler
+        server_handler& handler
     ) :
         strand_(io_service),
         socket_(io_service),

@@ -43,7 +43,7 @@ namespace QuickHttp
 
         inline ServerBase(
                 boost::asio::io_service& io_service,
-                base_server_handler& custom_handler,
+                server_handler& handler,
                 const std::string& address,
                 const std::string& port,
                 std::size_t thread_pool_size
@@ -58,8 +58,8 @@ namespace QuickHttp
         /// Handle a request to stop the server.
         void handle_stop();
 
-        // The caller should derive a custom handler, we'll track it here.
-        base_server_handler& m_custom_handler;
+        // The caller should create a handler, we'll track it here.
+        server_handler& m_handler;
 
         /// The number of threads that will call io_service::run().
         std::size_t thread_pool_size_;
@@ -83,7 +83,7 @@ namespace QuickHttp
     template <class socket_type>
     ServerBase<socket_type>::ServerBase(
             boost::asio::io_service& io_service,
-            base_server_handler& custom_handler,
+            server_handler& handler,
             const std::string& address,
             const std::string& port,
             std::size_t thread_pool_size
@@ -95,7 +95,7 @@ namespace QuickHttp
         signals_(io_service),
         acceptor_(io_service),
         new_connection_(),
-        m_custom_handler(custom_handler)
+        m_handler(handler)
 
     {
         // Register to handle the signals that indicate when the server should exit.
