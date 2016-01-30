@@ -87,8 +87,9 @@ public:
 	    wrappers_(wrappers),
         max_body_size_(max_body_size)
 	{
-	    load_favicon();
         set_html_includes(includes);
+	    load_favicon();
+	    load_index();
 	    for (auto& pAPI : vpAPI_)
 	    {
 	        if (pAPI->load_static_html())
@@ -142,11 +143,14 @@ public:
 
 	        } else
 	        {
-	            // We respond to all bad requests with the API html.
-	            // Note that this is no place to prevent DDOS - DDOS'ing to legit API calls is trivial.
-	            // Help the user out.
-                log(LV_ERROR,string("Received unrecognized request: ") + req.method + " " + req.uri);
-                rep.content = get_API_html();
+	            log(LV_ERROR,string("Received unrecognized request: ") + req.method + " " + req.uri);
+
+                // We respond to all bad requests with the index.
+                // Note that this is no place to prevent DDOS - DDOS'ing to legit API calls is trivial.
+                // Help the user out.
+                rep.content = index_;
+                type = "html";
+                rep.status = reply::ok;
 	        }
 	    }
 
@@ -167,19 +171,44 @@ public:
 protected:
 
 	// Called on startup
-	inline void load_favicon()
-	{
-	    try
-	    {
-	        favicon_ = read_file("htdocs/favicon.ico");
-	    }
-	    catch(...)
-	    {
+    inline void load_favicon()
+    {
+        try
+        {
+            favicon_ = read_file("htdocs/favicon.ico");
+        }
+        catch(...)
+        {
             log(LV_WARNING,"WARNING: No favicon.ico file was found in [htdocs/].");
 
             // TODO add an encoded default
-	    }
-	}
+        }
+    }
+
+    // This function performs API self-documentation.
+    // We need an index.html file as a basis.
+    // Then we automatically inject the API documentation.
+    inline void load_index()
+    {
+        try
+        {
+            // Use a temporary ac to inject includes.
+            API_call ac;
+            ac.static_html_ = read_file("htdocs/index.html");
+            inject_includes(ac);
+            index_ = ac.static_html_;
+
+            // We have a couple special S&R for the index.
+            replace(index_,"<title>Title</title>",string("<title>") + title_ + "</title>");
+            replace(index_,"<h1>Title</h1>",string("<h1>") + title_ + "</h1>");
+            replace(index_,"<!-- REST API docs go here -->",get_API_html());
+        }
+        catch(...)
+        {
+            log(LV_WARNING,"WARNING: No index.html file was found in [htdocs/].");
+            log(LV_WARNING,"This file is required for the REST self-documentation.");
+        }
+    }
 
     // Called on startup using a constructor parameter
     inline void set_html_includes(const vector<string>& includes)
@@ -478,6 +507,7 @@ protected:
     const string& title_;
     const html_wrappers_for_docs& wrappers_;
     string favicon_;
+    string index_;
 };
 
 
