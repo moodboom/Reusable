@@ -134,7 +134,7 @@ public:
 	    if (rep.status == reply::bad_request)
 	    {
 	        // There is one hardcoded request that we handle by hand, the annoying favicon.ico.
-	        if (req.uri.substr(req.uri.size()-11,11) == "favicon.ico")
+	        if (b_string_ends_in(req.uri,"favicon.ico"))
 	        {
 	            rep.content = favicon_;
 	            type = "ico";

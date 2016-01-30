@@ -34,6 +34,14 @@ static bool replace(string& str, const string& from, const string& to)
     str.replace(start_pos, from.length(), to);
     return true;
 }
+static bool b_string_ends_in(const string& source, const string& search)
+{
+    return (
+            !search.empty()                     // NOTE that we fail if search string is empty
+        &&  source.size() >= search.size()
+        &&  source.substr(source.size()-search.size(),search.size()) == search
+    );
+}
 //=========================================================
 
 
