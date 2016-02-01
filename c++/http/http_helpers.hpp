@@ -118,5 +118,3 @@ bool API_call::load_static_html()
     }
     return true;
 }
-
-

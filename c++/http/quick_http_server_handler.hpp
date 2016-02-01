@@ -33,39 +33,56 @@
 using namespace QuickHttp;
 
 
-class html_wrappers_for_docs
+// ------------------------------------------------------------------------------
+// CONSTANTS GLOBALS STATICS
+// ------------------------------------------------------------------------------
+typedef enum
 {
-public:
+    // assert( HW_COUNT == 18 );
+    HW_FIRST            = 0,
+    HW_LINE_BEGIN       = SP_FIRST,
+    HW_LINE_END         ,
+    HW_GET_BEGIN        ,
+    HW_GET_END          ,
+    HW_PUT_BEGIN        ,
+    HW_PUT_END          ,
+    HW_POST_BEGIN       ,
+    HW_POST_END         ,
+    HW_DELETE_BEGIN     ,
+    HW_DELETE_END       ,
+    HW_PATCH_BEGIN      ,
+    HW_PATCH_END        ,
+    HW_PATH_BEGIN       ,
+    HW_PATH_END         ,
+    HW_PARAM_BEGIN      ,
+    HW_PARAM_END        ,
 
-    // Someone please suggest a (C++17?) fix for this redundancy.
+    HW_COUNT
+} HTML_WRAPPERS_INDEX;
 
-    html_wrappers_for_docs(
-        const string method1,
-        const string method2,
-        const string path1,
-        const string path2,
-        const string param1,
-        const string param2,
-        const string endline
-    ) :
-        // init vars
-        method1_(method1),
-        method2_(method2),
-        path1_  (path1),
-        path2_  (path2),
-        param1_ (param1),
-        param2_ (param2),
-        endline_(endline)
-    {}
-
-    const string method1_;
-    const string method2_;
-    const string path1_;
-    const string path2_;
-    const string param1_;
-    const string param2_;
-    const string endline_;
+// This default set of API wrappers works with bootstrap.
+// Provide your own as needed, to present your API in any desired style.
+// assert( HW_COUNT == 13 );
+const vector<string> c_default_wrappers =
+{
+    "<form><div class=\"form-inline\">",                                                // HW_LINE_BEGIN
+    "</div></form>",                                                                    // HW_LINE_END
+    "<a href=\"/\" role=\"button\" class=\"btn btn-moneygreen\">",                      // HW_METHOD_BEGIN
+    "</a>",                                                                             // HW_METHOD_END
+    "<a href=\"/\" role=\"button\" class=\"btn btn-slategray\">",                       // HW_GET_CLASS
+    "</a>",                                                                             // HW_PUT_CLASS
+    "<a href=\"/\" role=\"button\" class=\"btn btn-schoolbusyellow\">",                 // HW_POST_CLASS
+    "</a>",                                                                             // HW_DELETE_CLASS
+    "<br />"                                                                            // HW_PATCH_CLASS
+                                                                                        // HW_PATH_BEGIN
+                                                                                        // HW_PATH_END
+                                                                                        // HW_PARAM_BEGIN
+                                                                                        // HW_PARAM_END
+                                                                                        // HW_USER_PARAM_BEGIN
+                                                                                        // HW_USER_PARAM_END
 };
+// ------------------------------------------------------------------------------
+
 
 // This functor creates the server reply for the given request.
 // The caller will provide custom server replies via the vpAPI parameter.
@@ -78,7 +95,7 @@ public:
 	    const vector<string>& includes,
         const vector<API_call*>& vpAPI,
         const string& title,
-        const html_wrappers_for_docs& wrappers,
+        const vector<string>& wrappers = c_default_wrappers,
         int max_body_size = 100000
 	) :
         // init vars
@@ -87,7 +104,8 @@ public:
 	    wrappers_(wrappers),
         max_body_size_(max_body_size)
 	{
-        set_html_includes(includes);
+	    assert(wrappers_.size() == HW_COUNT);
+	    set_html_includes(includes);
 	    load_favicon();
 	    load_index();
 	    for (auto& pAPI : vpAPI_)
@@ -322,12 +340,16 @@ protected:
         string html;
         for (auto& ac : vpAPI_)
         {
-            html += wrappers_.method1_ + ac->method_ + wrappers_.method2_ + " /";
+            // The method becomes a button that is pressed to execute the call.
+            // We need to build a form.
+
+            html += wrappers_[HW_LINE_BEGIN];
+            html += wrappers_[HW_METHOD_BEGIN] + ac->method_ + wrappers_[HW_METHOD_END] + " /";
             for (int n = 0; n < ac->path_tokens_.size(); ++n)
             {
                 const string& path = ac->path_tokens_[n];
                 if (!path.empty() && path[0] == ':')
-                    html += wrappers_.path1_ + path + wrappers_.path2_;
+                    html += wrappers_[HW_PATH_BEGIN] + path + wrappers_[HW_PATH_END];
                 else
                     html += path;
                 if (n < ac->path_tokens_.size() - 1)
@@ -340,9 +362,9 @@ protected:
                 if (n==0) html += " ? ";
                 else      html += " & ";
                 html += tokenpair.first + "=";
-                html += wrappers_.param1_ + tokenpair.second + wrappers_.param2_;
+                html += wrappers_[HW_PARAM_BEGIN] + tokenpair.second + wrappers_[HW_PARAM_END];
             }
-            html += wrappers_.endline_;
+            html += wrappers_[HW_LINE_END];
         }
 
         return html;
@@ -505,7 +527,7 @@ protected:
     const vector<API_call*>& vpAPI_;
     vector<pair<string,string>> includes_;
     const string& title_;
-    const html_wrappers_for_docs& wrappers_;
+    const vector<string>& wrappers_;
     string favicon_;
     string index_;
 };
