@@ -38,9 +38,9 @@ using namespace QuickHttp;
 // ------------------------------------------------------------------------------
 typedef enum
 {
-    // assert( HW_COUNT == 18 );
+    // assert( HW_COUNT == 16 );
     HW_FIRST            = 0,
-    HW_LINE_BEGIN       = SP_FIRST,
+    HW_LINE_BEGIN       = HW_FIRST,
     HW_LINE_END         ,
     HW_GET_BEGIN        ,
     HW_GET_END          ,
@@ -139,7 +139,7 @@ public:
 	    // Tokenize, and ignore malformed requests.
 	    // That means we will have at least one path token and one action (or just the hostname).
 	    API_call ac;
-	    ac.method_ = req.method;
+	    ac.set_method(req.method);
 	    if (tokenize_API_url(req.uri,protocol,host,ac))
 	    {
 	        if (process_API_call(ac,rep))
@@ -296,8 +296,11 @@ protected:
 
     bool b_API_call_matches(const API_call& acDefinition, const API_call& ac, bool bIncludeParamPairs = false)
     {
-        if (!strings_are_equal(acDefinition.method_,ac.method_))                                    return false;
-        if (acDefinition.path_tokens_.size() != ac.path_tokens_.size())                             return false;
+        if (acDefinition.method_ != ac.method_)
+            return false;
+
+        if (acDefinition.path_tokens_.size() != ac.path_tokens_.size())
+            return false;
 
         for (int n = 0; n < ac.path_tokens_.size(); ++n)
         {
@@ -343,8 +346,12 @@ protected:
             // The method becomes a button that is pressed to execute the call.
             // We need to build a form.
 
+            // A little stupid fu to get the string indexes.
+            HTML_WRAPPERS_INDEX method_begin = (HTML_WRAPPERS_INDEX)((int)HW_GET_BEGIN + 2*(int)ac->method_);
+            HTML_WRAPPERS_INDEX method_end = (HTML_WRAPPERS_INDEX)((int)method_begin + 1);
+
             html += wrappers_[HW_LINE_BEGIN];
-            html += wrappers_[HW_METHOD_BEGIN] + ac->method_ + wrappers_[HW_METHOD_END] + " /";
+            html += wrappers_[method_begin] + ac->method() + wrappers_[method_end] + " /";
             for (int n = 0; n < ac->path_tokens_.size(); ++n)
             {
                 const string& path = ac->path_tokens_[n];

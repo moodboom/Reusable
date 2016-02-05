@@ -1,7 +1,24 @@
 #pragma once
 
-
 using namespace QuickHttp;
+
+
+// ------------------------------------------------------------------------------
+// CONSTANTS GLOBALS STATICS
+// ------------------------------------------------------------------------------
+typedef enum
+{
+    // assert( HM_COUNT == 5 );
+    HM_FIRST    = 0,
+    HM_GET      = HM_FIRST,
+    HM_PUT      ,
+    HM_POST     ,
+    HM_DELETE   ,
+    HM_PATCH    ,
+
+    HM_COUNT
+} HTML_METHOD;
+// ------------------------------------------------------------------------------
 
 
 static bool url_decode(const std::string& in, std::string& out)
@@ -49,7 +66,7 @@ class API_call
 public:
     API_call() {}
     API_call(
-        string method,
+        HTML_METHOD method,
         vector<string> path_tokens,
         vector<string> types,
         vector<pair<string,string>> pair_tokens = vector<pair<string,string>>(),
@@ -78,7 +95,29 @@ public:
     virtual bool handle_call(reply& rep) { return false; }
     // ----------------------
 
-    string  method_;
+    string method()
+    {
+        switch (method_)
+        {
+            case HM_GET      : return "GET"     ;
+            case HM_PUT      : return "PUT"     ;
+            case HM_POST     : return "POST"    ;
+            case HM_DELETE   : return "DELETE"  ;
+            case HM_PATCH    : return "PATCH"   ;
+            default          : return "Unsupported method";
+        }
+    }
+    void set_method(string m)
+    {
+             if (m == "GET"    ) method_ = HM_GET      ;
+        else if (m == "PUT"    ) method_ = HM_PUT      ;
+        else if (m == "POST"   ) method_ = HM_POST     ;
+        else if (m == "DELETE" ) method_ = HM_DELETE   ;
+        else if (m == "PATCH"  ) method_ = HM_PATCH    ;
+        else method_ = HM_COUNT ;
+    }
+
+    HTML_METHOD method_;
     vector<string>  path_tokens_;
     vector<string>  types_;
     vector<pair<string,string>> pair_tokens_;
