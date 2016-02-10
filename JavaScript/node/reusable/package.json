@@ -1,0 +1,24 @@
+{
+
+  "doc1": "For new projects: ",
+  "doc2": "  1) Copy and update this to a new project folder",
+  "doc3": "  2) Copy setup.js into the folder, and update, then run it [node setup.js].",
+
+  "name": "moodboom",
+  "version": "1.0.0",
+  "description": "moodboom's Node scripts, primarily used for continuous integration",
+  "main": "main.js",
+  "preferGlobal": true,
+  "dependencies": {
+    "aws-sdk": "^2.2.12"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Michael Behrns-Miller",
+  "bin": {
+    "scsync"    : "sync.js",
+    "git-sync"  : "git-sync.js"
+  }
+}
