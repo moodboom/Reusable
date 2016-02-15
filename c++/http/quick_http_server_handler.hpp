@@ -40,46 +40,28 @@ using namespace QuickHttp;
 // ------------------------------------------------------------------------------
 typedef enum
 {
-    // assert( HW_COUNT == 8 );
+    // assert( HW_COUNT == 5 );
     HW_FIRST            = 0,
     HW_LINE_BEGIN       = HW_FIRST,
     HW_LINE_END         ,
-    HW_METHOD_BEGIN     ,
-    HW_METHOD_END       ,
-    /*
-    HW_GET_BEGIN        ,
-    HW_GET_END          ,
-    HW_PUT_BEGIN        ,
-    HW_PUT_END          ,
-    HW_POST_BEGIN       ,
-    HW_POST_END         ,
-    HW_DELETE_BEGIN     ,
-    HW_DELETE_END       ,
-    HW_PATCH_BEGIN      ,
-    HW_PATCH_END        ,
-    */
-    HW_PATH_BEGIN       ,
-    HW_PATH_END         ,
-    HW_PARAM_BEGIN      ,
-    HW_PARAM_END        ,
+    HW_METHOD           ,
+    HW_PATH             ,
+    HW_PARAM            ,
 
     HW_COUNT
 } HTML_WRAPPERS_INDEX;
 
-// This default set of API wrappers works with bootstrap.
+// This default set of API wrappers works well with bootstrap.
 // Provide your own as needed, to present your API in any desired style.
-// You can use the following variables and a substitution will be done: __API_url__, __API_method__, __API_variable_name__
-// assert( HW_COUNT == 16 );
+// You can use the following variables and a substitution will be done: __API_url__, __API_method__, __API_token__
+// assert( HW_COUNT == 5 );
 const vector<string> c_default_wrappers =
 {
-    "<form class=\"api-form\" method=\"__API_method__\" action=\"__API_url__\"><div class=\"form-inline\">",                // HW_LINE_BEGIN
-    "</div></form>",                                                                                                        // HW_LINE_END
-    "<button type=\"submit\" class=\"btn btn-__API_method__\">__API_method__</button><div class=\"form-group\">",           // HW_METHOD_BEGIN
-    "</div>",                                                                                                               // HW_METHOD_END
-    "<label>",                                                                                                              // HW_PATH_BEGIN
-    "</label>",                                                                                                             // HW_PATH_END
-    " <input type=\"text\" name=\"__API_variable_name__\" class=\"form-control\" placeholder=\"__API_variable_name__\"/> ", // HW_PARAM_BEGIN
-    "",                                                                                                                     // HW_PARAM_END
+    "<form class=\"api-form\" method=\"__API_method__\" action=\"__API_url__\"><div class=\"form-inline\">",        // HW_LINE_BEGIN
+    "</div></form>",                                                                                                // HW_LINE_END
+    "<button type=\"submit\" class=\"btn btn-__API_method__\">__API_method__</button><div class=\"form-group\">",   // HW_METHOD
+    "<label>__API_token__</label>",                                                                                 // HW_PATH
+    " <input type=\"text\" name=\"__API_token__\" class=\"form-control\" placeholder=\"__API_token__\"/> "          // HW_PARAM
 };
 // ------------------------------------------------------------------------------
 
@@ -222,12 +204,11 @@ protected:
             replace(index_,"<h1>Title</h1>",string("<h1>") + title_ + "</h1>");
 
             // Remove test data, replace with actual API data.
-            replace(index_,"<!-- SAMPLE DATA -->",get_API_html());
-            /*
-            std::regex e("<!-- BEGIN SAMPLE DATA.*END SAMPLE DATA -->");
+            // TODO determine how to get c++11 std::regex to S&R across lines (it doesn't respect /s)
+            // Right now, we can only have one line of test data, BUSH.
+            std::regex e("<!-- BEGIN SAMPLE DATA.*?END SAMPLE DATA -->");
             std::smatch sm;
             index_ = std::regex_replace(index_, e, get_API_html());
-            */
         }
         catch(...)
         {
@@ -357,9 +338,9 @@ protected:
                 // We need to build a form.
 
                 // ----------------
-                // We need to substitute for these strings, anywhere they are found:
+                // We need to substitute for these strings:
                 //
-                //  __API_url__, __API_method__
+                //  __API_url__, __API_method__, __API_token__
                 //
                 // Create a copy of the wrappers and S&R in them.
                 string url = ac->url();
@@ -378,7 +359,7 @@ protected:
                 // ----------------
 
                 html += wrappers[HW_LINE_BEGIN];
-                html += wrappers[HW_METHOD_BEGIN] + ac->method() + wrappers[HW_METHOD_END] + " /";
+                html += wrappers[HW_METHOD] + " /";
                 for (int n = 0; n < ac->path_tokens_.size(); ++n)
                 {
                     const string& path = ac->path_tokens_[n];
@@ -388,7 +369,7 @@ protected:
 
                     } else
                     {
-                        html += wrappers[HW_PATH_BEGIN] + path + wrappers[HW_PATH_END];
+                        html += build_path(path);
                     }
                     if (n < ac->path_tokens_.size() - 1)
                     {
@@ -397,17 +378,17 @@ protected:
                 }
                 if (!type.empty())
                 {
-                    html += wrappers[HW_PATH_BEGIN] + "." + type + wrappers[HW_PATH_END];
+                    html += build_path(string(".")+type);
                 }
                 for (int n = 0; n < ac->pair_tokens_.size(); ++n)
                 {
                     // We wrap the bit of non-param html in path tokens.
-                    html += wrappers[HW_PATH_BEGIN];
+                    string nonparam;
                     const pair<string,string>& tokenpair = ac->pair_tokens_[n];
-                    if (n==0) html += " ? ";
-                    else      html += " & ";
-                    html += tokenpair.first + "=";
-                    html += wrappers[HW_PATH_END];
+                    if (n==0) nonparam += " ? ";
+                    else      nonparam += " & ";
+                    nonparam += tokenpair.first + "=";
+                    html += build_path(nonparam);
 
                     // Now the actual param.
                     html += build_param(tokenpair.second);
@@ -575,14 +556,20 @@ protected:
         return false;
     }
 
+    string build_path(const string& param)
+    {
+        // Substitute var as needed.
+        string wr = wrappers_[HW_PATH];
+        replace(wr,"__API_token__",param);
+        return wr;
+    }
+
     string build_param(const string& param)
     {
         // Substitute var as needed.
-        string wr1 = wrappers_[HW_PARAM_BEGIN];
-        string wr2 = wrappers_[HW_PARAM_END];
-        replace(wr1,"__API_variable__",param);
-        replace(wr2,"__API_variable__",param);
-        return wr1 /* NOTE: we want an input field here, no html, no [+ path] */ + wr2;
+        string wr = wrappers_[HW_PARAM];
+        replace(wr,"__API_token__",param);
+        return wr;
     }
 
     const vector<API_call*>& vpAPI_;

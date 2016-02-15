@@ -97,13 +97,13 @@ public:
 
     string url()
     {
-        // We start the url with two backslashes (this one and the one added inside the loop).
+        // We start the url with two slashes (this one and the one added inside the loop).
         // That ensures that we use the parent page port.
-        string url = "\\";
+        string url = "/";
 
         for (auto& token : path_tokens_)
         {
-            url += "\\";
+            url += "/";
             url += token;
         }
         return url;

@@ -26,12 +26,18 @@ static bool strings_are_equal(const string& s1, const string& s2, bool b_case_in
     else
         return s1 == s2;
 }
+// Quick and easy simple global search and replace.
+// If you need regex, use std::regex.
 static bool replace(string& str, const string& from, const string& to)
 {
     size_t start_pos = str.find(from);
     if(start_pos == std::string::npos)
         return false;
-    str.replace(start_pos, from.length(), to);
+    while(start_pos != std::string::npos)
+    {
+        str.replace(start_pos, from.length(), to);
+        start_pos = str.find(from,start_pos+to.length());
+    }
     return true;
 }
 static bool b_string_ends_in(const string& source, const string& search)
