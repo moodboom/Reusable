@@ -3,6 +3,11 @@
 	<name>Reusable</name>
 	<comment></comment>
 	<projects>
+		<project>AbetterTrader server</project>
+		<project>HangTheDJ ampache-with-htdj</project>
+		<project>HangTheDJ Qt client</project>
+		<project>My Quick Http App</project>
+		<project>Power Engine</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

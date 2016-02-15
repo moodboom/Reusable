@@ -25,6 +25,8 @@
 #ifndef QUICK_HTTP_SERVER_HANDLER_HPP
 #define QUICK_HTTP_SERVER_HANDLER_HPP
 
+#include <regex>
+
 #include "http_helpers.hpp"
 #include "quick_http_components/mime_types.hpp"
 #include "quick_http_components/reply.hpp"
@@ -38,10 +40,13 @@ using namespace QuickHttp;
 // ------------------------------------------------------------------------------
 typedef enum
 {
-    // assert( HW_COUNT == 16 );
+    // assert( HW_COUNT == 8 );
     HW_FIRST            = 0,
     HW_LINE_BEGIN       = HW_FIRST,
     HW_LINE_END         ,
+    HW_METHOD_BEGIN     ,
+    HW_METHOD_END       ,
+    /*
     HW_GET_BEGIN        ,
     HW_GET_END          ,
     HW_PUT_BEGIN        ,
@@ -52,6 +57,7 @@ typedef enum
     HW_DELETE_END       ,
     HW_PATCH_BEGIN      ,
     HW_PATCH_END        ,
+    */
     HW_PATH_BEGIN       ,
     HW_PATH_END         ,
     HW_PARAM_BEGIN      ,
@@ -62,24 +68,18 @@ typedef enum
 
 // This default set of API wrappers works with bootstrap.
 // Provide your own as needed, to present your API in any desired style.
-// assert( HW_COUNT == 13 );
+// You can use the following variables and a substitution will be done: __API_url__, __API_method__, __API_variable_name__
+// assert( HW_COUNT == 16 );
 const vector<string> c_default_wrappers =
 {
-    "<form><div class=\"form-inline\">",                                                // HW_LINE_BEGIN
-    "</div></form>",                                                                    // HW_LINE_END
-    "<a href=\"/\" role=\"button\" class=\"btn btn-moneygreen\">",                      // HW_METHOD_BEGIN
-    "</a>",                                                                             // HW_METHOD_END
-    "<a href=\"/\" role=\"button\" class=\"btn btn-slategray\">",                       // HW_GET_CLASS
-    "</a>",                                                                             // HW_PUT_CLASS
-    "<a href=\"/\" role=\"button\" class=\"btn btn-schoolbusyellow\">",                 // HW_POST_CLASS
-    "</a>",                                                                             // HW_DELETE_CLASS
-    "<br />"                                                                            // HW_PATCH_CLASS
-                                                                                        // HW_PATH_BEGIN
-                                                                                        // HW_PATH_END
-                                                                                        // HW_PARAM_BEGIN
-                                                                                        // HW_PARAM_END
-                                                                                        // HW_USER_PARAM_BEGIN
-                                                                                        // HW_USER_PARAM_END
+    "<form class=\"api-form\" method=\"__API_method__\" action=\"__API_url__\"><div class=\"form-inline\">",                // HW_LINE_BEGIN
+    "</div></form>",                                                                                                        // HW_LINE_END
+    "<button type=\"submit\" class=\"btn btn-__API_method__\">__API_method__</button><div class=\"form-group\">",           // HW_METHOD_BEGIN
+    "</div>",                                                                                                               // HW_METHOD_END
+    "<label>",                                                                                                              // HW_PATH_BEGIN
+    "</label>",                                                                                                             // HW_PATH_END
+    " <input type=\"text\" name=\"__API_variable_name__\" class=\"form-control\" placeholder=\"__API_variable_name__\"/> ", // HW_PARAM_BEGIN
+    "",                                                                                                                     // HW_PARAM_END
 };
 // ------------------------------------------------------------------------------
 
@@ -210,16 +210,24 @@ protected:
     {
         try
         {
+
             // Use a temporary ac to inject includes.
             API_call ac;
             ac.static_html_ = read_file("htdocs/index.html");
             inject_includes(ac);
             index_ = ac.static_html_;
 
-            // We have a couple special S&R for the index.
+            // We have a couple special S&R for the title.
             replace(index_,"<title>Title</title>",string("<title>") + title_ + "</title>");
             replace(index_,"<h1>Title</h1>",string("<h1>") + title_ + "</h1>");
-            replace(index_,"<!-- REST API docs go here -->",get_API_html());
+
+            // Remove test data, replace with actual API data.
+            replace(index_,"<!-- SAMPLE DATA -->",get_API_html());
+            /*
+            std::regex e("<!-- BEGIN SAMPLE DATA.*END SAMPLE DATA -->");
+            std::smatch sm;
+            index_ = std::regex_replace(index_, e, get_API_html());
+            */
         }
         catch(...)
         {
@@ -343,42 +351,78 @@ protected:
         string html;
         for (auto& ac : vpAPI_)
         {
-            // The method becomes a button that is pressed to execute the call.
-            // We need to build a form.
-
-            // A little stupid fu to get the string indexes.
-            HTML_WRAPPERS_INDEX method_begin = (HTML_WRAPPERS_INDEX)((int)HW_GET_BEGIN + 2*(int)ac->method_);
-            HTML_WRAPPERS_INDEX method_end = (HTML_WRAPPERS_INDEX)((int)method_begin + 1);
-
-            html += wrappers_[HW_LINE_BEGIN];
-            html += wrappers_[method_begin] + ac->method() + wrappers_[method_end] + " /";
-            for (int n = 0; n < ac->path_tokens_.size(); ++n)
+            for (auto& type : ac->types_)
             {
-                const string& path = ac->path_tokens_[n];
-                if (!path.empty() && path[0] == ':')
-                    html += wrappers_[HW_PATH_BEGIN] + path + wrappers_[HW_PATH_END];
-                else
-                    html += path;
-                if (n < ac->path_tokens_.size() - 1)
-                    html += "/";
+                // The method becomes a button that is pressed to execute the call.
+                // We need to build a form.
+
+                // ----------------
+                // We need to substitute for these strings, anywhere they are found:
+                //
+                //  __API_url__, __API_method__
+                //
+                // Create a copy of the wrappers and S&R in them.
+                string url = ac->url();
+                if (!type.empty())
+                {
+                    url += ".";
+                    url += type;
+                }
+                string method = ac->method();
+                vector<string> wrappers = wrappers_;
+                for (auto& wr : wrappers)
+                {
+                    replace(wr,"__API_url__",url);
+                    replace(wr,"__API_method__",method);
+                }
+                // ----------------
+
+                html += wrappers[HW_LINE_BEGIN];
+                html += wrappers[HW_METHOD_BEGIN] + ac->method() + wrappers[HW_METHOD_END] + " /";
+                for (int n = 0; n < ac->path_tokens_.size(); ++n)
+                {
+                    const string& path = ac->path_tokens_[n];
+                    if (!path.empty() && path[0] == ':')
+                    {
+                        html += build_param(path.substr(1));
+
+                    } else
+                    {
+                        html += wrappers[HW_PATH_BEGIN] + path + wrappers[HW_PATH_END];
+                    }
+                    if (n < ac->path_tokens_.size() - 1)
+                    {
+                        html += "/";
+                    }
+                }
+                if (!type.empty())
+                {
+                    html += wrappers[HW_PATH_BEGIN] + "." + type + wrappers[HW_PATH_END];
+                }
+                for (int n = 0; n < ac->pair_tokens_.size(); ++n)
+                {
+                    // We wrap the bit of non-param html in path tokens.
+                    html += wrappers[HW_PATH_BEGIN];
+                    const pair<string,string>& tokenpair = ac->pair_tokens_[n];
+                    if (n==0) html += " ? ";
+                    else      html += " & ";
+                    html += tokenpair.first + "=";
+                    html += wrappers[HW_PATH_END];
+
+                    // Now the actual param.
+                    html += build_param(tokenpair.second);
+                }
+                html += wrappers[HW_LINE_END];
             }
-            // html += ac->action_ + "." + ac->type_;
-            for (int n = 0; n < ac->pair_tokens_.size(); ++n)
-            {
-                const pair<string,string>& tokenpair = ac->pair_tokens_[n];
-                if (n==0) html += " ? ";
-                else      html += " & ";
-                html += tokenpair.first + "=";
-                html += wrappers_[HW_PARAM_BEGIN] + tokenpair.second + wrappers_[HW_PARAM_END];
-            }
-            html += wrappers_[HW_LINE_END];
         }
 
         return html;
     }
 
+    // -------
+    // Helpers
+    // -------
 
-    // Helper
     bool tokenize_API_url(const std::string& url, std::string& protocol, std::string& host, API_call& ac)
     {
         // This is not the ultimate URL parser (there are libraries for that when you need it - google-url, StrTk, etc.).
@@ -529,6 +573,16 @@ protected:
 
         // We actually shouldn't hit this.
         return false;
+    }
+
+    string build_param(const string& param)
+    {
+        // Substitute var as needed.
+        string wr1 = wrappers_[HW_PARAM_BEGIN];
+        string wr2 = wrappers_[HW_PARAM_END];
+        replace(wr1,"__API_variable__",param);
+        replace(wr2,"__API_variable__",param);
+        return wr1 /* NOTE: we want an input field here, no html, no [+ path] */ + wr2;
     }
 
     const vector<API_call*>& vpAPI_;
