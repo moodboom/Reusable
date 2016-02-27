@@ -92,7 +92,7 @@ public:
     inline bool load_static_html();
 
     // Overload this to get the work done!
-    virtual bool handle_call(reply& rep) { return false; }
+    virtual bool handle_call(const string& type, reply& rep) { return false; }
     // ----------------------
 
     string url()
@@ -127,6 +127,15 @@ public:
         else if (m == "DELETE" ) method_ = HM_DELETE   ;
         else if (m == "PATCH"  ) method_ = HM_PATCH    ;
         else method_ = HM_COUNT ;
+    }
+
+    bool b_has_type(string search_type)
+    {
+        for (auto& t : types_)
+            if (strings_are_equal(t,search_type))
+                return true;
+
+        return false;
     }
 
     HTML_METHOD method_;

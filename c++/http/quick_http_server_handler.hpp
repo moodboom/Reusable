@@ -321,7 +321,15 @@ protected:
         for (auto& acloop : vpAPI_)
         {
             if (b_API_call_matches(*acloop,ac))
-                return acloop->handle_call(rep);
+            {
+                // Provide the requested type (there should be 0 or 1).
+                assert(ac.types_.size() < 2);
+                string type;
+                if (!ac.types_.empty())
+                    type = ac.types_[0];
+
+                return acloop->handle_call(type,rep);
+            }
         }
         return false;
     }
