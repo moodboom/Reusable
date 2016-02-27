@@ -154,7 +154,11 @@ bool API_call::load_static_html()
         return false;
 
     string filename = "htdocs";
-    for (auto& token : path_tokens_)
+
+    // NOTE that we do NOT want the actual token here: [auto& token].
+    // We want to work with a copy.  So here, we use [auto token].
+    // THIS IS AN EXCEPTION TO THE GENERAL RULE.  Be C++11 smart, my friend.  :-)
+    for (auto token : path_tokens_)
     {
         assert(token.length() > 0);
 
