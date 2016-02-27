@@ -274,11 +274,11 @@ protected:
         for (auto& include : includes_)
         {
             // Update any path to include the proper relative path.
+            // 1) build the target url replacement string
             string target = include.first;
             replace(target,"href=\"",string("href=\"") + relative_path);
             replace(target,"src=\"",string("src=\"") + relative_path);
-
-            // NOTE that this uses "replace" from utilities.hpp.
+            // 2) replace it in the static html
             replace(ac.static_html_, target, include.second);
         }
     }
