@@ -1,7 +1,6 @@
 #ifndef utilities_hpp
 #define utilities_hpp
 
-// #include <boost/algorithm/string.hpp>       // For replace_all()
 #include "basic_types.hpp"
 #include "miniz.h"
 
@@ -27,7 +26,6 @@ static bool strings_are_equal(const string& s1, const string& s2, bool b_case_in
         return s1 == s2;
 }
 // Quick and easy simple global search and replace.
-// If you need regex, use std::regex.
 static bool replace(string& str, const string& from, const string& to)
 {
     size_t start_pos = str.find(from);
@@ -38,6 +36,51 @@ static bool replace(string& str, const string& from, const string& to)
         str.replace(start_pos, from.length(), to);
         start_pos = str.find(from,start_pos+to.length());
     }
+    return true;
+}
+// If you know there is only one search term to replace,
+// this is obviously faster than replace() (above).
+static bool replace_once(string& str, const string& from, const string& to)
+{
+    size_t start_pos = str.find(from);
+    if(start_pos != std::string::npos)
+    {
+        str.replace(start_pos, from.length(), to);
+        return true;
+    }
+    return false;
+}
+// Replace regex
+// The search term can go across lines if needed,
+// depending on the "from" search term.
+// Typically use "[\\s\\S]*" to accomplish this.
+#include <boost/regex.hpp>
+static bool replace_with_regex(string& str, const string& from, const string& to)
+{
+    // ----------
+    // This would be a nice clean new way, using c++11.
+    // But you need a swap string (or you get a crash with gcc 4.9.2).
+    // And multiline searching using "TEST DATA[\\s\\S]*TEST DATA" was not successful.
+    // We'll stick with boost for now.
+    /*
+    #include <regex>                                // For replace_with_regex() etc.
+    std::regex reg(from);
+    string newstr = std::regex_replace(str,reg,to);
+    str = newstr;
+    return true;
+    */
+    // ----------
+
+    boost::regex reg;
+    reg.assign(from);
+    str = boost::regex_replace(str,reg,to,boost::match_default);
+    return true;
+}
+static bool replace_once_with_regex(string& str, const string& from, const string& to)
+{
+    boost::regex reg;
+    reg.assign(from);
+    str = boost::regex_replace(str,reg,to,boost::match_default | boost::format_first_only);
     return true;
 }
 static bool b_string_ends_in(const string& source, const string& search)
