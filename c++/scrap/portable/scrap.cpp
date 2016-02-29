@@ -551,57 +551,13 @@ int main( int argc, char * argv[] )
     // This secondary container can use a key that is not unique across the objects.
     // This is very common to be able to quickly gather "categories" of objects.
     // We use an unordered_multiset.  We need equals and hash functions, and we need to walk through similar key values.
+    // (TODO)
 
 
 
 
 
-
-
-
-
-    // unordered set of pointers
-    // To use c++11 undordered containers with object keys, we need hash_value and equal_to.
-    // When using pointers to objects, we need the functions to use pointers, and we have to specify them when defining the set or map.
-    // hash_value and equal_to functors work perfectly with pointer parameters.
-    // 
-    // Below, you can see that the equal_to and hash_value functors drive the behavior of the set.
-    // If an item is equal according to the functor, it is not allowed to be reinserted!  whoop!
-    // ==================================================================================
-
-    BlahPointerSet blah_uset;
-    BlahPointerAltSet blah_alt_uset;
-
-    blah_uset.insert(new blah(1,2,"first"));
-    blah_uset.insert(new blah(3,4));
-    blah_uset.insert(new blah(5,6));
-
-    blah_uset.insert(new blah(1,7));
-    blah_uset.insert(new blah(3,8));
-    blah_uset.insert(new blah(5,9));
-
-    // No effect, element already exists.
-    blah_uset.insert(new blah(1,2,"second"));
-
-    blah_alt_uset.insert(new blah(1,2));
-    blah_alt_uset.insert(new blah(3,4));
-    blah_alt_uset.insert(new blah(5,6));
-
-    // NOTE: No effect, element already exists using alt equal_to!!
-    blah_alt_uset.insert(new blah(1,7));
-    blah_alt_uset.insert(new blah(3,8));
-    blah_alt_uset.insert(new blah(5,9));
-
-    cout << "    uset size = " << blah_uset.size() << endl;         // 6
-    cout << "alt uset size = " << blah_alt_uset.size() << endl;     // 3
     
-    // which of the two was used?  the first one!  "first"
-    // c++11 doesn't like this temp var usage, use a key on the stack: auto it1 = blah_uset.find(&blah(1,2));
-    blah key(1,2);
-    cout << "finding... " << endl;
-    auto it1 = blah_uset.find(&key);
-    cout << "find gives... " << (*it1)->name_ << endl;
-
 
     // We can keep it running if needed to better see the output.
     // while (true)

@@ -13,11 +13,10 @@
 #c++ scrap.cpp -std=c++11 -o scrap -lboost_regex -lboost_system
 # ===================
 
-# MDM this wsa close to working, but make kept putting the source file at teh end of the line
-# which made it fail.  Autotools is SO FUCKED UP it's pathetic.  Just call c++
-# MDM 2015/01/24 OK FIXED UP, see ~m/.bashrc for full explanation
-#LDFLAGS="$LDFLAGS -lboost_regex -lboost_system -lpthread -lssl -lpthread -lcrypto"
-#make scrap && ./scrap
+# MDM One way: just call c++ / g++
+# But you have to hardcode boost paths, bleh
+#c++ scrap.cpp -std=c++11 -o scrap -I /home/m/development/boost_1_57_0/include -L /home/m/development/boost_1_57_0/lib -lboost_regex -lboost_system -lssl -lpthread -lcrypto && ./scrap
 
-c++ scrap.cpp -std=c++11 -o scrap -I /home/m/development/boost_1_57_0/include -L /home/m/development/boost_1_57_0/lib -lboost_regex -lboost_system -lssl -lpthread -lcrypto && ./scrap
-
+# MDM 2015/01/24 OK AUTOTOOLS IS FIXED UP, see ~m/.bashrc for full explanation
+LDFLAGS="$RELEASE_LDFLAGS -lboost_regex -lboost_system -lpthread -lssl -lpthread -lcrypto"
+make scrap && ./scrap
