@@ -1,24 +1,27 @@
 {
 
-  "doc1": "For new projects: ",
-  "doc2": "  1) Copy and update this to a new project folder",
-  "doc3": "  2) Copy setup.js into the folder, and update, then run it [node setup.js].",
+  "//": "this is how you comment JSON in Node.js, pretty stupid eh??",
 
-  "name": "moodboom",
+  "//": "For new projects: ",
+  "//": "  1) Copy and update this to a new project folder",
+  "//": "  2) Copy setup.js into the folder, and update, then run it [node setup.js].",
+
+  "name": "reusable",
   "version": "1.0.0",
   "description": "moodboom's reusable Node utilities",
-  "main": "main.js",
+  "main": "index.js",
   "preferGlobal": true,
-  "dependencies": {
-    "aws-sdk": "^2.2.12"
-  },
+
+  "dependencies": {},
+  "//": "NOTE: aws is huge, but not needed atm",
+  "//": "{\"aws-sdk\": \"^2.2.12\" }",
+
   "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Michael Behrns-Miller",
   "bin": {
-    "scsync"      : "sync.js",
     "git-sync"    : "git-sync.js",
     "get-svn-rev" : "get-svn-rev.js",
     "run-command" : "run-command.js"
