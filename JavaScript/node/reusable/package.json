@@ -22,8 +22,9 @@
   },
   "author": "Michael Behrns-Miller",
   "bin": {
-    "git-sync"    : "git-sync.js",
-    "get-svn-rev" : "get-svn-rev.js",
-    "run-command" : "run-command.js"
+    "git-sync"                  : "git-sync.js",
+    "get-svn-rev"               : "get-svn-rev.js",
+    "get-svn-last-changed-rev"  : "get-svn-last-changed-rev.js",
+    "run-command"               : "run-command.js"
   }
 }
