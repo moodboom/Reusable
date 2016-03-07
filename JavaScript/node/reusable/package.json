@@ -6,7 +6,7 @@
 
   "name": "moodboom",
   "version": "1.0.0",
-  "description": "moodboom's Node scripts, primarily used for continuous integration",
+  "description": "moodboom's reusable Node utilities",
   "main": "main.js",
   "preferGlobal": true,
   "dependencies": {
@@ -18,7 +18,9 @@
   },
   "author": "Michael Behrns-Miller",
   "bin": {
-    "scsync"    : "sync.js",
-    "git-sync"  : "git-sync.js"
+    "scsync"      : "sync.js",
+    "git-sync"    : "git-sync.js",
+    "get-svn-rev" : "get-svn-rev.js",
+    "run-command" : "run-command.js"
   }
 }
