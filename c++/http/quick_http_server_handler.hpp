@@ -328,7 +328,14 @@ protected:
                 if (!ac.types_.empty())
                     type = ac.types_[0];
 
-                return acloop->handle_call(type,rep);
+                // Authenticate using the header.
+                if (acloop->setUserFromHeader())
+                {
+                    // Copy in the requested variable values.
+                    acloop->path_tokens_ = ac.path_tokens_;
+
+                    return acloop->handle_call(type,rep);
+                }
             }
         }
         return false;

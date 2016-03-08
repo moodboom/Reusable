@@ -138,6 +138,11 @@ public:
         return false;
     }
 
+    // TODO add JWT handling HERE in the base class
+    // but we need to push AppUser class down here too!
+    // And add all JWT handling.
+    virtual bool setUserFromHeader() { return true; }
+
     HTML_METHOD method_;
     vector<string>  path_tokens_;
     vector<string>  types_;
