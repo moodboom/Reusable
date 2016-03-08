@@ -36,6 +36,44 @@ exports.cdfirst = function (candidates) {
 };
 
 
+// =========== run_cmd: run one command and get output ============
+// Sync version, this is the most useful
+// Usage:
+// var run = require('./shared.js').run_command_sync;
+// var lsout = run( "ls", ["-l"]);
+exports.run_command_sync = function (cmd, args ) {
+    var ss = require('child_process').spawnSync;
+    var outp = ss(cmd, args, { encoding : 'utf8' });
+
+    // DEBUG
+    // console.log(outp.stdout);
+
+    return outp.stdout;
+
+    // From here:
+    //  http://stackoverflow.com/questions/32393250/nodejs-child-process-spawnsync-or-child-process-spawn-wrapped-in-yieldable-gener
+    // More example cde:
+    // var ls = cp.spawnSync('ls', ['-l', '/usr'], { encoding : 'utf8' });
+    // uncomment the following if you want to see everything returned by the spawnSync command
+    // console.log('ls: ' , ls);
+    // console.log('stdout here: \n' + ls.stdout);
+}
+
+
+// sync version; you have to provide a callback function
+// Usage:
+// run_cmd( "ls", ["-l"], function(text) { console.log (text) });
+exports.run_command = function (cmd, args, callBack ) {
+
+    var spawn = require('child_process').spawn;
+    var child = spawn(cmd, args);
+    var resp = "";
+
+    child.stdout.on('data', function (buffer) { resp += buffer.toString() });
+    child.stdout.on('end', function() { callBack (resp) });
+}
+
+
 // =========== justLogResponse ============
 // This function is used to just log a command response,
 // swallowing any errors, assuming this is part of a process that should carry on.
@@ -50,6 +88,38 @@ exports.justLogResponse = function (error, stdout, stderr) {
         process.stdout.write(stdout);
     } 
 }    
+
+
+// =========== svn_last_changed_rev: gets the SVN "last changed rev" for the current folder, as a string ============
+exports.svn_last_changed_rev = function () {
+
+    var run = exports.run_command_sync;
+
+    var svn_info = run("svn", ["info"]);
+
+    // extract the "Last Changed Rev"
+    var regx = /^Last Changed Rev: (.*)$/gm;
+    var array_result = regx.exec(svn_info);
+
+    // return the first group result ([0] contains the whole result)
+    return array_result[1];
+}
+
+
+// =========== svn_rev: gets the SVN current revision for the current repo, as a string ============
+exports.svn_rev = function () {
+
+    var run = exports.run_command_sync;
+
+    var svn_info = run("svn", ["info"]);
+
+    // extract the "Last Changed Rev"
+    var regx = /^Revision: (.*)$/gm;
+    var array_result = regx.exec(svn_info);
+
+    // return the first group result ([0] contains the whole result)
+    return array_result[1];
+}
 
 
 // =========== runsteps: run a specific set of commands in specific directories ============
