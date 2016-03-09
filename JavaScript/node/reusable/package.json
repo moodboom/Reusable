@@ -7,9 +7,12 @@
   "//": "  2) Copy setup.js into the folder, and update, then run it [node setup.js].",
 
   "name": "reusable",
+  "description": "moodboom's reusable utilities",
+  "author": "Michael Behrns-Miller <moodboom@gmail.com>",
   "version": "1.0.0",
-  "description": "moodboom's reusable Node utilities",
-  "main": "index.js",
+  "homepage": "http://bitpost.com",
+  "license": "MIT",
+
   "preferGlobal": true,
 
   "dependencies": {},
@@ -17,10 +20,11 @@
   "//": "{\"aws-sdk\": \"^2.2.12\" }",
 
   "devDependencies": {},
+
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "Michael Behrns-Miller",
+
   "bin": {
     "git-sync"                  : "git-sync.js",
     "get-svn-rev"               : "get-svn-rev.js",

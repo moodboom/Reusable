@@ -2,8 +2,10 @@
 
 var fs = require('fs');
 
+// Example for improving cdfirst
+/*
 // =========== cdscripts ============
-exports.cdscripts = function () {
+var cdscripts = function () {
     // NOTE that this is the way to get "home", cross-platform, if it is ever needed.
     // var homedir = (process.platform === 'win32') ? process.env.HOMEPATH : process.env.HOME;
 
@@ -26,10 +28,10 @@ exports.cdscripts = function () {
         }
     }
 };
-
+*/
 
 // =========== cdfirst: change to first found folder ============
-exports.cdfirst = function (candidates) {
+var cdfirst = function (candidates) {
 
     // TODO
 
@@ -41,7 +43,7 @@ exports.cdfirst = function (candidates) {
 // Usage:
 // var run = require('./shared.js').run_command_sync;
 // var lsout = run( "ls", ["-l"]);
-exports.run_command_sync = function (cmd, args ) {
+var run_command_sync = function (cmd, args ) {
     var ss = require('child_process').spawnSync;
     var outp = ss(cmd, args, { encoding : 'utf8' });
 
@@ -63,7 +65,7 @@ exports.run_command_sync = function (cmd, args ) {
 // sync version; you have to provide a callback function
 // Usage:
 // run_cmd( "ls", ["-l"], function(text) { console.log (text) });
-exports.run_command = function (cmd, args, callBack ) {
+var run_command = function (cmd, args, callBack ) {
 
     var spawn = require('child_process').spawn;
     var child = spawn(cmd, args);
@@ -78,7 +80,7 @@ exports.run_command = function (cmd, args, callBack ) {
 // This function is used to just log a command response,
 // swallowing any errors, assuming this is part of a process that should carry on.
 // It expects that the standard output of the command includes any necessary carriage returns; ie, none are added.
-exports.justLogResponse = function (error, stdout, stderr) { 
+var justLogResponse = function (error, stdout, stderr) { 
     if (error) { 
         console.log(stdout);
         console.log(stderr);
@@ -91,7 +93,7 @@ exports.justLogResponse = function (error, stdout, stderr) {
 
 
 // =========== svn_last_changed_rev: gets the SVN "last changed rev" for the current folder, as a string ============
-exports.svn_last_changed_rev = function () {
+var svn_last_changed_rev = function () {
 
     var run = exports.run_command_sync;
 
@@ -107,7 +109,7 @@ exports.svn_last_changed_rev = function () {
 
 
 // =========== svn_rev: gets the SVN current revision for the current repo, as a string ============
-exports.svn_rev = function () {
+var svn_rev = function () {
 
     var run = exports.run_command_sync;
 
@@ -122,8 +124,60 @@ exports.svn_rev = function () {
 }
 
 
+
+// =========== walk: gather all files in a folder ============
+// TODO node-dir is probably more robust/feature-filled, check it out!
+var path = require('path');
+var walk = function(dir, done) {
+  var results = [];
+  fs.readdir(dir, function(err, list) {
+    if (err) return done(err);
+    var pending = list.length;
+    if (!pending) return done(null, results);
+    list.forEach(function(file) {
+      file = path.resolve(dir, file);
+      fs.stat(file, function(err, stat) {
+        if (stat && stat.isDirectory()) {
+          walk(file, function(err, res) {
+            results = results.concat(res);
+            if (!--pending) done(null, results);
+          });
+        } else {
+          results.push(file);
+          if (!--pending) done(null, results);
+        }
+      });
+    });
+  });
+};
+
+// Similar to previous, but only returns directories not files within them.
+var walksubdirs = function(dir, done) {
+  var results = [];
+  fs.readdir(dir, function(err, list) {
+    if (err) return done(err);
+    var pending = list.length;
+    if (!pending) return done(null, results);
+    list.forEach(function(file) {
+      file = path.resolve(dir, file);
+      fs.stat(file, function(err, stat) {
+        if (stat && stat.isDirectory()) {
+          results.push(file);
+          walksubdirs(file, function(err, res) {
+            results = results.concat(res);
+            if (!--pending) done(null, results);
+          });
+        } else {
+          if (!--pending) done(null, results);
+        }
+      });
+    });
+  });
+};
+
+
 // =========== runsteps: run a specific set of commands in specific directories ============
-exports.runsteps = function (candidates,steps,verbosity) {
+var runsteps = function (candidates,steps,verbosity) {
 
     // TODO, example follows...
     
@@ -230,3 +284,13 @@ exports.runsteps = function (candidates,steps,verbosity) {
         }
     }
 }
+
+module.exports.cdfirst = cdfirst;
+module.exports.run_command_sync = run_command_sync;
+module.exports.run_command = run_command;
+module.exports.justLogResponse = justLogResponse;
+module.exports.svn_last_changed_rev = svn_last_changed_rev;
+module.exports.svn_rev = svn_rev;
+module.exports.walk = walk;
+module.exports.walksubdirs = walksubdirs;
+module.exports.runsteps = runsteps;
