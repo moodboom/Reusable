@@ -19,11 +19,11 @@ typedef std::vector< Short		>	ShortVector;
 typedef std::vector< Long		>	LongVector;
 typedef std::vector< Huge		>	HugeVector;
 typedef std::vector< uByte		>	uByteVector;
-typedef std::vector< uShort	>	uShortVector;
+typedef std::vector< uShort             >	uShortVector;
 typedef std::vector< uLong		>	uLongVector;
 typedef std::vector< uHuge		>	uHugeVector;
 typedef std::vector< Float		>	FloatVector;
-typedef std::vector< Double	>	DoubleVector;
+typedef std::vector< Double             >	DoubleVector;
 typedef std::vector< bool		>	BoolVector;
 
 // Add other types as needed:

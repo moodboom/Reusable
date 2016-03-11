@@ -20,8 +20,9 @@
 // DEPRECATED, use newer C99 types like int_fast32_t
 // See the above include file for details.
 // -------------------------------------------------------
+// I'm going to put these back in for now...
+// but start using c++11 types like int_fast32_t from now on...
 
-/*
 // We will provide defines for a wide range of specifically-sized
 // variable types here.  This is very important when dealing with
 // portable binary formats (binary files, streamed data, etc.).
@@ -69,9 +70,10 @@ typedef uint64_t             uHuge;		// 64-bit unsigned
 typedef float                Float;		// 32-bit float
 typedef double               Double;	        // 64-bit double
 
+// TO DO
+/*
 #elif defined OSX
 
-TO DO
 typedef __int8               Byte;		//  8-bit signed
 typedef __int16              Short;		// 16-bit signed
 typedef __int32              Long;		// 32-bit signed
@@ -84,8 +86,8 @@ typedef unsigned __int64     uHuge;		// 64-bit unsigned
 
 typedef float                Float;		// 32-bit float
 typedef double               Double;	        // 64-bit double
+*/
 
 #endif
-*/
 
 #endif		// STANDARD_TYPES_H
