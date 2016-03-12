@@ -382,6 +382,79 @@ static string read_file(string filename)
 //=========================================================
 
 
+// ===========================================
+// JSON encoding/decoding
+// ===========================================
+
+// -----------------------------------------------------
+// https://gist.github.com/moodboom/0ad810280635ead63d0f
+// rapidjson.org
+// https://github.com/miloyip/rapidjson/
+// it's FAST: https://github.com/mloskot/json_benchmark
+// but it obsesses over allocation (read: F'IN INCONVENIENT for std::string's)
+// Here we attempt to make rapidjson practical:
+//
+//   1) throw proper exceptions during runtime
+//   2) directly handle std::string
+
+// We override the default behavior of asserting on parse errors
+// with throwing of this exception.  Then we can gracefully handle errors.
+class rapidjson_exception : public std::runtime_error
+{
+public:
+    rapidjson_exception() : std::runtime_error("json schema invalid") {}
+};
+#define RAPIDJSON_ASSERT(x)  if(x); else throw rapidjson_exception();
+
+#include <rapidjson/document.h>
+#include <rapidjson/stringbuffer.h>       // These two includes allow you to get an object as a string
+#include <rapidjson/writer.h>             // That allows an array of objects to use an object parser function
+
+static string json_get_string(rapidjson::Document& d)
+{
+    rapidjson::StringBuffer sb;
+    rapidjson::Writer<rapidjson::StringBuffer> writer( sb );
+    d.Accept( writer );
+    return sb.GetString();
+}
+
+// 2016/03/12 Sure rapidjson is fast but it sucks ass at handling std::string.  No excuse.
+// See docs here:
+//
+//      https://github.com/miloyip/rapidjson/blob/master/example/tutorial/tutorial.cpp
+//
+static void json_add_string(rapidjson::Document& d, rapidjson::Value& parent, const string& name, const string& value)
+{
+    rapidjson::Value n;
+    n.SetString(name.c_str(),name.size(),d.GetAllocator());
+    rapidjson::Value v;
+    v.SetString(value.c_str(),value.size(),d.GetAllocator());
+    parent.AddMember(n,v,d.GetAllocator());
+}
+// -----------------------------------------------------
+
+
+// ===========================================
+//   boost XML parsing via property_tree
+// ===========================================
+// - Does not do SAX-style parsing
+// - Messy
+// - Uses RapidXML underneath (good i think)
+//
+// I'll keep the headers here since we only plan
+// to use it here to extract customer xml.
+//
+// NOTE that ptree JSON handling does not preserve
+// int/bool/etc type - rendering it totally useless.
+// ===========================================
+#define BOOST_SPIRIT_THREADSAFE
+#include <boost/property_tree/ptree.hpp>
+// #include <boost/property_tree/json_parser.hpp>
+#include <boost/property_tree/xml_parser.hpp>
+using boost::property_tree::ptree;
+// ===========================================
+
+
 //=========================================================
 // PROFILING
 //=========================================================
