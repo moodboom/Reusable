@@ -173,12 +173,22 @@ public:
 #include <rapidjson/stringbuffer.h>       // These two includes allow you to get an object as a string
 #include <rapidjson/writer.h>             // That allows an array of objects to use an object parser function
 
-static string get_json_string(rapidjson::Document& d) 
+static string json_get_string(rapidjson::Document& d)
 {
     rapidjson::StringBuffer sb;
     rapidjson::Writer<rapidjson::StringBuffer> writer( sb );
     d.Accept( writer );
     return sb.GetString();
+}
+
+// 2016/03/12 Sure rapidjson is fast but it sucks ass at handling std::string.  No excuse.
+static void json_add_string(rapidjson::Document& d, rapidjson::Value& parent, const string& name, const string& value)
+{
+    rapidjson::Value n;
+    n.SetString(name.c_str(),name.size(),d.GetAllocator());
+    rapidjson::Value v;
+    v.SetString(value.c_str(),value.size(),d.GetAllocator());
+    parent.AddMember(n,v,d.GetAllocator());
 }
 
 
