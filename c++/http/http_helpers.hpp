@@ -92,7 +92,7 @@ public:
     inline bool load_static_html();
 
     // Overload this to get the work done!
-    virtual bool handle_call(const string& type, reply& rep) { return false; }
+    virtual bool handle_call(const API_call& caller, reply& rep) { return false; }
     // ----------------------
 
     string url()

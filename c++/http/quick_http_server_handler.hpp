@@ -322,19 +322,15 @@ protected:
         {
             if (b_API_call_matches(*acloop,ac))
             {
-                // Provide the requested type (there should be 0 or 1).
-                assert(ac.types_.size() < 2);
-                string type;
-                if (!ac.types_.empty())
-                    type = ac.types_[0];
-
                 // Authenticate using the header.
                 if (acloop->setUserFromHeader())
                 {
-                    // Copy in the requested variable values.
-                    acloop->path_tokens_ = ac.path_tokens_;
-
-                    return acloop->handle_call(type,rep);
+                    return acloop->handle_call(ac,rep);
+                }
+                else
+                {
+                    // TODO provide "unauthorized" feedback?
+                    return false;
                 }
             }
         }
