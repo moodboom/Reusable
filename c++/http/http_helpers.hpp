@@ -95,7 +95,7 @@ public:
     virtual bool handle_call(const API_call& caller, reply& rep) { return false; }
     // ----------------------
 
-    string url()
+    string url() const
     {
         string url;
 
@@ -107,7 +107,7 @@ public:
         return url;
     }
 
-    string method()
+    string method() const
     {
         switch (method_)
         {
@@ -129,7 +129,7 @@ public:
         else method_ = HM_COUNT ;
     }
 
-    bool b_has_type(string search_type)
+    bool b_has_type(string search_type) const
     {
         for (auto& t : types_)
             if (strings_are_equal(t,search_type))
@@ -137,6 +137,11 @@ public:
 
         return false;
     }
+
+    // These test the *first* type, which should be set for valid API calls.
+    bool b_no_type() const { return types_.empty(); }
+    bool b_type(const string& test_type) const { return !b_no_type() && strings_are_equal(types_[0],test_type); }
+
 
     // TODO add JWT handling HERE in the base class
     // but we need to push AppUser class down here too!
