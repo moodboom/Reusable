@@ -219,12 +219,16 @@ protected:
 // PersistentIDObject
 //=========================================================
 // This object expects that an AUTOINCREMENTED INTEGER PRIMARY KEY is used for persistence.
-// Provide functions to handle -1 as a request to get a new db id from sql, set the id later, etc.
+// We provide functions to handle -1 as a request to get a new db id.
+// We use a static counter to do so, allowing delayed-write of new objects.
 //=========================================================
 // History
 // -------
-// v1.00 8/06/2016   First added.  In heavy use by AbetterTrader server app.
-// v1.01 8/11/2016   Updated documentation to move work to derived classes, since we have no virtual inheritance in constructor.
+// v1.00 2015/08/06     First added.  In heavy use by AbetterTrader server app.
+// v1.01 2015/08/11     Updated documentation to move work to derived classes,
+//                      since we have no virtual inheritance in constructor.
+// v1.02 2016/03/23     Rolled some functionality back into base, by using an int reference constructor param
+//                      of a static member in derived class
 //=========================================================
 class PersistentIDObject : public PersistentObject
 {
@@ -232,87 +236,67 @@ typedef PersistentObject inherited;
 
 public:
 
-    PersistentIDObject(const int_fast64_t& db_id = -1)
+    PersistentIDObject(int_fast64_t& static_max_db_id, const int_fast64_t& db_id = -1)
     :
         // Call base class
         inherited(),
 
         // init vars
+        static_max_db_id_(static_max_db_id),
         db_id_(db_id)
-    {}
-
-    // RECOMMENDED:
-    // If we track our own "max db_id" per persisted class,
-    // we can create new objects without need to hit the db until later.
-    // This allows for delayed writes, a Very Good Thing.
-    // This may also be an additional performance benefit,
-    // for example in sqlite where AUTOINCREMENT can subsequently be avoided.
-    // AUTOINCREMENT causes sqlite to guarantee that new ids are higher than old ones,
-    // but at the cost of an extra INSERT call, ouch.
-    // Special db_id values provide more functionality:
-    //
-    //      Value   Meaning
-    //      -----   -------
-    //      -1      Newly created object; when saving, a new "largest-yet" unique db_id will be generated and replace the -1 value
-    //      -2      Used for a temporary object; NEVER save it or change the value
-    //
-    // Example:
-    /*
-    widget.hpp:
-    -----------
-    class Widget : public PersistentIDObject
-    {
-    typedef PersistentIDObject inherited;
-    public:
-        void assignNewDbIdAsNeeded() { if (db_id_ == -1) { ++sq_max_db_id_; db_id_ = sq_max_db_id_; setDirty(); } }
-        static int_fast64_t sq_max_db_id_;
-    }
-
-    widget.cpp:
-    -----------
-    int_fast64_t StockQuoteDetails::sq_max_db_id_ = -1;
-    Widget::Widget()
-    :
-        // Call base class
-        inherited(db_id),
     {
         assignNewDbIdAsNeeded();
     }
 
-    capture the starting max_db_id on startup, eg:
-    ----------------------------------------------
-    { SQLite::Statement query(db, string("SELECT MAX(id) FROM ") + c_str_Tablename_StockQuotes      ); query.executeStep(); StockQuoteDetails::sq_max_db_id_ = query.getColumn(0).getInt64(); }
-    */
+    // IN-MEMORY ID HANDLING
+    // We track our own "max db_id" per persisted class,
+    // so we can create new objects without need to hit the db until later.
+    // This allows for delayed writes, very important.
+    //
+    // Special db_id values provide the functionality:
+    //
+    //      Value   Meaning
+    //      -----   -------
+    //      -1      Used for newly created objects; in initialize(), a new "largest-yet" unique db_id
+    //              will be generated and replace the -1 value
+    //      -2      Used for a temporary object; we will NEVER save it or change the value
+    //
+    // In derived classes:
+    //
+    //     1) In each derived class header, set up a static max db_id tracker, and provide it to the base class.
+    //     -----------------------------------------------------------------------------
+    //
+    //          class Widget : public PersistentIDObject
+    //          {
+    //          typedef PersistentIDObject inherited;
+    //          public:
+    //              Widget(const int_fast64_t& db_id = -1)
+    //              :
+    //                  // Call base class
+    //                  inherited(widget_max_db_id_,db_id)
+    //              {}
+    //
+    //             static int_fast64_t widget_max_db_id_;
+    //         }
+    //
+    //     2) On startup, capture the starting max_db_id for each persistent class
+    //     -----------------------------------------------------------------------
+    //
+    //         { SQLite::Statement query(db, string("SELECT MAX(id) FROM ") + c_str_Tablename_Widgets ); query.executeStep(); Widget::widget_max_db_id_ = query.getColumn(0).getInt64(); }
+    //
+    void assignNewDbIdAsNeeded()
+    {
+        if (db_id_ == -1)
+        {
+            ++static_max_db_id_;
+            db_id_ = static_max_db_id_;
+            setDirty();
+        }
+    }
 
-    // ALTERNATIVE:
-    // These can be used to write to sql, and obtain a new db_id from the write.
-    // You lose the ability for delayed-write though, a heavy price!
-    inline string getIDAsSqlString() const;                    // Use this to get a string that will be NULL if we need a new db id.
-    inline void setIDFromSql(const int_fast64_t& new_id);      // Call this instead of setSaved() for these types of objects.
-
+    int_fast64_t& static_max_db_id_;
     int_fast64_t db_id_;
 };
-
-
-string PersistentIDObject::getIDAsSqlString() const
-{
-    if (db_id_ == -1 || db_id_ == -2)
-        return "NULL";
-    return boost::lexical_cast<string>(db_id_);
-}
-void PersistentIDObject::setIDFromSql(const int_fast32_t& new_id)
-{
-    if (db_id_ == -2)
-        return;
-
-    if (db_id_ == -1)
-        db_id_ = new_id;
-    assert(db_id_ == new_id);
-
-    // We only call this right after being saved.
-    // Make sure all the post-save virtual functionality is called.
-    setSaved();
-}
 
 
 // ===================
