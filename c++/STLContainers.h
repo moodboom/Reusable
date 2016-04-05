@@ -46,9 +46,9 @@ void TraceMap( std::map< T1, T2 >& mapTarget, int nMaxObjects = 100 )
 		TRACE( _T("\n===========\n") );
 		TRACE( _T(  " MAP TRACE\n") );
 		TRACE( _T(  "===========\n") );
-		strMsg.printf( 
-			2000, 
-			_T(  "Size: %d\n"), 
+		strMsg.printf(
+			2000,
+			_T(  "Size: %d\n"),
 			mapTarget.size()
 		);
 		TRACE( strMsg.c_str() );
@@ -57,16 +57,16 @@ void TraceMap( std::map< T1, T2 >& mapTarget, int nMaxObjects = 100 )
 		int nCounter = 0;
 		for ( it = mapTarget.begin(); it != mapTarget.end(); it++, nCounter++ )
 		{
-			strMsg.printf( 
-				2000, 
-				_T("\tItem %d: %s: %s\n"), 
-				nCounter, 
-				to_string( 
+			strMsg.printf(
+				2000,
+				_T("\tItem %d: %s: %s\n"),
+				nCounter,
+				to_string(
 					it->first
-				).c_str(), 
-				to_string( 
+				).c_str(),
+				to_string(
 					it->second
-				).c_str() 
+				).c_str()
 			);
 			TRACE( strMsg.c_str() );
 
@@ -75,7 +75,7 @@ void TraceMap( std::map< T1, T2 >& mapTarget, int nMaxObjects = 100 )
 				TRACE( _T("...\n") );
 				break;
 			}
-		}	
+		}
 		TRACE( _T(  "===========\n\n") );
 	#endif
 }
@@ -87,7 +87,7 @@ void TraceMap( std::map< T1, T2 >& mapTarget, int nMaxObjects = 100 )
 // This function allows you to dump a trace of a std::vector object
 // to the debug window.
 //
-// NOTE: this requires operator<<() for the class type of your vector.  
+// NOTE: this requires operator<<() for the class type of your vector.
 // Make sure you provide one.  e.g.:
 //
 //		std::stringstream& operator<<( std::stringstream strm, const MyInfo& info )
@@ -140,7 +140,7 @@ void TraceVector( std::stringstream& strm, std::vector< T >& vectorTarget, int n
 // This function allows you to dump a trace of a std::list object
 // to the debug window.
 //
-// NOTE: this requires operator<<() for the class type of your list.  
+// NOTE: this requires operator<<() for the class type of your list.
 // Make sure you provide one.  e.g.:
 //
 //		std::stringstream& operator<<( std::ostringstream strm, const MyInfo& info )
@@ -236,7 +236,7 @@ typedef PersistentObject inherited;
 
 public:
 
-    PersistentIDObject(int_fast64_t& static_max_db_id, const int_fast64_t& db_id = -1)
+    PersistentIDObject(int64_t& static_max_db_id, const int64_t& db_id = -1)
     :
         // Call base class
         inherited(),
@@ -270,13 +270,13 @@ public:
     //          {
     //          typedef PersistentIDObject inherited;
     //          public:
-    //              Widget(const int_fast64_t& db_id = -1)
+    //              Widget(const int64_t& db_id = -1)
     //              :
     //                  // Call base class
     //                  inherited(widget_max_db_id_,db_id)
     //              {}
     //
-    //             static int_fast64_t widget_max_db_id_;
+    //             static int64_t widget_max_db_id_;
     //         }
     //
     //     2) On startup, capture the starting max_db_id for each persistent class
@@ -294,8 +294,9 @@ public:
         }
     }
 
-    int_fast64_t& static_max_db_id_;
-    int_fast64_t db_id_;
+    // These will persist, and require room for growth.  Use an exact and generous bit size.
+    int64_t& static_max_db_id_;
+    int64_t db_id_;
 };
 
 
@@ -317,7 +318,7 @@ struct PersistentIDObject_hash
 {
     std::size_t operator()(const PersistentIDObject* ppo) const
     {
-        return std::hash<int_fast32_t>()(ppo->db_id_);
+        return std::hash<int64_t>()(ppo->db_id_);
     }
 };
 // ===================
