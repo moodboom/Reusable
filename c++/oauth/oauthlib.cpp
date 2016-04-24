@@ -617,13 +617,14 @@ bool oAuth::getEtradeHeader(
     const std::string& rawUrl, /* in */
     const std::string& rawData, /* in */
     std::string& oAuthHttpHeader, /* out */
-    const bool includeOAuthVerifierPin /* in */
+    const bool includeOAuthVerifierPin, /* in */
+    const bool includeOAuthTokenPin /* in */
 ) {
     bool b_return = getOAuthHeader( eType, rawUrl, rawData, oAuthHttpHeader, includeOAuthVerifierPin );
 
+    // Build the header in the only field order that I know that works with E*Trade's API.  Id10ts.
     if (includeOAuthVerifierPin)
     {
-        // Build the header in the only field order that I know that works with E*Trade's API.  Id10ts.
         oAuthHttpHeader =
               string("Authorization: OAuth oauth_nonce=\"")
             + getNonce()
@@ -638,9 +639,22 @@ bool oAuth::getEtradeHeader(
             + "\",oauth_signature_method=\"HMAC-SHA1\",oauth_signature=\""
             + getOAuthSignature()
             + "\"\r\n";
+    } else if (includeOAuthTokenPin)
+    {
+        oAuthHttpHeader =
+              string("Authorization: OAuth oauth_nonce=\"")
+            + getNonce()
+            + "\",oauth_timestamp=\""
+            + getTimeStamp()
+            + "\",oauth_consumer_key=\""
+            + getConsumerKey()
+            + "\",oauth_token=\""
+            + m_oAuthTokenKey
+            + "\",oauth_signature_method=\"HMAC-SHA1\",oauth_signature=\""
+            + getOAuthSignature()
+            + "\"\r\n";
     } else
     {
-        // Build the header in the only field order that I know that works with E*Trade's API.  Id10ts.
         oAuthHttpHeader =
               string("Authorization: OAuth oauth_nonce=\"")
             + getNonce()

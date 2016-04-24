@@ -102,7 +102,8 @@ public:
         const std::string& rawUrl, /* in */
         const std::string& rawData, /* in */
         std::string& oAuthHttpHeader, /* out */
-        const bool includeOAuthVerifierPin = false /* in */
+        const bool includeOAuthVerifierPin = false, /* in */
+        const bool includeOAuthTokenPin = false /* in */
     );
 
     bool extractOAuthTokenKeySecret( const std::string& requestTokenResponse /* in */ );
