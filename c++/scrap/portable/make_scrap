@@ -17,6 +17,9 @@
 # But you have to hardcode boost paths, bleh
 #c++ scrap.cpp -std=c++11 -o scrap -I /home/m/development/boost_1_57_0/include -L /home/m/development/boost_1_57_0/lib -lboost_regex -lboost_system -lssl -lpthread -lcrypto && ./scrap
 
+# MDM 2016/04/26 Add reusable
+CPPFLAGS="$CPPFLAGS -I/home/m/development/Reusable/c++"
+
 # MDM 2015/01/24 OK AUTOTOOLS IS FIXED UP, see ~m/.bashrc for full explanation
 LDFLAGS="$RELEASE_LDFLAGS -lboost_regex -lboost_system -lpthread -lssl -lpthread -lcrypto"
 make scrap && ./scrap

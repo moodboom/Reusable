@@ -1,4 +1,5 @@
 #include "scrap.hpp"
+#include <utilities.hpp>
 
 
 int main( int argc, char * argv[] )
@@ -553,6 +554,19 @@ int main( int argc, char * argv[] )
     // We use an unordered_multiset.  We need equals and hash functions, and we need to walk through similar key values.
     // (TODO)
 
+
+    // 14 ==================================================================================
+    std::cout << "== 14 === version strings =======" << endl;
+    // 14 ==================================================================================
+    string v1,v2;
+
+    v1 = "0.1.2.3 and then some description";
+    v2 = "1";
+    cout << "[" << v1 << "] is " << LessThanVersion(v1,v2) ? " less   " : " greater " << " than [" << v2 << "]" << endl;
+
+    v1 = "0.57 desc";
+    v2 = "1.0";
+    cout << "[" << v1 << "] is " << LessThanVersion(v1,v2) ? " less   " : " greater " << " than [" << v2 << "]" << endl;
 
 
 
