@@ -95,6 +95,39 @@ static bool b_string_ends_in(const string& source, const string& search)
 
 
 //=========================================================
+//  VERSIONING
+//=========================================================
+// Started here: http://stackoverflow.com/questions/2941491/compare-versions-as-strings
+// Will extract up to 4 single-char-separated integers so multiple strings can be compared.
+// Source can be...
+//
+//      0.0.0.0.*  (that's a regex, with . = any character)
+//      0.0.0.*
+//      0.0.*
+//      0.*
+//
+// So for example, this will extract [0,58,1] from [git describe] versions like 0.58-1-gacd6168.
+void VersionParse(int result[4], const std::string& input)
+{
+    std::istringstream parser(input);
+    for(int idx = 0; idx < 4; idx++)
+    {
+        if (idx > 0) parser.get(); // Skip ANY single character.
+        parser >> result[idx];
+        if (parser.eof()) { for (int idxz = idx; idxz < 4; idxz++) result[idxz] = 0; return; }  // Quit if we hit the end.
+    }
+}
+bool LessThanVersion(const std::string& a,const std::string& b)
+{
+    int parsedA[4], parsedB[4];
+    VersionParse(parsedA, a);
+    VersionParse(parsedB, b);
+    return std::lexicographical_compare(parsedA, parsedA + 4, parsedB, parsedB + 4);
+}
+//=========================================================
+
+
+//=========================================================
 //  TIME
 //=========================================================
 static ptime get_current_time()
