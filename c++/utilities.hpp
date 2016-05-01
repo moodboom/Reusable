@@ -113,7 +113,7 @@ static bool b_string_ends_in(const string& source, const string& search)
 // My versioning guidelines dictate that MINOR version differences mean
 // a db upgrade can and should be performed.
 // See http://bitpost.com/news/?p=1989.
-void VersionParse(int64_t result[4], const std::string& input)
+static void VersionParse(int64_t result[4], const std::string& input)
 {
     std::istringstream parser(input);
     for(int idx = 0; idx < 4; idx++)
@@ -123,14 +123,14 @@ void VersionParse(int64_t result[4], const std::string& input)
         if (parser.eof()) { for (int idxz = idx; idxz < 4; idxz++) result[idxz] = 0; return; }  // Quit if we hit the end.
     }
 }
-bool bVersionLessThan(const std::string& a,const std::string& b)
+static bool bVersionLessThan(const std::string& a,const std::string& b)
 {
     int64_t parsedA[4], parsedB[4];
     VersionParse(parsedA, a);
     VersionParse(parsedB, b);
     return std::lexicographical_compare(parsedA, parsedA + 4, parsedB, parsedB + 4);
 }
-bool bVersionsAreCompatible(const std::string& a,const std::string& b)
+static bool bVersionsAreCompatible(const std::string& a,const std::string& b)
 {
     int64_t parsedA[4], parsedB[4];
     VersionParse(parsedA, a);
@@ -138,7 +138,7 @@ bool bVersionsAreCompatible(const std::string& a,const std::string& b)
 
     return (parsedA[0] == parsedB[0]);  // same MAJOR
 }
-bool bVersionNeedsUpgrade(const std::string& vDB,const std::string& vApp)
+static bool bVersionNeedsUpgrade(const std::string& vDB,const std::string& vApp)
 {
     // The caller should ensure that the db version is less than or equal to the app version before getting here.
     assert(!bVersionLessThan(vApp,vDB));
