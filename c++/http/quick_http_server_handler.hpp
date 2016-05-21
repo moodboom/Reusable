@@ -156,7 +156,7 @@ public:
                 // Note that this is no place to prevent DDOS - DDOS'ing to legit API calls is trivial.
                 // Help the user out.
                 string html = "<html><head>";
-                html += "<meta http-equiv=\"refresh\" content=\"2; URL='" + host +"/index.html'\" />";
+                html += "<meta http-equiv=\"refresh\" content=\"2; URL='/index.html'\" />";
                 html += "</head><body>";
                 html += msg;
                 html += "</body></html>";
