@@ -141,17 +141,29 @@ public:
 	            type = "ico";
                 rep.status = reply::ok;
 
-	        } else
-	        {
-	            log(LV_ERROR,string("Received unrecognized request: ") + req.method + " " + req.uri);
-
-                // We respond to all bad requests with the index.
-                // Note that this is no place to prevent DDOS - DDOS'ing to legit API calls is trivial.
-                // Help the user out.
+            } else if (b_string_ends_in(req.uri,"/index.html"))
+            {
                 rep.content = index_;
                 type = "html";
                 rep.status = reply::ok;
-	        }
+
+            } else
+            {
+                string msg = string("Received unrecognized request: ") + req.method + " " + req.uri;
+                log(LV_ERROR,msg);
+
+                // We respond to all bad requests with a redirect to the index.
+                // Note that this is no place to prevent DDOS - DDOS'ing to legit API calls is trivial.
+                // Help the user out.
+                string html = "<html><head>";
+                html += "<meta http-equiv=\"refresh\" content=\"2; URL='" + host +"/index.html'\" />";
+                html += "</head><body>";
+                html += msg;
+                html += "</body></html>";
+                rep.content = html;
+                type = "html";
+                rep.status = reply::ok;
+            }
 	    }
 
 	    // Build the headers.
