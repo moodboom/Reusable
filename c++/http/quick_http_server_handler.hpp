@@ -216,11 +216,7 @@ protected:
             replace(index_,"<h1>Title</h1>",string("<h1>") + title_ + "</h1>");
 
             // Remove test data, replace with actual API data.
-            // TODO determine how to get c++11 std::regex to S&R across lines (it doesn't respect /s)
-            // Right now, we can only have one line of test data, BUSH.
-            std::regex e("<!-- BEGIN SAMPLE DATA.*?END SAMPLE DATA -->");
-            std::smatch sm;
-            index_ = std::regex_replace(index_, e, get_API_html());
+            replace_once_with_regex(index_,"<!-- BEGIN SAMPLE DATA[\\s\\S]*END SAMPLE DATA -->",get_API_html());
         }
         catch(...)
         {
@@ -282,6 +278,10 @@ protected:
         int steps = ac.path_tokens_.size() - 1;
         for (int n=0; n < steps; ++n)
             relative_path += "../";
+
+        // We also provide a generic way to add data to the html that
+        // will automatically be removed on load (often important for live editing).
+        replace_with_regex(index_,"<!-- DISCARDED BY SERVER BEGIN[\\s\\S]*?DISCARDED BY SERVER END -->","");
 
         for (auto& include : includes_)
         {
