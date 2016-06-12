@@ -273,15 +273,16 @@ protected:
     // Search for any include files, and replace with the full script or style.
     void inject_includes(API_call& ac)
     {
+        // First, clean up test data.
+        // We provide a generic way to add data to the html that
+        // will automatically be removed on load (often important for live editing).
+        replace_with_regex(ac.static_html_,"<!-- DISCARDED BY SERVER BEGIN[\\s\\S]*?DISCARDED BY SERVER END -->","");
+
         // We may need to build the relative path back to the root, based on the depth of the ac path.
         string relative_path;
         int steps = ac.path_tokens_.size() - 1;
         for (int n=0; n < steps; ++n)
             relative_path += "../";
-
-        // We also provide a generic way to add data to the html that
-        // will automatically be removed on load (often important for live editing).
-        replace_with_regex(index_,"<!-- DISCARDED BY SERVER BEGIN[\\s\\S]*?DISCARDED BY SERVER END -->","");
 
         for (auto& include : includes_)
         {
