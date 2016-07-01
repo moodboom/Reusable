@@ -1,5 +1,5 @@
 //-------------------------------------------------------------------//
-//	Copyright � 2001-2004 A better Software.
+//	Copyright � 2001-2016 A better Software, Inc.
 //-------------------------------------------------------------------//
 
 #if !defined(STL_CONTAINERS_H)
@@ -236,6 +236,11 @@ typedef PersistentObject inherited;
 
 public:
 
+    typedef enum {
+        DBID_UNSAVED = -1,
+        DBID_DO_NOT_SAVE = -2
+    } DB_ID_CONSTANTS;
+
     PersistentIDObject(int64_t& static_max_db_id, const int64_t& db_id = -1)
     :
         // Call base class
@@ -255,11 +260,11 @@ public:
     //
     // Special db_id values provide the functionality:
     //
-    //      Value   Meaning
-    //      -----   -------
-    //      -1      Used for newly created objects; in initialize(), a new "largest-yet" unique db_id
-    //              will be generated and replace the -1 value
-    //      -2      Used for a temporary object; we will NEVER save it or change the value
+    //      Value               Meaning
+    //      -----               -------
+    //      DBID_UNSAVED        Used for newly created objects; in initialize(), a new "largest-yet" unique db_id
+    //                          will be generated and the -1 value will be replaced
+    //      DBID_DO_NOT_SAVE    Used for a temporary object; we will NEVER save it or change the value
     //
     // In derived classes:
     //
@@ -286,7 +291,7 @@ public:
     //
     void assignNewDbIdAsNeeded()
     {
-        if (db_id_ == -1)
+        if (db_id_ == DBID_UNSAVED)
         {
             ++static_max_db_id_;
             db_id_ = static_max_db_id_;
