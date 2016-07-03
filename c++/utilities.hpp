@@ -147,8 +147,8 @@ static bool bVersionNeedsUpgrade(const std::string& vDB,const std::string& vApp)
     VersionParse(parsedDB, vDB);
     VersionParse(parsedApp, vApp);
     return (
-            parsedDB[0] == parsedApp[0]     // same MAJOR
-        &&  parsedDB[1] < parsedApp[0]      // lower MINOR
+            (parsedDB[0] == parsedApp[0])     // same MAJOR
+        &&  (parsedDB[1] <  parsedApp[0])     // lower MINOR
     );
 }
 //=========================================================
