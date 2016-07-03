@@ -97,70 +97,66 @@ static bool b_string_ends_in(const string& source, const string& search)
 //=========================================================
 //  VERSIONING
 //=========================================================
-// Started here: http://stackoverflow.com/questions/2941491/compare-versions-as-strings
-// Will extract up to 4 single-char-separated integers so multiple strings can be compared.
-// Source can be...
-//
-//      0.0.0.0.*  (that's a regex, with . = any character)
-//      0.0.0.*
-//      0.0.*
-//      0.*
-//
-// So for example, this will extract [0,58,1] from [git describe] versions like 0.58-1-gacd6168.
-//
 // Following the precise definitions at semver.org,
 // versions are only and always compatible if their MAJOR versions match.
 // My versioning guidelines dictate that MINOR version differences mean
 // a db upgrade can and should be performed.
 // See http://bitpost.com/news/?p=1989.
-static void VersionParse(int64_t result[4], const std::string& input)
+class SemVer
 {
-    std::istringstream parser(input);
-    for(int idx = 0; idx < 4; idx++)
+public:
+    SemVer(const std::string& input)
     {
-        if (idx > 0) parser.get(); // Skip ANY single character.
-        parser >> result[idx];
-        if (parser.eof()) { for (int idxz = idx; idxz < 4; idxz++) result[idxz] = 0; return; }  // Quit if we hit the end.
+        VersionParse(input);
     }
-}
-static bool bVersionLessThan(const std::string& a,const std::string& b)
-{
-    int64_t parsedA[4], parsedB[4];
-    VersionParse(parsedA, a);
-    VersionParse(parsedB, b);
-    return bVersionLessThan(parsedA,parsedB);
-}
-static bool bVersionLessThan(const int64_t& v1[4], const int64_t& v2[4])
-{
-    return std::lexicographical_compare(v1, v1 + 4, v2, v2 + 4);
-}
-static bool bVersionsAreCompatible(const std::string& a,const std::string& b)
-{
-    int64_t parsedA[4], parsedB[4];
-    VersionParse(parsedA, a);
-    VersionParse(parsedB, b);
-    return bVersionsAreCompatible(parsedA,parsedB);
-}
-static bool bVersionsAreCompatible(const int64_t& v1[4], const int64_t& v2[4])
-{
-    return (v1[0] == v2[0]);  // same MAJOR
-}
-static bool bVersionNeedsUpgrade(const std::string& vDB,const std::string& vApp)
-{
-    // The caller should ensure that the db version is less than or equal to the app version before getting here.
-    assert(!bVersionLessThan(vApp,vDB));
+    typedef enum 
+    {
+        VC_MAJOR,
+        VC_MINOR,
+        VC_PATCH,
+        VC_BUILD
+        
+    } VersionComponent;
 
-    int64_t parsedDB[4], parsedApp[4];
-    VersionParse(parsedDB, vDB);
-    VersionParse(parsedApp, vApp);
-    return bVersionNeedsUpgrade(parsedDB,parsedApp);
-}
-static bool bVersionNeedsUpgrade(const int64_t& vDB[4], const int64_t& vApp[4])
-{
-    return (
-            bVersionsAreCompatible(vDB,vApp)
-        &&  (vDB[1] < vApp[1])     // lower MINOR
-    );
+    bool VersionParse(const std::string& input)
+    {
+        // Started here: http://stackoverflow.com/questions/2941491/compare-versions-as-strings
+        // Will extract up to 4 single-char-separated integers so multiple strings can be compared.
+        // Source can be...
+        //
+        //      0.0.0.0.*  (that's a regex, with . = any character)
+        //      0.0.0.*
+        //      0.0.*
+        //      0.*
+        //
+        // So for example, this will extract [0,58,1] from [git describe] versions like 0.58-1-gacd6168.
+        //
+        std::istringstream parser(input);
+        for(int idx = 0; idx < 4; idx++)
+        {
+            if (idx > 0) parser.get(); // Skip ANY single character.
+            parser >> result[idx];
+            if (parser.eof()) { for (int idxz = idx; idxz < 4; idxz++) result[idxz] = 0; return false; }  // Quit if we hit the end.
+        }
+        return true;
+    }
+    bool bVersionLessThan(const SemVer& right)
+    {
+        return std::lexicographical_compare(semver_, semver_ + 4, right.semver_, right.semver_ + 4);
+    }
+    bool bVersionsAreCompatible(const SemVer& right)
+    {
+        return (semver_VC_MAJOR] == right.semver_[VC_MAJOR]);  // same MAJOR
+    }
+    bool bVersionNeedsUpgrade(const SemVer& currentVersion)
+    {
+        return (
+                bVersionsAreCompatible(currentVersion)
+            &&  (semver_[VC_MINOR] < currentVersion.semver_[VC_MINOR])     // lower MINOR
+        );
+    }
+
+    int64_t semver_[4];
 }
 //=========================================================
 
