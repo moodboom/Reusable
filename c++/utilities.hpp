@@ -128,15 +128,22 @@ static bool bVersionLessThan(const std::string& a,const std::string& b)
     int64_t parsedA[4], parsedB[4];
     VersionParse(parsedA, a);
     VersionParse(parsedB, b);
-    return std::lexicographical_compare(parsedA, parsedA + 4, parsedB, parsedB + 4);
+    return bVersionLessThan(parsedA,parsedB);
+}
+static bool bVersionLessThan(const int64_t& v1[4], const int64_t& v2[4])
+{
+    return std::lexicographical_compare(v1, v1 + 4, v2, v2 + 4);
 }
 static bool bVersionsAreCompatible(const std::string& a,const std::string& b)
 {
     int64_t parsedA[4], parsedB[4];
     VersionParse(parsedA, a);
     VersionParse(parsedB, b);
-
-    return (parsedA[0] == parsedB[0]);  // same MAJOR
+    return bVersionsAreCompatible(parsedA,parsedB);
+}
+static bool bVersionsAreCompatible(const int64_t& v1[4], const int64_t& v2[4])
+{
+    return (v1[0] == v2[0]);  // same MAJOR
 }
 static bool bVersionNeedsUpgrade(const std::string& vDB,const std::string& vApp)
 {
@@ -146,9 +153,13 @@ static bool bVersionNeedsUpgrade(const std::string& vDB,const std::string& vApp)
     int64_t parsedDB[4], parsedApp[4];
     VersionParse(parsedDB, vDB);
     VersionParse(parsedApp, vApp);
+    return bVersionNeedsUpgrade(parsedDB,parsedApp);
+}
+static bool bVersionNeedsUpgrade(const int64_t& vDB[4], const int64_t& vApp[4])
+{
     return (
-            (parsedDB[0] == parsedApp[0])     // same MAJOR
-        &&  (parsedDB[1] <  parsedApp[0])     // lower MINOR
+            bVersionsAreCompatible(vDB,vApp)
+        &&  (vDB[1] < vApp[1])     // lower MINOR
     );
 }
 //=========================================================
