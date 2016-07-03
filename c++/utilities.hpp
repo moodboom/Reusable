@@ -135,29 +135,29 @@ public:
         for(int idx = 0; idx < 4; idx++)
         {
             if (idx > 0) parser.get(); // Skip ANY single character.
-            parser >> result[idx];
-            if (parser.eof()) { for (int idxz = idx; idxz < 4; idxz++) result[idxz] = 0; return false; }  // Quit if we hit the end.
+            parser >> semver_[idx];
+            if (parser.eof()) { for (int idxz = idx; idxz < 4; idxz++) semver_[idxz] = 0; return false; }  // Quit if we hit the end.
         }
         return true;
     }
-    bool bVersionLessThan(const SemVer& right)
+    bool bLessThan(const SemVer& right)
     {
         return std::lexicographical_compare(semver_, semver_ + 4, right.semver_, right.semver_ + 4);
     }
-    bool bVersionsAreCompatible(const SemVer& right)
+    bool bCompatible(const SemVer& right)
     {
-        return (semver_VC_MAJOR] == right.semver_[VC_MAJOR]);  // same MAJOR
+        return (semver_[VC_MAJOR] == right.semver_[VC_MAJOR]);  // same MAJOR
     }
-    bool bVersionNeedsUpgrade(const SemVer& currentVersion)
+    bool bNeedsUpgrade(const SemVer& currentVersion)
     {
         return (
-                bVersionsAreCompatible(currentVersion)
+                bCompatible(currentVersion)
             &&  (semver_[VC_MINOR] < currentVersion.semver_[VC_MINOR])     // lower MINOR
         );
     }
 
     int64_t semver_[4];
-}
+};
 //=========================================================
 
 
