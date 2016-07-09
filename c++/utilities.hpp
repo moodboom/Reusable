@@ -566,6 +566,13 @@ static bool bEqual(const double& a, const double& b)
         ||  (std::abs(a-b)<std::abs(std::min(a,b))*std::numeric_limits<double>::epsilon())  // Test 2: More expensive, but comprehensive
     ;
 }
+static bool bZero(const double& a)
+{
+    return                                                                                  // nicked from http://stackoverflow.com/questions/4010240/comparing-doubles
+            (a == 0.0)                                                                      // Test 1: Very cheap, but can result in false negatives
+        ||  (std::abs(a)<std::numeric_limits<double>::epsilon())                            // Test 2: More expensive, but comprehensive
+    ;
+}
 //=========================================================
 
 
