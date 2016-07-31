@@ -573,6 +573,7 @@ static bool bZero(const double& a)
         ||  (std::abs(a)<std::numeric_limits<double>::epsilon())                            // Test 2: More expensive, but comprehensive
     ;
 }
+static bool bLessThanOrEqual(const double& a, const double& b) { return (a < b) || bEqual(a,b); }
 //=========================================================
 
 
