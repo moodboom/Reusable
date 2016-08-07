@@ -105,7 +105,7 @@ public:
 	    }
 	}
 
-	virtual void operator() (const request& req, reply& rep)
+    virtual void operator() (const Request& req, reply& rep)
 	{
 	    // Let's see what type of request we got.
 	    // Slice up the URL and switch on the pieces.
