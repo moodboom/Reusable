@@ -45,9 +45,7 @@ namespace QuickHttp
             server_handler& handler,
             const std::string& address,
             const std::string& port,
-            std::size_t thread_pool_size,
-            const long timeout_request=5,
-            const long timeout_content=300
+            std::size_t thread_pool_size
         );
 
     protected:
@@ -58,22 +56,20 @@ namespace QuickHttp
     template<>
     class Server<HTTPS> : public ServerBase<HTTPS> {
     public:
-        inline Server(boost::asio::io_service& io_service,
+        inline Server(
+            boost::asio::io_service& io_service,
             server_handler& handler,
             const std::string& address,
             const std::string& port,
             std::size_t thread_pool_size,
             const std::string& cert_file,
             const std::string& private_key_file,
-            const long timeout_request=5,
-            const long timeout_content=300,
             const std::string& verify_file=std::string()
         );
 
     protected:
         inline virtual void start_accept();
         inline virtual void handle_accept(const boost::system::error_code& e);
-
         boost::asio::ssl::context context;
     };
 
@@ -85,12 +81,10 @@ namespace QuickHttp
         server_handler& handler,
         const std::string& address,
         const std::string& port,
-        std::size_t thread_pool_size,
-        const long timeout_request,
-        const long timeout_content
+        std::size_t thread_pool_size
     ) :
         // Call base class
-        ServerBase<HTTP>::ServerBase(io_service, handler, address, port, thread_pool_size, timeout_request, timeout_content)
+        ServerBase<HTTP>::ServerBase(io_service, handler, address, port, thread_pool_size)
     {
         start_accept();
     }
@@ -126,12 +120,10 @@ namespace QuickHttp
         std::size_t thread_pool_size,
         const std::string& cert_file,
         const std::string& private_key_file,
-        const long timeout_request,
-        const long timeout_content,
         const std::string& verify_file
     ) :
         // Call base class
-        ServerBase<HTTPS>::ServerBase(io_service, handler, address, port, thread_pool_size, timeout_request, timeout_content),
+        ServerBase<HTTPS>::ServerBase(io_service, handler, address, port, thread_pool_size),
 
         // Init vars
 
@@ -152,97 +144,60 @@ namespace QuickHttp
     /// Initiate an asynchronous accept operation.
     void Server<HTTPS>::start_accept()
     {
-        // MDM I was originally using bind with a callback for HTTP.
-        // Simple-Web-Server is using lambdas with different parameters for HTTPS.
-        // The signature is different enough that I'm switching to that.
-
-        // Give the connection both our service and our handler.
+        /*
+        // Give the connection both our service and our handler, and it will be ready to go.
         new_connection_.reset(new connection(io_service_, m_handler));
 
         acceptor_.async_accept(new_connection_->socket(),
           boost::bind(&Server<HTTPS>::handle_accept, this,
             boost::asio::placeholders::error));
+        */
 
-        /*
         //Create new socket for this connection
         //Shared_ptr is used to pass temporary objects to the asynchronous functions
         std::shared_ptr<HTTPS> socket(new HTTPS(io_service_, context));
 
-        acceptor_.async_accept((*socket).lowest_layer(), [this, socket](const boost::system::error_code& ec) {
-            //Immediately start accepting a new connection
-            start_accept();
-
-            if(!ec) {
-                boost::asio::ip::tcp::no_delay option(true);
-                socket->lowest_layer().set_option(option);
-
-                //Set timeout on the following boost::asio::ssl::stream::async_handshake
-                std::shared_ptr<boost::asio::deadline_timer> timer;
-                if(timeout_request_>0)
-                    timer=set_timeout_on_socket(socket, timeout_request_);
-
-                // MDM may we change this signature here?
-                // (*socket).async_handshake(boost::asio::ssl::stream_base::server, [this, socket, timer]
-                (*socket).async_handshake(boost::asio::ssl::stream_base::server, [this, socket, timer]
-                        (const boost::system::error_code& ec) {
-
-
-                    if(timeout_request_>0)
-                        timer->cancel();
-                    if(!ec)
-                    {
-                        // TODO
-                        log(LV_ALWAYS,"Received request");
-                        // read_request_and_content(socket);
-                    }
-                });
-            }
-        });
-        */
-
+        acceptor_.async_accept(
+            (*socket).lowest_layer(),
+            boost::bind(
+                &Server<HTTPS>::handle_accept,
+                this,
+                boost::asio::placeholders::error
+            )
+        );
     }
 
-    // TODO with newer https code
     /// Handle completion of an asynchronous accept operation.
     void Server<HTTPS>::handle_accept(const boost::system::error_code& e)
     {
-        if (!e)
-        {
-            // MDM Do I *want* this option?
-            boost::asio::ip::tcp::no_delay option(true);
-            // socket->lowest_layer().set_option(option);
-            new_connection_->socket().lowest_layer().set_option(option);
+      /*
+      if (!e)
+      {
+        new_connection_->start();
+      }
+      */
 
-            // MDM Set this up to mirror SWS variable to ease code migration.
-            // NOPE not the same thing
-            // boost::asio::ip::tcp::socket* socket = &(new_connection_->socket());
 
-            // MDM INstead let's just try a f'in shared ptr...
-            // THIS IS NOT RIGHT, WE ALREADY HAVE A FUCKING SOCKET:
-            //      std::shared_ptr<HTTPS> socket(new HTTPS(io_service_, context));
-            std::shared_ptr<HTTPS> socket(&(new_connection_->ssl_socket()));
+      if(!e)
+      {
+          // TODO
+          /*
+          //Set timeout on the following boost::asio::ssl::stream::async_handshake
+          std::shared_ptr<boost::asio::deadline_timer> timer;
+          if(timeout_request>0)
+              timer=set_timeout_on_socket(socket, timeout_request);
+          (*socket).async_handshake(boost::asio::ssl::stream_base::server, [this, socket, timer]
+                  (const boost::system::error_code& ec) {
+              if(timeout_request>0)
+                  timer->cancel();
+              if(!ec)
+                  read_request_and_content(socket);
+          });
+          */
+      }
 
-            //Set timeout on the following boost::asio::ssl::stream::async_handshake
-            std::shared_ptr<boost::asio::deadline_timer> timer;
-            if(timeout_request_>0)
-                timer=set_timeout_on_socket(socket, timeout_request_);
 
-            (*socket).async_handshake(boost::asio::ssl::stream_base::server, [this, socket, timer]
-                    (const boost::system::error_code& ec) {
-                if(timeout_request_>0)
-                    timer->cancel();
-                if(!ec)
-                {
-                    // TODO
-                    log(LV_ALWAYS,"Received request");
-                    // read_request_and_content(socket);
-                    new_connection_->start();
-                }
-            });
-
-        }
-
-        start_accept();
+      start_accept();
     }
 
 }   // namespace QuickHttp

@@ -52,7 +52,6 @@ namespace QuickHttp
 
         /// Get the socket associated with the connection.
         inline boost::asio::ip::tcp::socket& socket();
-        inline boost::asio::ip::tcp::socket& ssl_socket();
 
         /// Start the first asynchronous operation for the connection.
         inline void start();
@@ -69,10 +68,7 @@ namespace QuickHttp
         boost::asio::io_service::strand strand_;
 
         /// Socket for the connection.
-        // MDM NOTE: THIS IS NOT GOOD ENOUGH to work in base, it will not work for HTTPS.
-        // For that, we need boost::asio::ssl::stream<boost::asio::ip::tcp::socket>
         boost::asio::ip::tcp::socket socket_;
-        boost::asio::ssl::stream<boost::asio::ip::tcp::socket> ssl_socket_;
 
         /// The handler used to process the incoming request.
         server_handler& request_handler_;
@@ -108,11 +104,6 @@ namespace QuickHttp
     boost::asio::ip::tcp::socket& connection::socket()
     {
       return socket_;
-    }
-
-    boost::asio::ip::tcp::socket& connection::ssl_socket()
-    {
-      return ssl_socket_;
     }
 
     void connection::start()

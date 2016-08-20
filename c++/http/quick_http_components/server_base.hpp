@@ -46,9 +46,7 @@ namespace QuickHttp
                 server_handler& handler,
                 const std::string& address,
                 const std::string& port,
-                std::size_t thread_pool_size,
-                const long timeout_request,
-                const long timeout_content
+                std::size_t thread_pool_size
         );
 
         /// Initiate an asynchronous accept operation.
@@ -60,28 +58,11 @@ namespace QuickHttp
         /// Handle a request to stop the server.
         void handle_stop();
 
-        // From Simple-Web-Server
-        std::shared_ptr<boost::asio::deadline_timer> set_timeout_on_socket(std::shared_ptr<socket_type> socket, long seconds) {
-            std::shared_ptr<boost::asio::deadline_timer> timer(new boost::asio::deadline_timer(io_service_));
-            timer->expires_from_now(boost::posix_time::seconds(seconds));
-            timer->async_wait([socket](const boost::system::error_code& ec){
-                if(!ec) {
-                    boost::system::error_code ec;
-                    socket->lowest_layer().shutdown(boost::asio::ip::tcp::socket::shutdown_both, ec);
-                    socket->lowest_layer().close();
-                }
-            });
-            return timer;
-        }
-
         // The caller should create a handler, we'll track it here.
         server_handler& m_handler;
 
         /// The number of threads that will call io_service::run().
         std::size_t thread_pool_size_;
-
-        const long timeout_request_;
-        const long timeout_content_;
 
         /// The io_service used to perform asynchronous operations.
         boost::asio::io_service& io_service_;
@@ -105,16 +86,12 @@ namespace QuickHttp
             server_handler& handler,
             const std::string& address,
             const std::string& port,
-            std::size_t thread_pool_size,
-            const long timeout_request,
-            const long timeout_content
+            std::size_t thread_pool_size
     ) :
 
         // Init vars
         io_service_(io_service),
         thread_pool_size_(thread_pool_size),
-        timeout_request_(timeout_request),
-        timeout_content_(timeout_content),
         signals_(io_service),
         acceptor_(io_service),
         new_connection_(),
