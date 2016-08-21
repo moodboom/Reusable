@@ -96,7 +96,7 @@ public:
     // Overload this to get the work done!
 	// MDM SWS refactor TODO
 	// virtual bool handle_call(const API_call& caller, reply& rep) { return false; }
-	virtual bool handle_call(const API_call& caller, ServerBase<HTTPS>::Response& rep) { return false; }
+    virtual bool handle_call(const API_call& caller, ServerBase<HTTPS>::Response& rep) { return false; }
     // ----------------------
 
     string url() const
