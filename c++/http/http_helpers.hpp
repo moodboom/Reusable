@@ -1,6 +1,8 @@
 #pragma once
 
-using namespace QuickHttp;
+#include <http/Simple-Web-Server/server_https.hpp>		// For Response
+
+using namespace SimpleWeb;
 
 
 // ------------------------------------------------------------------------------
@@ -92,7 +94,9 @@ public:
     inline bool load_static_html();
 
     // Overload this to get the work done!
-    virtual bool handle_call(const API_call& caller, reply& rep) { return false; }
+	// MDM SWS refactor TODO
+	// virtual bool handle_call(const API_call& caller, reply& rep) { return false; }
+	virtual bool handle_call(const API_call& caller, ServerBase<HTTPS>::Response& rep) { return false; }
     // ----------------------
 
     string url() const
