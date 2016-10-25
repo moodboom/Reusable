@@ -1,3 +1,4 @@
+package com.bitpost.scala.scrap
 /**
   * Created by m on 9/30/16.
   */

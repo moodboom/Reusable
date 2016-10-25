@@ -366,6 +366,13 @@ search for [^ D] to jump to TODO
 
 2016/01/24 posted to github with MIT license; why not, life is short...
 
+2016/10/25 stupid mediawiki can't keep numbering going across code or breaks
+   you SUCK medaiwiki
+   just use splat (*)
+   and leading space for code
+   fuck numbering at all
+   assholes
+
 =======================================================================================================================
 ^ DONE
 v TO DO
