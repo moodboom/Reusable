@@ -1,9 +1,18 @@
 package com.bitpost.scala.scrap
 
-// silliness from:
+// original brew silliness from:
 // http://danielwestheide.com/blog/2013/01/09/the-neophytes-guide-to-scala-part-8-welcome-to-the-future.html
+
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+
+// MDM These are essential for futures and promises
+import scala.concurrent.{Future, Promise}
+import scala.util.{Failure, Success, Try}
+
+// MDM SYNCHRONOUS BEHAVIOR, don't act like you never need it
+import scala.concurrent.Await
+import scala.concurrent.Await._
+
 import scala.util.Random
 
 /**
@@ -32,7 +41,7 @@ object Scrap extends App {
   def heatWater(water: Water): Future[Water] = Future {
     println("heat :starting to heat the water now")
     Thread.sleep(Random.nextInt(3000))
-    println("heat: hot, it's hot!")
+    println("heat : hot, it's hot!")
     water.copy(temperature = 85)
   }
 
@@ -52,22 +61,41 @@ object Scrap extends App {
 
   def combine(espresso: Espresso, frothedMilk: FrothedMilk): Cappuccino = s"${espresso}-${frothedMilk} cappuccino"
 
-  println("espresso: starting...")
-  val groundCoffee = grind("arabica beans")
-  val heatedWater = heatWater(Water(20))
-  val frothedMilk = frothMilk("soymilk")
-  val results = for {
-    ground <- groundCoffee
-    water <- heatedWater
-    foam <- frothedMilk
-    espresso <- brew(ground, water)
-  } yield combine(espresso, foam)
+  def makeCoffee() = Future {
+    println("espresso: starting...")
+    val groundCoffee = grind("arabica beans")
+    val heatedWater = heatWater(Water(20))
+    val frothedMilk = frothMilk("soymilk")
+    val results = for {
+      ground <- groundCoffee
+      water <- heatedWater
+      foam <- frothedMilk
+      espresso <- brew(ground, water)
+    } yield combine(espresso, foam)
 
-  results onFailure { case t => println(s"wtf ${t.getMessage}") }
-  results onSuccess {
-    case actualFinalResults =>
-      println(s"espresso: done with ${actualFinalResults}")
+    results onFailure { case t => println(s"wtf ${t.getMessage}") }
+    results onSuccess {
+      case actualFinalResults =>
+        println(s"espresso: done with ${actualFinalResults}")
+    }
   }
+
+  // Still not sure what use a promise is...
+  /*
+  val p = Promise[Unit]
+  val f = makeCoffee()
+  f.onComplete {
+    case Success(t) =>  p.success(t)
+    case Failure(t) => p.failure(t)
+  }
+
+  p.future
+  */
+
+  // Sometimes you NEED synchronous behavior.
+  // I do not like the fact that Scala acts like you don't.
+  val futureCoffee = makeCoffee()
+  val done = Await.ready(futureCoffee,Duration.Inf)
 
   // An example of how sometimes all this fanciness is bad news: the JVM just cuts it off if you don't sleep - WTF...
   Thread.sleep(8000)
