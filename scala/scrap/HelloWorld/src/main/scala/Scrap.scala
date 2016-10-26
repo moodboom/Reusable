@@ -11,9 +11,10 @@ import scala.util.{Failure, Success, Try}
 
 // MDM SYNCHRONOUS BEHAVIOR, don't act like you never need it
 import scala.concurrent.Await
-import scala.concurrent.Await._
+import scala.concurrent.duration.Duration
 
 import scala.util.Random
+
 
 /**
   * Created by m on 9/30/16.
@@ -78,7 +79,15 @@ object Scrap extends App {
       case actualFinalResults =>
         println(s"espresso: done with ${actualFinalResults}")
     }
+
+    // Sometimes you NEED synchronous behavior.
+    val done = Await.ready(results,Duration.Inf)
   }
+
+  // Sometimes you NEED synchronous behavior.
+  // I do not like the fact that Scala acts like you don't.
+  val futureCoffee = makeCoffee()
+  val done = Await.ready(futureCoffee,Duration.Inf)
 
   // Still not sure what use a promise is...
   /*
@@ -92,11 +101,4 @@ object Scrap extends App {
   p.future
   */
 
-  // Sometimes you NEED synchronous behavior.
-  // I do not like the fact that Scala acts like you don't.
-  val futureCoffee = makeCoffee()
-  val done = Await.ready(futureCoffee,Duration.Inf)
-
-  // An example of how sometimes all this fanciness is bad news: the JVM just cuts it off if you don't sleep - WTF...
-  Thread.sleep(8000)
 }
