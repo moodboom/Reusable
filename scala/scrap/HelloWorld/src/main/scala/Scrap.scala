@@ -125,7 +125,6 @@ object Scrap extends App {
   }
   p.future
   */
-  // 2 ===================================================================================
 
 
   // 3 ===================================================================================
@@ -169,6 +168,8 @@ object Scrap extends App {
 
   // Map wrapped with a future, SO WE KNOW WHEN IT IS DONE.
   // How nice that I completely stumbled on this.
+  // WORKS GREAT
+  /*
   var smoothiesFuture = Future{
     smoothies.map(smoothie => makeSmoothie(smoothie))
   }
@@ -176,6 +177,7 @@ object Scrap extends App {
     case Success(t) => println("Smoothies are all done.")
     case Failure(t) => println(s"Smoothies didn't get done: ${t}")
   }
+  */
 
   // Yes blocking is BAD BAD BAD, but you better do it
   // if you want to know when to exit your app.
@@ -184,9 +186,40 @@ object Scrap extends App {
   // Not a good idea to spend effort on.
   // Await.result(smoothiesFuture, Duration.Inf)
 
-  // HACK to let things finish
-  Thread.sleep(10000)
 
-  // 3 ===================================================================================
+  // 4 ===================================================================================
+  // Need to handle future of futures completion
+  // 4 ===================================================================================
+  println("== 4 ============================")
+
+  type SmoothieOrder = String
+  val orders = List[SmoothieOrder]( "jon", "cara", "stephen" )
+    .toIndexedSeq
+    .par
+
+  def prepOrder(order: SmoothieOrder) = Future {
+
+    // Each order is a full smoothie set
+    var smoothiesFuture = Future{
+      smoothies.map(smoothie => makeSmoothie(smoothie))
+    }
+    smoothiesFuture.onComplete {
+      case Success(t) => println(s"${order} smoothies are all done.")
+      case Failure(t) => println(s"Smoothies didn't get done: ${t}")
+    }
+  }
+
+  var ordersFuture = Future{
+    orders.map(order => prepOrder(order))
+  }
+  ordersFuture.onComplete {
+    case Success(t) => println("Orders are all done.")
+    case Failure(t) => println(s"Orders didn't get done: ${t}")
+  }
+
+
+
+  // HACK to let things finish
+  Thread.sleep(20000)
 
 }
