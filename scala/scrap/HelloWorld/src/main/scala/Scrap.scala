@@ -22,6 +22,12 @@ import scala.util.Random
 
 object Scrap extends App {
 
+
+  // 1 ===================================================================================
+  // FUTURES and how to make them run async but then hit a point where they can sync up
+  // 1 ===================================================================================
+  println("== 1 ============================")
+
   // Some type aliases, just for getting more meaningful method signatures:
   type CoffeeBeans = String
   type GroundCoffee = String
@@ -33,7 +39,7 @@ object Scrap extends App {
 
   def grind(beans: CoffeeBeans): Future[GroundCoffee] = Future {
     println("grind: start...")
-    Thread.sleep(Random.nextInt(3000))
+    Thread.sleep(Random.nextInt(500))
     // if (beans == "baked beans") throw GrindingException("are you joking?")
     println("grind: finished...")
     s"ground coffee of $beans"
@@ -48,21 +54,23 @@ object Scrap extends App {
 
   def frothMilk(milk: Milk): Future[FrothedMilk] = Future {
     println("milk : frothing system engaged!")
-    Thread.sleep(Random.nextInt(3000))
+    Thread.sleep(Random.nextInt(500))
     println("milk : shutting down frothing system")
     s"frothed $milk"
   }
 
   def brew(coffee: GroundCoffee, heatedWater: Water): Future[Espresso] = Future {
     println("brew : happy brewing :)")
-    Thread.sleep(Random.nextInt(3000))
+    Thread.sleep(Random.nextInt(500))
     println("brew : it's brewed!")
     "espresso"
   }
 
   def combine(espresso: Espresso, frothedMilk: FrothedMilk): Cappuccino = s"${espresso}-${frothedMilk} cappuccino"
 
-  def makeCoffee() = Future {
+  def makeACupAndWaitForItToFinish() =
+  {
+    // Let's make some coffee...
     println("espresso: starting...")
     val groundCoffee = grind("arabica beans")
     val heatedWater = heatWater(Water(20))
@@ -80,25 +88,103 @@ object Scrap extends App {
         println(s"espresso: done with ${actualFinalResults}")
     }
 
-    // Sometimes you NEED synchronous behavior.
-    val done = Await.ready(results,Duration.Inf)
+    // WAIT for the damned coffee to finish before you quit, silly Scala!
+    // Sometimes you NEED synchronous behavior, like when determining when to quit a command line app.
+    // NOTE that in any server scenario, blocking makes little to no sense.
+    Await.ready(results,Duration.Inf)
   }
 
-  // Sometimes you NEED synchronous behavior.
-  // I do not like the fact that Scala acts like you don't.
-  val futureCoffee = makeCoffee()
-  val done = Await.ready(futureCoffee,Duration.Inf)
+  // Uncomment to run this scrap
+  // makeACupAndWaitForItToFinish()
 
-  // Still not sure what use a promise is...
+  // NOTE that in the goofy scala world, this kinda finishes here
+  // but the final logging may happen after the next block starts.
+  // Apparently, deterministic behavior is only available via true functional chaining.
+
+
+  // 2 ===================================================================================
+  // What do you use a promise for?  Not sure yet...
+  // not for synchronous guarantee it seems - this doesn't block app to finish...
+  // AH, a future IS a promise.  This just splits them.  What do you do with it then?
+  // 2 ===================================================================================
+  println("== 2 ============================")
+
+  // This takes up a thread and doesn't let go
+  // I'm turning it off so subsequent scrap is not impacted...
   /*
+  def makeACoffeeViaPromise() = Future {
+    println("instant: start to make a slow instant coffee")
+    Thread.sleep(10000)
+    println("instant: done.  gross.")
+  }
   val p = Promise[Unit]
-  val f = makeCoffee()
+  val f = makeACoffeeViaPromise()
   f.onComplete {
     case Success(t) =>  p.success(t)
     case Failure(t) => p.failure(t)
   }
-
   p.future
   */
+  // 2 ===================================================================================
+
+
+  // 3 ===================================================================================
+  // Container looping with futures
+  // 3 ===================================================================================
+  println("== 3 ============================")
+
+  type Smoothie = String
+
+  // Small list
+  // val smoothies = List[Smoothie]( "mango", "blueberry", "strawberry", "banana" )
+
+  // Big indexed "par" container
+  // NOTE that it did not make much difference, it seems scala optimizes so that only VERY large collections are parallelized...?
+  // val smoothies = List[Smoothie]( "mango", "blueberry", "strawberry", "mango", "blueberry", "strawberry", "mango", "blueberry", "strawberry", "mango", "blueberry", "strawberry", "mango", "blueberry", "strawberry", "mango", "blueberry", "strawberry", "mango", "blueberry", "strawberry", "mango", "blueberry", "strawberry", "mango", "blueberry", "strawberry", "mango", "blueberry", "strawberry", "mango", "blueberry", "strawberry", "mango", "blueberry", "strawberry", "mango", "blueberry", "strawberry", "mango", "blueberry", "strawberry", "mango", "blueberry", "strawberry", "mango", "blueberry", "strawberry", "mango", "blueberry", "strawberry", "mango", "blueberry", "strawberry", "mango", "blueberry", "strawberry", "mango", "blueberry", "strawberry", "mango", "blueberry", "strawberry", "mango", "blueberry", "strawberry", "mango", "blueberry", "strawberry", "mango", "blueberry", "strawberry", "banana" )
+  //   .toIndexedSeq
+  //   .par
+
+  // Small indexed parallel-enable container
+  val smoothies = List[Smoothie]( "mango", "blueberry", "strawberry", "banana" )
+    .toIndexedSeq
+    .par
+
+  def makeSmoothie(smoothie: Smoothie) = Future {
+    println(s"smoothie start: ${smoothie}")
+    Thread.sleep(500)
+    println(s"smoothie done : ${smoothie}")
+
+    // A dirty little sleep here to get the logging out before something else jumps in!
+    Thread.sleep(50)
+  }
+
+  // We can make a full set of smoothies fully async, if we want:
+  // var smoothiesMapResult = smoothies.map(smoothie => makeSmoothie(smoothie))
+
+  // Filter and map the result as a parameter into a function
+  // NOTE: This will not block
+  // smoothies.filter(_ == "mango").map(smoothie => makeSmoothie(smoothie))
+
+  // Map wrapped with a future, SO WE KNOW WHEN IT IS DONE.
+  // How nice that I completely stumbled on this.
+  var smoothiesFuture = Future{
+    smoothies.map(smoothie => makeSmoothie(smoothie))
+  }
+  smoothiesFuture.onComplete {
+    case Success(t) => println("Smoothies are all done.")
+    case Failure(t) => println(s"Smoothies didn't get done: ${t}")
+  }
+
+  // Yes blocking is BAD BAD BAD, but you better do it
+  // if you want to know when to exit your app.
+  // Bah this doesn't actually block on the map internal operation.
+  // It would take deeper blocking to get that done.
+  // Not a good idea to spend effort on.
+  // Await.result(smoothiesFuture, Duration.Inf)
+
+  // HACK to let things finish
+  Thread.sleep(10000)
+
+  // 3 ===================================================================================
 
 }
