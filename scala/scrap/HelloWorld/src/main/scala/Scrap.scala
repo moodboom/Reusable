@@ -158,7 +158,9 @@ object Scrap extends App {
     Thread.sleep(50)
   }
 
-  // We can make a full set of smoothies fully async, if we want:
+  // We can make a full set of smoothies fully async, if we want.
+  // NOTE that this will suck up threads and therefore may interfere with subsequent code.
+  // That's the Scala life!
   // var smoothiesMapResult = smoothies.map(smoothie => makeSmoothie(smoothie))
 
   // Filter and map the result as a parameter into a function
