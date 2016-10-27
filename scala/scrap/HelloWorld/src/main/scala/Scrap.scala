@@ -189,6 +189,7 @@ object Scrap extends App {
 
   // 4 ===================================================================================
   // Need to handle future of futures completion
+  // This is not working yet, needs deeper future tracking or maybe flatten?
   // 4 ===================================================================================
   println("== 4 ============================")
 
@@ -209,13 +210,22 @@ object Scrap extends App {
     }
   }
 
-  var ordersFuture = Future{
+  val ordersFuture = Future{
     orders.map(order => prepOrder(order))
   }
+
+  // How are we supposed to flatten this?
   ordersFuture.onComplete {
     case Success(t) => println("Orders are all done.")
     case Failure(t) => println(s"Orders didn't get done: ${t}")
   }
+  /*
+  val ordersFlatFuture = ordersFuture.map(Future.sequence(_))
+  ordersFlatFuture.onComplete {
+    case Success(t) => println("Orders are all done.")
+    case Failure(t) => println(s"Orders didn't get done: ${t}")
+  }
+  */
 
 
 
