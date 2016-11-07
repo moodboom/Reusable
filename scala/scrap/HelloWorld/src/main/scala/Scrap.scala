@@ -95,7 +95,7 @@ object Scrap extends App {
   }
 
   // Uncomment to run this scrap
-  // makeACupAndWaitForItToFinish()
+  makeACupAndWaitForItToFinish()
 
   // NOTE that in the goofy scala world, this kinda finishes here
   // but the final logging may happen after the next block starts.
