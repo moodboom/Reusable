@@ -227,9 +227,23 @@ object Scrap extends App {
   }
   */
 
-
-
   // HACK to let things finish
-  Thread.sleep(20000)
+  Thread.sleep(5000)
+
+
+  // 5 ===================================================================================
+  // Convert a list into a map using the list as the key values
+  // The trick is in the toMap call
+  // WARNING this is NOT efficient
+  // http://stackoverflow.com/questions/674639/scala-best-way-of-turning-a-collection-into-a-map-by-key
+  // 5 ===================================================================================
+  println("== 5 ============================")
+  case class CConfig(ssdfhae:String,sffhae2:String,wh:Integer)
+  val charms = List("a","b","c")
+  val charmConfigs: Map[String, CConfig] = charms.map(charm => charm -> CConfig(charm,charm,10)) toMap
+
+  // WOW, move this right under the above line and you'll get syntax errors wtf!
+  println(s"""The a charm config = ${charmConfigs("a").sffhae2}""")
+
 
 }
