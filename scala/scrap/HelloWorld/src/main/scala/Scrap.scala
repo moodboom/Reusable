@@ -90,7 +90,7 @@ object Scrap extends App {
 
     // WAIT for the damned coffee to finish before you quit, silly Scala!
     // Sometimes you NEED synchronous behavior, like when determining when to quit a command line app.
-    // NOTE that in any server scenario, blocking makes little to no sense.
+    // NOTE that in any server scenario, blocking is a sign of a bad design.
     Await.ready(results,Duration.Inf)
   }
 
