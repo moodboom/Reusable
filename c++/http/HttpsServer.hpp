@@ -9,9 +9,17 @@
 //
 #include <Simple-Web-Server/server_https.hpp>
 
+#include <utilities.hpp>
 #include "HttpsConstants.hpp"
 
 using namespace SimpleWeb;
+
+
+using namespace std;
+//Added for the json-example:
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/json_parser.hpp>
+using namespace boost::property_tree;
 
 
 // We derive from SimpleWeb::HttpsServer
@@ -26,31 +34,24 @@ public:
     {}
 
     boost::asio::io_service& get_io_service() { return io_service; }
-};
 
-
-
-//Added for the default_resource example
-//void default_resource_send(const HttpsServer &server, shared_ptr<HttpsServer::Response> response,
-//                           shared_ptr<ifstream> ifs, shared_ptr<vector<char> > buffer);
-using namespace std;
-//Added for the json-example:
-using namespace boost::property_tree;
-static void default_resource_send(const HttpsServer &server, std::shared_ptr<HttpsServer::Response> response,
-                           std::shared_ptr<ifstream> ifs, std::shared_ptr<vector<char> > buffer) {
-    streamsize read_length;
-    if((read_length=ifs->read(&(*buffer)[0], buffer->size()).gcount())>0) {
-        response->write(&(*buffer)[0], read_length);
-        if(read_length==static_cast<streamsize>(buffer->size())) {
-            server.send(response, [&server, response, ifs, buffer](const boost::system::error_code &ec) {
-                if(!ec)
-                    default_resource_send(server, response, ifs, buffer);
-                else
-                    cerr << "Connection interrupted" << endl;
-            });
+    // You can use this or roll your own.  It's from Simple-Web-Server https_examples.cpp
+    void default_resource_send(/*const HttpsServer &server,*/ std::shared_ptr<HttpsServer::Response> response,
+                               std::shared_ptr<ifstream> ifs, std::shared_ptr<vector<char> > buffer) {
+        streamsize read_length;
+        if((read_length=ifs->read(&(*buffer)[0], buffer->size()).gcount())>0) {
+            response->write(&(*buffer)[0], read_length);
+            if(read_length==static_cast<streamsize>(buffer->size())) {
+                send(response, [this, response, ifs, buffer](const boost::system::error_code &ec) {
+                    if(!ec)
+                        default_resource_send(response, ifs, buffer);
+                    else
+                        cerr << "Connection interrupted" << endl;
+                });
+            }
         }
     }
-}
+};
 
 
 static bool url_decode(const std::string& in, std::string& out)
