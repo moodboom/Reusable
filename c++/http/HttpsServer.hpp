@@ -12,15 +12,6 @@
 #include <utilities.hpp>
 #include "HttpsConstants.hpp"
 
-using namespace SimpleWeb;
-
-
-using namespace std;
-//Added for the json-example:
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/json_parser.hpp>
-using namespace boost::property_tree;
-
 
 // We derive from SimpleWeb::HttpsServer
 // The base creates a protected io_service, we need to expose it so we can extend it with our timers
@@ -52,6 +43,10 @@ public:
         }
     }
 };
+
+
+// Request extraction helpers
+static string get_request_content(std::shared_ptr<Server<HTTPS>::Request> request)           { return request->content.string(); }
 
 
 static bool url_decode(const std::string& in, std::string& out)
