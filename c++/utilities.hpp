@@ -354,6 +354,12 @@ static bool set_log_verbosity(string str_v)
 // FILE
 //=========================================================
 // Don't mess around, let boost::filesystem do all the nasty work.
+#include <boost/filesystem.hpp>
+//
+// Check out this gem:
+//
+//      boost::filesystem::create_directories("/tmp/a/b/c");
+//
 // Folder recursion can be done directly:
 /*
         using namespace boost::filesystem;
@@ -388,6 +394,11 @@ static bool archive_any_old_file(const string& filename, const string& prefix, c
         path p(filename);
         if (exists(p))
         {
+            // Make sure the target path exists.
+            if (prefix.size()) 
+                if (!boost::filesystem::create_directories(prefix))
+                    return false;
+            
             stringstream ss;
             ss << prefix << filename << (suffix.empty() ? string(".") + generate_uuid() : suffix);
             rename(p,path(ss.str()));
@@ -412,6 +423,11 @@ static bool backup_any_old_file(const string& filename, const string& prefix, co
         path p(filename);
         if (exists(p))
         {
+            // Make sure the target path exists.
+            if (prefix.size()) 
+                if (!boost::filesystem::create_directories(prefix))
+                    return false;
+            
             stringstream ss;
             ss << prefix << filename << (suffix.empty() ? string(".") + generate_uuid() : suffix);
             copy(p,path(ss.str()));
