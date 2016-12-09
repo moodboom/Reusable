@@ -27,6 +27,7 @@ object Scrap extends App {
   // FUTURES and how to make them run async but then hit a point where they can sync up
   // 1 ===================================================================================
   println("== 1 ============================")
+  println("== Making coffee")
 
   // Some type aliases, just for getting more meaningful method signatures:
   type CoffeeBeans = String
@@ -90,17 +91,17 @@ object Scrap extends App {
 
     // WAIT for the damned coffee to finish before you quit, silly Scala!
     // Sometimes you NEED synchronous behavior, like when determining when to quit a command line app.
-    // NOTE that in any server scenario, blocking is a sign of a bad design.
+    // NOTE that in a typical server scenario, blocking is a sign of a bad design.
     Await.ready(results,Duration.Inf)
   }
 
-  // Uncomment to run this scrap
   makeACupAndWaitForItToFinish()
 
-  // NOTE that in the goofy scala world, this kinda finishes here
-  // but the final logging may happen after the next block starts.
+  // Keep Scala somewhat honest
+  // NOTE that in the goofy scala world, when this finishes
+  // the final logging may happen after the next block starts.
   // Apparently, deterministic behavior is only available via true functional chaining.
-
+  Thread.sleep(300)
 
   // 2 ===================================================================================
   // What do you use a promise for?  Not sure yet...
@@ -108,6 +109,7 @@ object Scrap extends App {
   // AH, a future IS a promise.  This just splits them.  What do you do with it then?
   // 2 ===================================================================================
   println("== 2 ============================")
+  println("== I promise... ?")
 
   // This takes up a thread and doesn't let go
   // I'm turning it off so subsequent scrap is not impacted...
@@ -124,6 +126,9 @@ object Scrap extends App {
     case Failure(t) => p.failure(t)
   }
   p.future
+
+  // Keep Scala somewhat honest
+  Thread.sleep(300)
   */
 
 
@@ -131,6 +136,7 @@ object Scrap extends App {
   // Container looping with futures
   // 3 ===================================================================================
   println("== 3 ============================")
+  println("== Easy Await with Future[]")
 
   type Smoothie = String
 
@@ -154,22 +160,23 @@ object Scrap extends App {
     println(s"smoothie done : ${smoothie}")
 
     // A dirty little sleep here to get the logging out before something else jumps in!
-    Thread.sleep(50)
+    // Thread.sleep(50)
   }
 
-  // We can make a full set of smoothies fully async, if we want.
+  // 1) We can make a full set of smoothies fully async, if we want.  Fire and forget!
+  // Just don't expect to know when it's complete.
   // NOTE that this will suck up threads and therefore may interfere with subsequent code.
   // That's the Scala life!
   // var smoothiesMapResult = smoothies.map(smoothie => makeSmoothie(smoothie))
 
-  // Filter and map the result as a parameter into a function
+  // 2) Filter and map the result as a parameter into a function, to only do ONE smoothie.
   // NOTE: This will not block
   // smoothies.filter(_ == "mango").map(smoothie => makeSmoothie(smoothie))
 
-  // Map wrapped with a future, SO WE KNOW WHEN IT IS DONE.
+  // ---------------------------------------------------------
+  // 3) Map wrapped with a future, SO WE KNOW WHEN IT IS DONE.
   // How nice that I completely stumbled on this.
   // WORKS GREAT
-  /*
   var smoothiesFuture = Future{
     smoothies.map(smoothie => makeSmoothie(smoothie))
   }
@@ -177,26 +184,33 @@ object Scrap extends App {
     case Success(t) => println("Smoothies are all done.")
     case Failure(t) => println(s"Smoothies didn't get done: ${t}")
   }
-  */
-
   // Yes blocking is BAD BAD BAD, but you better do it
   // if you want to know when to exit your app.
   // Bah this doesn't actually block on the map internal operation.
   // It would take deeper blocking to get that done.
   // Not a good idea to spend effort on.
-  // Await.result(smoothiesFuture, Duration.Inf)
+  Await.result(smoothiesFuture, Duration.Inf)
+  // ---------------------------------------------------------
 
+  // Keep Scala somewhat honest
+  Thread.sleep(300)
 
   // 4 ===================================================================================
   // Need to handle future of futures completion
-  // This is not working yet, needs deeper future tracking or maybe flatten?
+  // GOT IT
+  // THINGS TO NOTE:
+  //    1) know your types, and use these tools to flatten: val flatterFuture = ordersFuture.flatMap(s => Future.sequence(s))
+  //    1) do not use .par to try to force parallel action, it will prevent flattening of Futures
+  //    2) Await is NOT PRECISE at least with things like simultaneous println - always put a delay in!  Terrible.
   // 4 ===================================================================================
   println("== 4 ============================")
+  println("== FLATTENING Future[Future[]]")
 
   type SmoothieOrder = String
   val orders = List[SmoothieOrder]( "jon", "cara", "stephen" )
     .toIndexedSeq
-    .par
+    // Don't use this, it doesn't flatten!!!
+    //.par
 
   def prepOrder(order: SmoothieOrder) = Future {
 
@@ -204,30 +218,34 @@ object Scrap extends App {
     var smoothiesFuture = Future{
       smoothies.map(smoothie => makeSmoothie(smoothie))
     }
-    smoothiesFuture.onComplete {
-      case Success(t) => println(s"${order} smoothies are all done.")
-      case Failure(t) => println(s"Smoothies didn't get done: ${t}")
-    }
+    smoothiesFuture
   }
 
   val ordersFuture = Future{
     orders.map(order => prepOrder(order))
   }
 
+  // We have a future (outer) of list of future (inner) of list
   // How are we supposed to flatten this?
-  ordersFuture.onComplete {
-    case Success(t) => println("Orders are all done.")
-    case Failure(t) => println(s"Orders didn't get done: ${t}")
-  }
-  /*
-  val ordersFlatFuture = ordersFuture.map(Future.sequence(_))
-  ordersFlatFuture.onComplete {
-    case Success(t) => println("Orders are all done.")
-    case Failure(t) => println(s"Orders didn't get done: ${t}")
-  }
-  */
+  val flattenedFutures = ordersFuture.flatMap(s => Future.sequence(s))
+  flattenedFutures.foreach(println)
+  val flattenedFutures2 = flattenedFutures.flatMap(s => Future.sequence(s))
+  flattenedFutures2.foreach(println)
+  Await.result(flattenedFutures2,Duration.Inf)
 
-  // HACK to let things finish
+  flattenedFutures2.onComplete {
+    case Success(t) => {
+
+      // THIS IS MANDATORY, Scala is in a rush and will println this ahead of future println without it!
+      Thread.sleep(1500)
+
+      println("Orders are all done.")
+    }
+    case Failure(t) => println(s"Orders didn't get done: ${t}")
+  }
+
+  // Even though we tracked the end of a bunch of futures and used Await on them,
+  // Scala doesn't seem to care and keeps going if we let it.
   Thread.sleep(5000)
 
 
