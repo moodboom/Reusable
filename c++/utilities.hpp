@@ -360,7 +360,7 @@ static bool set_log_verbosity(string str_v)
 //
 //      boost::filesystem::create_directories("/tmp/a/b/c");
 //
-// Folder recursion can be done directly:
+// Folder recursion example:
 /*
         using namespace boost::filesystem;
         recursive_directory_iterator it = recursive_directory_iterator("START_DIR");
