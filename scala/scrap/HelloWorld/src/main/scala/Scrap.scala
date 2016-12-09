@@ -205,6 +205,9 @@ object Scrap extends App {
   // 4 ===================================================================================
   println("== 4 ============================")
   println("== FLATTENING Future[Future[]]")
+  // There's an entire set of so questions under this set of tags, ha: [scala] [concurrent.futures]
+  // http://stackoverflow.com/questions/26717249/how-to-flatten-a-list-of-futures-in-scala
+  // http://stackoverflow.com/questions/26881010/scala-nested-futures
 
   type SmoothieOrder = String
   val orders = List[SmoothieOrder]( "jon", "cara", "stephen" )
