@@ -92,16 +92,16 @@ public:
     void getOAuthPin( std::string& oAuthPin /* out */ );
     void setOAuthPin( const std::string& oAuthPin /* in */ );
 
-    bool getOAuthHeader( const eOAuthHttpRequestType eType, /* in */
+    bool getOAuthHeader(const eOAuthHttpRequestType eType, /* in */
                          const std::string& rawUrl, /* in */
                          const std::string& rawData, /* in */                       // MDM: can be empty for GETs, or include request key1=value1&key2=value2 pairs for POSTs
-                         std::string& oAuthHttpHeader, /* out */
+                         std::map<std::string, std::string>& oAuthHttpHeader, /* out */
                          const bool includeOAuthVerifierPin = false /* in */ );
     bool getEtradeHeader(
         const eOAuthHttpRequestType eType, /* in */
         const std::string& rawUrl, /* in */
         const std::string& rawData, /* in */
-        std::string& oAuthHttpHeader, /* out */
+        std::map<std::string, std::string>& oAuthHttpHeader, /* out */
         const bool includeOAuthVerifierPin = false, /* in */
         const bool includeOAuthTokenPin = false /* in */
     );
