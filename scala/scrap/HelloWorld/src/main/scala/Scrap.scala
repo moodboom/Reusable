@@ -228,9 +228,9 @@ object Scrap extends App {
   // We have a future (outer) of list of future (inner) of list
   // How are we supposed to flatten this?
   val flattenedFutures = ordersFuture.flatMap(s => Future.sequence(s))
-  flattenedFutures.foreach(println)
+  // flattenedFutures.foreach(println)
   val flattenedFutures2 = flattenedFutures.flatMap(s => Future.sequence(s))
-  flattenedFutures2.foreach(println)
+  // flattenedFutures2.foreach(println)
   Await.result(flattenedFutures2,Duration.Inf)
 
   flattenedFutures2.onComplete {

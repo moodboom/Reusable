@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="03f08941-c55a-402e-b9b9-b47877d834e9" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala/Scrap.scala" afterPath="$PROJECT_DIR$/src/main/scala/Scrap.scala" />
     </list>
     <ignored path="HelloWorld.iws" />
@@ -30,8 +30,8 @@
       <file leaf-file-name="Scrap.scala" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/scala/Scrap.scala">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="3502">
-              <caret line="248" column="17" selection-start-line="248" selection-start-column="17" selection-end-line="248" selection-end-column="17" />
+            <state relative-caret-position="92">
+              <caret line="102" column="40" selection-start-line="102" selection-start-column="17" selection-end-line="102" selection-end-column="40" />
               <folding />
             </state>
           </provider>
@@ -56,10 +56,10 @@
     <sorting>DEFINITION_ORDER</sorting>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="2029" />
-    <option name="y" value="20" />
-    <option name="width" value="1472" />
-    <option name="height" value="2127" />
+    <option name="x" value="2349" />
+    <option name="y" value="1082" />
+    <option name="width" value="1099" />
+    <option name="height" value="1065" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="false">
     <OptionsSetting value="true" id="Add" />
@@ -334,15 +334,15 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1481300544223</updated>
-      <workItem from="1481300545479" duration="6514000" />
+      <workItem from="1481300545479" duration="9147000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="6514000" />
+    <option name="totallyTimeSpent" value="9147000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="2029" y="20" width="1472" height="2127" extended-state="0" />
+    <frame x="2349" y="1082" width="1099" height="1065" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
@@ -352,7 +352,7 @@
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32968128" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.6997886" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.6292614" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
@@ -391,8 +391,8 @@
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/src/main/scala/Scrap.scala">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3502">
-          <caret line="248" column="17" selection-start-line="248" selection-start-column="17" selection-end-line="248" selection-end-column="17" />
+        <state relative-caret-position="92">
+          <caret line="102" column="40" selection-start-line="102" selection-start-column="17" selection-end-line="102" selection-end-column="40" />
           <folding />
         </state>
       </provider>
