@@ -9,22 +9,51 @@
 // HttpsAPIServer
 // ------------------
 // Extends HttpsServer to add support for easy creation of RESTful APIS.
+// This server expects a well-defined RESTful API.
 // ------------------
-class HttpsATIServer : public HttpsServer
+class HttpsAPIServer : public HttpsServer
 {
+    typedef HttpsServer inherited;
+
     // THEFT!  Steal the base class constructor, as-is.
     using HttpsServer::HttpsServer;
 
 public:
     
+    virtual void startServer() {
+        createFaviconHandler();
+        createAPIDocumentationHandler();
+        createAPIHandlers();
+        createBadRequestHandler();
 
-protected:
+        inherited::start();   
+    }
     
+protected:
+
+    // Override in your derived class to provide your API handlers.    
+    virtual void createAPIHandlers() {}
+
+private:
+    
+    // Do not use this in your derived class, use createAPIHandlers() instead.
+    // This version provides the following default response handling for you:
+    //
+    //      /favicon.ico    -> returns this file (loaded and cached on startup)
+    //      /               -> returns the API definition
+    //      (your handlers) -> your response
+    //      (bad request)   -> redirect to /
+    //
+    
+    void createFaviconHandler();
+    void createAPIDocumentationHandler();
+    void createBadRequestHandler();
 };
 
 
-// Request extraction helpers
-static string get_request_content(std::shared_ptr<Server<HTTPS>::Request> request)           { return request->content.string(); }
+inline void HttpsAPIServer::createFaviconHandler() {}
+inline void HttpsAPIServer::createAPIDocumentationHandler() {}
+inline void HttpsAPIServer::createBadRequestHandler() {}
 
 
 static bool url_decode(const std::string& in, std::string& out)
