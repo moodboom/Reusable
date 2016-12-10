@@ -13,20 +13,34 @@
 #include "HttpsConstants.hpp"
 
 
-// We derive from SimpleWeb::HttpsServer
-// The base creates a protected io_service, we need to expose it so we can extend it with our timers
+// HttpsServer
+// A very simple generic web server meant to be easy to use out of the box.
+// We lightly derive from SimpleWeb::HttpsServer, for two reasons:  
+// 1) The base creates a protected io_service, we need to derive to expose io_service, so we can extend it with our timers.
+// 2) We provide a default_resource_send() to send the buffer to the client; we have not needed any custom behavior yet, it gets the job done.
 class HttpsServer : public Server<HTTPS>
 {
-public:
+    // The awesome C++11 way to steal the constructor from the base class, oh man I've been waiting for this one...
+    // DOES THIS FOR YOU!
+    /*
     HttpsServer(unsigned short port, size_t num_threads, const std::string& cert_file, const std::string& private_key_file)
     :
         // Call base class
         Server<HTTPS>::Server(port, num_threads, cert_file, private_key_file)
     {}
+    */
+    using Server<HTTPS>::Server;
 
+public:
+    
     boost::asio::io_service& get_io_service() { return io_service; }
 
-    // You can use this or roll your own.  It's from Simple-Web-Server https_examples.cpp
+protected:
+    
+    // This function sends the response to the client.
+    // The response buffer was created previously by a handler.
+    // This code is from Simple-Web-Server https_examples.cpp.
+    // It is all we have needed so far, so we have not needed to make it virtual.
     void default_resource_send(/*const HttpsServer &server,*/ std::shared_ptr<HttpsServer::Response> response,
                                std::shared_ptr<ifstream> ifs, std::shared_ptr<vector<char> > buffer) {
         streamsize read_length;
