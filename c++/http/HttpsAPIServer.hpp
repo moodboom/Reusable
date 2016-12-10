@@ -15,11 +15,44 @@ class HttpsAPIServer : public HttpsServer
 {
     typedef HttpsServer inherited;
 
-    // THEFT!  Steal the base class constructor, as-is.
-    using HttpsServer::HttpsServer;
-
 public:
     
+    HttpsAPIServer(
+            
+        // required params
+        const vector<string>& includes,
+        // TODO
+        // const vector<API_call*>& vpAPI,
+        const string& title,
+
+        // required base params
+        unsigned short port, 
+        size_t num_threads, 
+        const std::string& cert_file, 
+        const std::string& private_key_file,
+
+        // defaulted params
+        const vector<string>& wrappers = c_default_wrappers,
+        int max_body_size = 100000,
+
+        // defaulted base params
+        long timeout_request=5, 
+        long timeout_content=300,
+        const std::string& verify_file=std::string()
+
+    ) :
+        // Call base class
+        inherited(port,num_threads,cert_file,private_key_file,timeout_request,timeout_content,verify_file),
+        
+        // Init vars
+        // TODO
+        // vpAPI_(vpAPI),
+        title_(title),
+        wrappers_(wrappers),
+        max_body_size_(max_body_size)
+        
+    {}
+
     virtual void startServer() {
         createFaviconHandler();
         createAPIDocumentationHandler();
@@ -48,12 +81,49 @@ private:
     void createFaviconHandler();
     void createAPIDocumentationHandler();
     void createBadRequestHandler();
+
+    // TODO
+    // const vector<API_call> vAPI_;
+    
+    std::size_t max_body_size_;
+    vector<pair<string,string>> includes_;
+    const string& title_;
+    const vector<string>& wrappers_;
+    string favicon_;
+    string index_;
 };
 
 
-inline void HttpsAPIServer::createFaviconHandler() {}
-inline void HttpsAPIServer::createAPIDocumentationHandler() {}
-inline void HttpsAPIServer::createBadRequestHandler() {}
+inline void HttpsAPIServer::createFaviconHandler() {
+
+    try
+    {
+        favicon_ = read_file("htdocs/favicon.ico");
+    }
+    catch(...)
+    {
+        log(LV_WARNING,"WARNING: No favicon.ico file was found in [htdocs/].");
+    }
+
+    resource[".*favicon.ico"]["GET"]=[this](std::shared_ptr<HttpsServer::Response> response, std::shared_ptr<HttpsServer::Request> request) {
+        log(LV_ALWAYS,string("Received request: ") + get_request_content(request));
+        string content = favicon_;
+
+        request->header.insert(std::make_pair(string("Content-Type"),string("image/x-icon")));
+        
+        *response << cstr_HTML_HEADER1 << content.length() << cstr_HTML_HEADER2 << content;
+    };
+}
+
+
+inline void HttpsAPIServer::createAPIDocumentationHandler() {
+    
+}
+
+
+inline void HttpsAPIServer::createBadRequestHandler() {
+    
+}
 
 
 static bool url_decode(const std::string& in, std::string& out)
