@@ -1,8 +1,5 @@
 #pragma once
 
-using namespace SimpleWeb;
-using namespace std;
-
 
 // ------------------------------------------------------------------------------
 // CONSTANTS GLOBALS STATICS
