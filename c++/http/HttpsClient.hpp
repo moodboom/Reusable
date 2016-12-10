@@ -1,17 +1,6 @@
 #pragma once
 
-// This is a wrapper class around the third-party header-only Simple-Web-Server library (which in turn uses boost asio).
-//
-// NOTE that you must include Simple-Web-Server code in your project:
-//  https://github.com/eidheim/Simple-Web-Server
-//
-// It's header-only, so you can easily add it to your CMakeLists.txt with INCLUDE_DIRECTORIES.
-// You can even add it via a relative path, like this:
-//
-//      set(ThirdParty "../../../")
-//      INCLUDE_DIRECTORIES(${ThirdParty})
-//
-#include <Simple-Web-Server/client_https.hpp>
+#include <Simple-Web-Server/client_https.hpp>           // See HttpsServer.hpp for instructions on including Simple-Web-Server in CMake.
 
 using namespace SimpleWeb;
 using namespace std;

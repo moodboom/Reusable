@@ -1,5 +1,21 @@
 #pragma once
 
+
+// Simple-Web-Server is required but easy to include.
+// 
+// Instructions:
+//
+//  1)  Get the code and put it somewhere within reach of your project:
+//
+//          https://github.com/eidheim/Simple-Web-Server
+//
+//  2)  Include it in your project.
+//      It's header-only, so you can easily add it to your CMakeLists.txt with INCLUDE_DIRECTORIES.
+//      You can even add it via a relative path, like this:
+//
+//          set(ThirdParty "../../../")
+//          INCLUDE_DIRECTORIES(${ThirdParty})
+//
 #include <Simple-Web-Server/server_https.hpp>
 
 using namespace SimpleWeb;
@@ -15,14 +31,6 @@ using namespace std;
 // We lightly derive from SimpleWeb::HttpsServer, for two reasons:  
 // 1) The base creates a protected io_service, we need to derive to expose io_service, so we can extend it with our timers.
 // 2) We provide a default_resource_send() to send the buffer to the client; we have not needed any custom behavior yet, it gets the job done.
-//
-// NOTE that you must include Simple-Web-Server code in your project:
-// https://github.com/eidheim/Simple-Web-Server
-// You can add it to your CMakeLists.txt via a relative path, like this:
-//
-//      set(ThirdParty "../../../")
-//      INCLUDE_DIRECTORIES(${ThirdParty})
-//
 // ------------------
 class HttpsServer : public Server<HTTPS>
 {

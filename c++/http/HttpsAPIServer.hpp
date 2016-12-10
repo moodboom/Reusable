@@ -9,16 +9,6 @@
 // HttpsAPIServer
 // ------------------
 // Extends HttpsServer to add support for easy creation of RESTful APIS.
-//
-// NOTE that you must include Simple-Web-Server code in your project:
-//  https://github.com/eidheim/Simple-Web-Server
-//
-// It's header-only, so you can easily add it to your CMakeLists.txt with INCLUDE_DIRECTORIES.
-// You can even add it via a relative path, like this:
-//
-//      set(ThirdParty "../../../")
-//      INCLUDE_DIRECTORIES(${ThirdParty})
-//
 // ------------------
 class HttpsATIServer : public HttpsServer
 {
