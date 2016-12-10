@@ -2,3 +2,5 @@
 *.sdf
 *.vcxproj.*
 Debug
+scala/*/target/
+scala/*/*/target/
