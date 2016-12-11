@@ -106,7 +106,8 @@ inline void HttpsAPIServer::createFaviconHandler() {
     }
 
     resource[".*favicon.ico"]["GET"]=[this](std::shared_ptr<HttpsServer::Response> response, std::shared_ptr<HttpsServer::Request> request) {
-        log(LV_ALWAYS,string("Received request: ") + get_request_content(request));
+        log(LV_ALWAYS,string("Received GET request: ") + request->path);
+
         string content = favicon_;
 
         request->header.insert(std::make_pair(string("Content-Type"),string("image/x-icon")));
@@ -117,12 +118,39 @@ inline void HttpsAPIServer::createFaviconHandler() {
 
 
 inline void HttpsAPIServer::createAPIDocumentationHandler() {
-    
+    resource["^/"]["GET"]=[this](std::shared_ptr<HttpsServer::Response> response, std::shared_ptr<HttpsServer::Request> request) {
+        log(LV_ALWAYS,string("Received GET request for API docs"));
+
+        string content = "TODO: API DOCS";
+
+        request->header.insert(std::make_pair(string("Content-Type"),string("text/html")));
+        
+        *response << cstr_HTML_HEADER1 << content.length() << cstr_HTML_HEADER2 << content;
+    };
 }
 
 
 inline void HttpsAPIServer::createBadRequestHandler() {
-    
+
+    default_resource["GET"]=[this](std::shared_ptr<HttpsServer::Response> response, std::shared_ptr<HttpsServer::Request> request) {
+
+        // We respond to all bad requests with a redirect to the index.
+        // Note that this is no place to prevent DDOS - DDOS'ing to legit API calls is trivial.
+        // Help the user out.
+
+        string msg = string("Received unrecognized GET request: ") + request->path;
+        log(LV_ERROR,msg);
+
+        request->header.insert(std::make_pair(string("Content-Type"),string("text/html")));
+        
+        string html = "<html><head>";
+        html += "<meta http-equiv=\"refresh\" content=\"2; URL='/'\" />";
+        html += "</head><body>";
+        html += msg;
+        html += "</body></html>";
+        
+        *response << cstr_HTML_HEADER1 << html.length() << cstr_HTML_HEADER2 << html;
+    };
 }
 
 
