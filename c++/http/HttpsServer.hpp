@@ -19,7 +19,7 @@ using namespace std;
 // HttpsServer
 // ------------------
 // A very simple generic web server meant to be easy to use out of the box.
-// You can derive from this class and provide a function to create your handlers.  Eg:
+// You can derive from this class and create your handlers before calling startServer().  Eg:
 //
 //  void createHandlers() {
 //      resource["^/test.html"]["GET"]=[this](std::shared_ptr<HttpsServer::Response> response, std::shared_ptr<HttpsServer::Request> request) {
@@ -35,10 +35,12 @@ using namespace std;
 // We lightly derive from Simple-Web-Server's Server<HTTPS> class, for these reasons:  
 // 1) The base creates a protected io_service, we need to derive to expose io_service, so we can extend it with our timers.
 // 2) We provide a default_resource_send() to send the buffer to the client; we have not needed any custom behavior yet, it gets the job done.
-// 3) We provide a startServer() function so the user doesn't need to create a thread for the start() base class function.
+// 3) We provide a startServer() function so the user doesn't need to create a thread for the start() base class function, and derived classes can override it.
 // ------------------
 class HttpsServer : public Server<HTTPS>
 {
+    typedef Server<HTTPS> inherited;
+    
     // THEFT!  Steal the base class constructor, as-is.
     using Server<HTTPS>::Server;
 
@@ -48,7 +50,7 @@ public:
 
     virtual void startServer() {
         std::thread server_thread([this](){
-            start();
+            inherited::start();
         });
         std::this_thread::sleep_for(std::chrono::seconds(1));
         server_thread.join();
