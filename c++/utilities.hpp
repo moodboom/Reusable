@@ -118,6 +118,11 @@ public:
         
     } VersionComponent;
 
+    string asString() { 
+        stringstream ss;
+        ss << semver_[0] << "." << semver_[1] << "." << semver_[2];
+        return ss.str();
+    }
     bool VersionParse(const std::string& input)
     {
         // Started here: http://stackoverflow.com/questions/2941491/compare-versions-as-strings

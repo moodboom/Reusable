@@ -46,3 +46,159 @@ const vector<string> c_default_wrappers =
 const string cstr_HTML_HEADER1 = "HTTP/1.1 200 OK\r\nContent-Length: ";
 const string cstr_HTML_HEADER2 = "\r\n\r\n";
 // ------------------------------------------------------------------------------
+
+
+
+// API_call
+// This class wraps everything that defines a RESTful API call.  It has tons of helpers to manage the call, too.
+class API_call
+{
+public:
+    
+    API_call(
+        HTML_METHOD method,
+        vector<string> path_tokens,
+        vector<string> types,
+        vector<pair<string,string>> pair_tokens = vector<pair<string,string>>(),
+        bool b_param_pairs_are_mandatory = true
+    ) :
+        method_(method),
+        path_tokens_(path_tokens),
+        types_(types),
+        pair_tokens_(pair_tokens),
+        b_param_pairs_are_mandatory_(b_param_pairs_are_mandatory)
+    {}
+
+    // This is used to create keys etc, but never for full API call objects.
+    API_call() 
+    {}
+
+    // Call handlers should follow this pattern:
+    // 
+    //      1) on startup, read a static html skeleton into memory.
+    //      2) on call, gather dynamic data and inject into the pre-loaded static html
+    //
+    // This base class can do (1) for you in this function.
+    // It creates a set of static html that mirrors the API structure and the base will read from them.
+    // This also allows us to browse the static html directly, essential when working on the html/css/js skeleton.
+    inline bool load_static_html();
+
+    string url() const
+    {
+        string url;
+
+        for (auto& token : path_tokens_)
+        {
+            url += "/";
+            url += token;
+        }
+        return url;
+    }
+
+    string regex() const
+    {
+        // result regex eg: 
+        //  source  /car/:id/:brand/pic.png
+        //  regex   "^/car/[0-9].*/[s]/pic.png"
+        
+        string regex("^");
+        for (auto& token: path_tokens_)
+        {
+            regex += string("/");
+            if (token[0] == ':')
+            {
+                // TODO add regex for known tokens, generic otherwise
+            } else {
+                regex += token;
+            }
+        }
+        regex += string("[.]");
+        
+        // TODO regex for only requested types_.
+        regex += string(".*"); // types_;
+        
+        return regex;
+    }
+
+    string method() const
+    {
+        switch (method_)
+        {
+            case HM_GET      : return "GET"     ;
+            case HM_PUT      : return "PUT"     ;
+            case HM_POST     : return "POST"    ;
+            case HM_DELETE   : return "DELETE"  ;
+            case HM_PATCH    : return "PATCH"   ;
+            default          : return "Unsupported method";
+        }
+    }
+    void set_method(string m)
+    {
+             if (m == "GET"    ) method_ = HM_GET      ;
+        else if (m == "PUT"    ) method_ = HM_PUT      ;
+        else if (m == "POST"   ) method_ = HM_POST     ;
+        else if (m == "DELETE" ) method_ = HM_DELETE   ;
+        else if (m == "PATCH"  ) method_ = HM_PATCH    ;
+        else method_ = HM_COUNT ;
+    }
+
+    bool b_has_type(string search_type) const
+    {
+        for (auto& t : types_)
+            if (strings_are_equal(t,search_type))
+                return true;
+
+        return false;
+    }
+
+    // These test the *first* type, which should be set for valid API calls.
+    bool b_no_type() const { return types_.empty(); }
+    bool b_type(const string& test_type) const { return !b_no_type() && strings_are_equal(types_[0],test_type); }
+
+
+    HTML_METHOD method_;
+    vector<string>  path_tokens_;
+    vector<string>  types_;
+    vector<pair<string,string>> pair_tokens_;
+    bool b_param_pairs_are_mandatory_;
+
+    string static_html_;
+};
+
+
+bool API_call::load_static_html()
+{
+    if (types_.empty() || types_[0] != "html")
+        return false;
+
+    string filename = "htdocs";
+
+    // NOTE that we do NOT want the actual token here: [auto& token].
+    // We want to work with a copy.  So here, we use [auto token].
+    // THIS IS AN EXCEPTION TO THE GENERAL RULE.  Be C++11 smart, my friend.  :-)
+    for (auto token : path_tokens_)
+    {
+        assert(token.length() > 0);
+
+        // REST api is documented with a leading colon for caller-provided id-type fields.
+        // Remove these from the pathname.
+        if (token[0] == ':')
+            token = token.substr(1,token.length()-1);
+
+        filename += string("/") + token;
+    }
+    filename += string(".") + types_[0];
+
+    try
+    {
+        static_html_ = read_file(filename);
+    }
+    catch (...)
+    {
+        log(LV_ERROR,string("Unable to load static html:") + filename);
+        return false;
+    }
+    return true;
+}
+
+
