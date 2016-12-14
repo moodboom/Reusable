@@ -107,20 +107,25 @@ public:
             regex += string("/");
             if (token[0] == ':')
             {
-                // Special meanings: [:int] = only numerals
+                // Special meanings: /:int/ = only numerals
                 // By default, we will allow any alphanumeric.
                 string id = token.substr(1,token.length()-1);
-                if (strings_are_equal(id,"int"))    regex += "[0-9].*";
-                else                                regex += "[A-Za-z0-9].*";
+                if (strings_are_equal(id,"int"))    regex += "[[:digit:]].*";
+                else                                regex += "[[:alnum:]].*";
 
             } else {
                 regex += token;
             }
         }
-        regex += string("[.]");
-        
-        // TODO regex for only requested types_.
-        regex += string(".*"); // types_;
+        regex += string("[.](");
+        regex += "(";
+        bool bFirst = true;
+        for (auto& type: types_)
+        {
+            if (bFirst) { bFirst = false; } else { regex += "|"; }
+            regex += type;
+        }
+        regex += ")";
         
         return regex;
     }
