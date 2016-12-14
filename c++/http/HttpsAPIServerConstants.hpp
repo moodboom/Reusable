@@ -118,7 +118,6 @@ public:
             }
         }
         regex += string("[.](");
-        regex += "(";
         bool bFirst = true;
         for (auto& type: types_)
         {
