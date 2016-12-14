@@ -107,7 +107,12 @@ public:
             regex += string("/");
             if (token[0] == ':')
             {
-                // TODO add regex for known tokens, generic otherwise
+                // Special meanings: [:int] = only numerals
+                // By default, we will allow any alphanumeric.
+                string id = token.substr(1,token.length()-1);
+                if (strings_are_equal(id,"int"))    regex += "[0-9].*";
+                else                                regex += "[A-Za-z0-9].*";
+
             } else {
                 regex += token;
             }
