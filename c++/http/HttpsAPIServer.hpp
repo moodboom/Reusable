@@ -127,14 +127,12 @@ private:
     // -------
 
     inline bool tokenize_API_url(const std::string& url, std::string& protocol, std::string& host, API_call& ac);
-
     inline string build_path(const string& param);
-
     inline string build_param(const string& param);
 
     std::size_t max_body_size_;
     vector<pair<string,string>> includes_;
-    const string& title_;
+    const string title_;
     const vector<string>& wrappers_;
     string favicon_;
     string index_;
@@ -154,12 +152,8 @@ inline void HttpsAPIServer::createFaviconHandler() {
     }
 
     resource[".*favicon.ico"]["GET"]=[this](std::shared_ptr<HttpsServer::Response> response, std::shared_ptr<HttpsServer::Request> request) {
-        log(LV_ALWAYS,string("Received GET request: ") + request->path);
-
         string content = favicon_;
-
         request->header.insert(std::make_pair(string("Content-Type"),string("image/x-icon")));
-        
         *response << cstr_HTML_HEADER1 << content.length() << cstr_HTML_HEADER2 << content;
     };
 }
@@ -167,23 +161,16 @@ inline void HttpsAPIServer::createFaviconHandler() {
 
 inline void HttpsAPIServer::createAPIDocumentationHandler() {
     resource["^/"]["GET"]=[this](std::shared_ptr<HttpsServer::Response> response, std::shared_ptr<HttpsServer::Request> request) {
-        log(LV_ALWAYS,string("Received GET request for API docs"));
-
-        string content = "TODO: API DOCS";
-
+        string content = index_;
         request->header.insert(std::make_pair(string("Content-Type"),string("text/html")));
-        
         *response << cstr_HTML_HEADER1 << content.length() << cstr_HTML_HEADER2 << content;
     };
 }
 
 
 inline void HttpsAPIServer::createBadRequestHandler() {
-
     default_resource["GET"]=[this](std::shared_ptr<HttpsServer::Response> response, std::shared_ptr<HttpsServer::Request> request) {
-
         badCall(response,request);
-        
     };
 }
 
@@ -194,11 +181,10 @@ inline void HttpsAPIServer::badCall(std::shared_ptr<HttpsServer::Response> respo
     // Note that this is no place to prevent DDOS - DDOS'ing to legit API calls is trivial.
     // Help the user out.
 
-    string msg = string("Received unrecognized GET request: ") + request->path;
+    string msg = string("Received unrecognized ") + request->method + " request: " + request->path;
     log(LV_ERROR,msg);
 
     request->header.insert(std::make_pair(string("Content-Type"),string("text/html")));
-    
     string html = "<html><head>";
     html += "<meta http-equiv=\"refresh\" content=\"2; URL='/'\" />";
     html += "</head><body>";
