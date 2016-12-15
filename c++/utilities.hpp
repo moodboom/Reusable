@@ -4,6 +4,46 @@
 #include "basic_types.hpp"
 #include "miniz.h"
 
+// 2016/12/14 AVAILABLE FUNCTIONS:
+//    static bool strings_are_equal(const string& s1, const string& s2, bool b_case_insensitive = true)
+//    static bool replace(string& str, const string& from, const string& to)
+//    static bool replace_once(string& str, const string& from, const string& to)
+//    static bool replace_with_regex(string& str, const string& from, const string& to)
+//    static bool replace_once_with_regex(string& str, const string& from, const string& to)
+//    static bool b_string_ends_in(const string& source, const string& search)
+//    // class SemVer
+//    static ptime get_current_time()
+//    static ptime string_to_ptime(const string& str_time, const string& str_format)
+//    static ptime iso_string_to_ptime(const string& str_time)
+//    static string ptime_to_string(const ptime& pt, const string& str_format)
+//    static time_t ptime_to_time_t(const ptime& pt)
+//    static ptime time_t_to_ptime(const time_t& tt)
+//    static string time_t_to_string(const time_t& tt, const string& str_format)
+//    static time_t get_current_time_t()
+//    static std::string generate_uuid()
+//    static std::string generate_random_hex(uint_fast32_t length)
+//    static void log(LOG_TO_FILE_VERBOSITY v, string str, bool b_suppress_console = false, bool b_suppress_newline = false, bool b_suppress_file = false, int indent = 0)
+//    static void log(LOG_TO_FILE_VERBOSITY v, int n, bool b_suppress_console = false, bool b_suppress_newline = false, int indent = 0)
+//    static bool backup_any_old_file(const string& filename, const string& prefix = "", const string& suffix = "");
+//    static bool archive_any_old_file(const string& filename, const string& prefix = "", const string& suffix = "");
+//    static void archive_any_old_log_file()
+//    static bool set_log_verbosity(string str_v)
+//    //  #include <boost/filesystem.hpp>
+//    static bool archive_any_old_file(const string& filename, const string& prefix, const string& suffix)
+//    static bool backup_any_old_file(const string& filename, const string& prefix, const string& suffix)
+//    static string read_file(string filename)
+//    //      #include <json/json.hpp>                                // 2016 JSON handling
+//    //      using json = nlohmann::json;
+//    static void start_profile(time_t& start_time)
+//    static void end_profile(const time_t& start_time, std::string msg)
+//    static void start_profile_ms(uint64_t& start_time)
+//    static uint64_t end_profile_ms(const uint64_t& start_time, std::string msg = "")
+//    static bool bEqual(const double& a, const double& b)
+//    static bool bZero(const double& a)
+//    static bool bLessThanOrEqual(const double& a, const double& b)
+//    static void sleep(int n_secs)
+//    static bool unzip_first_file(string& str_zip, string& str_unzipped)
+//    static bool url_decode(const std::string& in, std::string& out)
 
 //=========================================================
 // STRING HELPERS
@@ -480,6 +520,21 @@ static string read_file(string filename)
 // https://github.com/miloyip/rapidjson/
 // it's FAST: https://github.com/mloskot/json_benchmark
 // but it obsesses over allocation (read: F'IN INCONVENIENT for std::string's)
+// More useable: 
+//      
+//      #include <json/json.hpp>                                // 2016 JSON handling
+//      using json = nlohmann::json;
+//      json jsonOrder =
+//      {
+//          { "PlaceEquityOrder", {
+//              { "-xmlns", "http://order.etws.etrade.com" },
+//              { "EquityOrderRequest", {
+//                  { "marketSession","REGULAR"       },
+//                  { "orderTerm"    ,"GOOD_FOR_DAY"  }
+//              }}
+//          }}
+//      };
+//
 // Here we attempt to make rapidjson practical:
 //
 //   1) throw proper exceptions during runtime
@@ -663,6 +718,46 @@ static bool unzip_first_file(string& str_zip, string& str_unzipped)
 	mz_zip_reader_end(&zip_archive);
 
 	return true;
+}
+
+
+static bool url_decode(const std::string& in, std::string& out)
+{
+  out.clear();
+  out.reserve(in.size());
+  for (std::size_t i = 0; i < in.size(); ++i)
+  {
+    if (in[i] == '%')
+    {
+      if (i + 3 <= in.size())
+      {
+        int value = 0;
+        std::istringstream is(in.substr(i + 1, 2));
+        if (is >> std::hex >> value)
+        {
+          out += static_cast<char>(value);
+          i += 2;
+        }
+        else
+        {
+          return false;
+        }
+      }
+      else
+      {
+        return false;
+      }
+    }
+    else if (in[i] == '+')
+    {
+      out += ' ';
+    }
+    else
+    {
+      out += in[i];
+    }
+  }
+  return true;
 }
 //=========================================================
 
