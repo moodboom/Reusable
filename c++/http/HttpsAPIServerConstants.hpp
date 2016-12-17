@@ -107,11 +107,15 @@ public:
             regex += string("/");
             if (token[0] == ':')
             {
-                // Special meanings: /:int/ = only numerals
-                // By default, we will allow any alphanumeric.
+                // Special meanings: 
+                //  /:int/      only numerals
+                //  /:double/   only numerals and [.]
+                //  default     any alphanumeric BUT NOTHING ELSE (eg SLASH :-) ).
+                //              Reommended to use /:string/ for consistency
                 string id = token.substr(1,token.length()-1);
-                if (strings_are_equal(id,"int"))    regex += "[[:digit:]].*";
-                else                                regex += "[[:alnum:]].*";
+                     if (strings_are_equal(id,"int"))    regex += "[[:digit:]]*";
+                else if (strings_are_equal(id,"double")) regex += "[[:digit:].]*";
+                else                                     regex += "[[:alnum:].]*";
 
             } else {
                 regex += token;

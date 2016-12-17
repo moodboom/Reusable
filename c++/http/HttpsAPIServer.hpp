@@ -100,6 +100,10 @@ public:
     
 protected:
     
+    // -------
+    // Helpers
+    // -------
+    bool tokenize_API_url(const std::string& url, std::string& protocol, std::string& host, API_call& ac);
     void badCall(std::shared_ptr<HttpsServer::Response> response, std::shared_ptr<Request> request);
 
 private:
@@ -111,24 +115,19 @@ private:
     // This function performs API self-documentation.
     // We need an index.html file as a basis.
     // Then we automatically inject the API documentation.
-    inline void load_index();
+    void load_index();
     
     // Called on startup using a constructor parameter
-    inline void set_html_includes(const vector<string>& includes);
+    void set_html_includes(const vector<string>& includes);
     
     // Called on startup for each preloaded html file.
     // Search for any include files, and replace with the full script or style.
-    inline void inject_includes(API_call& ac);
+    void inject_includes(API_call& ac);
 
-    inline string get_API_html();
+    string get_API_html();
     
-    // -------
-    // Helpers
-    // -------
-
-    inline bool tokenize_API_url(const std::string& url, std::string& protocol, std::string& host, API_call& ac);
-    inline string build_path(const string& param);
-    inline string build_param(const string& param);
+    string build_path(const string& param);
+    string build_param(const string& param);
 
     std::size_t max_body_size_;
     vector<pair<string,string>> includes_;
