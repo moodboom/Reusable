@@ -130,6 +130,18 @@ public:
         }
         regex += ")";
         
+        if (!pair_tokens_.empty())
+        {
+            if (b_param_pairs_are_mandatory_) {
+                for (auto& pair : pair_tokens_)
+                {
+                    regex += string("(?|&)")+pair.first+"=.*";
+                }
+            } else {
+                regex += ".*";
+            }
+        }
+        
         return regex;
     }
 
