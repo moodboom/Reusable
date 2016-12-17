@@ -135,7 +135,7 @@ public:
             if (b_param_pairs_are_mandatory_) {
                 for (auto& pair : pair_tokens_)
                 {
-                    regex += string("(?|&)")+pair.first+"=.*";
+                    regex += string("[?&]")+pair.first+"=.+?";
                 }
             } else {
                 regex += ".*";
