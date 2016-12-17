@@ -104,7 +104,8 @@ protected:
     // Helpers
     // -------
     bool tokenize_API_url(const std::string& url, std::string& protocol, std::string& host, API_call& ac);
-    void badCall(std::shared_ptr<HttpsServer::Response> response, std::shared_ptr<Request> request);
+    void badCall(HRes response, const string msg);
+    string requestError(HReq request,const string msg);
 
 private:
     
@@ -150,7 +151,7 @@ inline void HttpsAPIServer::createFaviconHandler() {
         log(LV_WARNING,"WARNING: No favicon.ico file was found in [htdocs/].");
     }
 
-    resource[".*favicon.ico"]["GET"]=[this](std::shared_ptr<HttpsServer::Response> response, std::shared_ptr<HttpsServer::Request> request) {
+    resource[".*favicon.ico"]["GET"]=[this](HRes response, HReq request) {
         string content = favicon_;
         request->header.insert(std::make_pair(string("Content-Type"),string("image/x-icon")));
         *response << cstr_HTML_HEADER1 << content.length() << cstr_HTML_HEADER2 << content;
@@ -159,7 +160,7 @@ inline void HttpsAPIServer::createFaviconHandler() {
 
 
 inline void HttpsAPIServer::createAPIDocumentationHandler() {
-    resource["^/"]["GET"]=[this](std::shared_ptr<HttpsServer::Response> response, std::shared_ptr<HttpsServer::Request> request) {
+    resource["^/"]["GET"]=[this](HRes response, HReq request) {
         string content = index_;
         request->header.insert(std::make_pair(string("Content-Type"),string("text/html")));
         *response << cstr_HTML_HEADER1 << content.length() << cstr_HTML_HEADER2 << content;
@@ -168,22 +169,25 @@ inline void HttpsAPIServer::createAPIDocumentationHandler() {
 
 
 inline void HttpsAPIServer::createBadRequestHandler() {
-    default_resource["GET"]=[this](std::shared_ptr<HttpsServer::Response> response, std::shared_ptr<HttpsServer::Request> request) {
-        badCall(response,request);
+    default_resource["GET"]=[this](HRes response, HReq request) {
+        badCall(response,requestError(request,"Received unrecognized request"));
     };
 }
 
 
-inline void HttpsAPIServer::badCall(std::shared_ptr<HttpsServer::Response> response, std::shared_ptr<HttpsServer::Request> request)
+inline string HttpsAPIServer::requestError(HReq request,const string msg) 
+{ 
+    return msg + ": " + request->method + " " + request->path; 
+}
+
+inline void HttpsAPIServer::badCall(HRes response, const string msg)
 {
-    // We respond to all bad requests with a redirect to the index.
+    // We respond to all bad calls with a brief (2 second) message and then a redirect to the index.
     // Note that this is no place to prevent DDOS - DDOS'ing to legit API calls is trivial.
     // Help the user out.
 
-    string msg = string("Received unrecognized ") + request->method + " request: " + request->path;
     log(LV_ERROR,msg);
 
-    request->header.insert(std::make_pair(string("Content-Type"),string("text/html")));
     string html = "<html><head>";
     html += "<meta http-equiv=\"refresh\" content=\"2; URL='/'\" />";
     html += "</head><body>";

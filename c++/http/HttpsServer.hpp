@@ -22,7 +22,7 @@ using namespace std;
 // You can derive from this class and create your handlers before calling startServer().  Eg:
 //
 //  void createHandlers() {
-//      resource["^/test.html"]["GET"]=[this](std::shared_ptr<HttpsServer::Response> response, std::shared_ptr<HttpsServer::Request> request) {
+//      resource["^/test.html"]["GET"]=[this](HRes response, HReq request) {
 //          log(LV_ALWAYS,string("Received GET request: ") + get_request_content(request));
 //          string content="we testin";
 //          *response << "HTTP/1.1 200 OK\r\nContent-Length: " << content.length() << "\r\n\r\n" << content;
@@ -57,7 +57,7 @@ public:
     }
     
     // helpers
-    string get_request_content(std::shared_ptr<Server<HTTPS>::Request> request) { return request->content.string(); }
+    string get_request_content(std::shared_ptr<HttpsServer::Request> request) { return request->content.string(); }
 
 protected:
     
@@ -65,8 +65,11 @@ protected:
     // The response buffer was created previously by a handler.
     // This code is from Simple-Web-Server https_examples.cpp.
     // It is all we have needed so far, so we have not needed to make it virtual.
-    void default_resource_send(/*const HttpsServer &server,*/ std::shared_ptr<HttpsServer::Response> response,
-                               std::shared_ptr<ifstream> ifs, std::shared_ptr<vector<char> > buffer) {
+    void default_resource_send(
+        std::shared_ptr<HttpsServer::Response> response,
+        std::shared_ptr<ifstream> ifs, 
+        std::shared_ptr<vector<char> > buffer
+    ) {
         streamsize read_length;
         if((read_length=ifs->read(&(*buffer)[0], buffer->size()).gcount())>0) {
             response->write(&(*buffer)[0], read_length);
@@ -82,4 +85,7 @@ protected:
     }
 };
 
+
+typedef std::shared_ptr<HttpsServer::Response> HRes;
+typedef std::shared_ptr<HttpsServer::Request>  HReq;
 
