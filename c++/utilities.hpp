@@ -4,14 +4,18 @@
 #include "basic_types.hpp"
 #include "miniz.h"
 
-// 2016/12/14 AVAILABLE FUNCTIONS:
+//  INDEX
+// ~~~~~~~
+// STRING HELPERS
 //    static bool strings_are_equal(const string& s1, const string& s2, bool b_case_insensitive = true)
 //    static bool replace(string& str, const string& from, const string& to)
 //    static bool replace_once(string& str, const string& from, const string& to)
 //    static bool replace_with_regex(string& str, const string& from, const string& to)
 //    static bool replace_once_with_regex(string& str, const string& from, const string& to)
 //    static bool b_string_ends_in(const string& source, const string& search)
+//  VERSIONING
 //    // class SemVer
+// TIME
 //    static ptime get_current_time()
 //    static ptime string_to_ptime(const string& str_time, const string& str_format)
 //    static ptime iso_string_to_ptime(const string& str_time)
@@ -20,30 +24,39 @@
 //    static ptime time_t_to_ptime(const time_t& tt)
 //    static string time_t_to_string(const time_t& tt, const string& str_format)
 //    static time_t get_current_time_t()
+// RANDOM
 //    static std::string generate_uuid()
 //    static std::string generate_random_hex(uint_fast32_t length)
+// LOGGING TO FILE
 //    static void log(LOG_TO_FILE_VERBOSITY v, string str, bool b_suppress_console = false, bool b_suppress_newline = false, bool b_suppress_file = false, int indent = 0)
 //    static void log(LOG_TO_FILE_VERBOSITY v, int n, bool b_suppress_console = false, bool b_suppress_newline = false, int indent = 0)
 //    static bool backup_any_old_file(const string& filename, const string& prefix = "", const string& suffix = "");
 //    static bool archive_any_old_file(const string& filename, const string& prefix = "", const string& suffix = "");
 //    static void archive_any_old_log_file()
 //    static bool set_log_verbosity(string str_v)
+// FILE
 //    //  #include <boost/filesystem.hpp>
-//    static bool archive_any_old_file(const string& filename, const string& prefix, const string& suffix)
-//    static bool backup_any_old_file(const string& filename, const string& prefix, const string& suffix)
 //    static string read_file(string filename)
+// JSON
 //    //      #include <json/json.hpp>                                // 2016 JSON handling
 //    //      using json = nlohmann::json;
+// PROFILING
 //    static void start_profile(time_t& start_time)
 //    static void end_profile(const time_t& start_time, std::string msg)
 //    static void start_profile_ms(uint64_t& start_time)
 //    static uint64_t end_profile_ms(const uint64_t& start_time, std::string msg = "")
+// MATH
 //    static bool bEqual(const double& a, const double& b)
 //    static bool bZero(const double& a)
 //    static bool bLessThanOrEqual(const double& a, const double& b)
+// WEB
+//    static bool url_decode(const std::string& in, std::string& out)
+//    static std::map<const std::string,std::string> parse_form(const std::string& formdata)
+// MISC
 //    static void sleep(int n_secs)
 //    static bool unzip_first_file(string& str_zip, string& str_unzipped)
-//    static bool url_decode(const std::string& in, std::string& out)
+// ~~~~~~~
+
 
 //=========================================================
 // STRING HELPERS
@@ -207,7 +220,7 @@ public:
 
 
 //=========================================================
-//  TIME
+// TIME
 //=========================================================
 static ptime get_current_time()
 {
@@ -511,7 +524,7 @@ static string read_file(string filename)
 
 
 // ===========================================
-// JSON encoding/decoding
+// JSON
 // ===========================================
 
 // -----------------------------------------------------
@@ -633,7 +646,7 @@ static uint64_t end_profile_ms(const uint64_t& start_time, std::string msg = "")
 
 
 //=========================================================
-// math
+// MATH
 //=========================================================
 static bool bEqual(const double& a, const double& b)
 {
@@ -650,6 +663,72 @@ static bool bZero(const double& a)
     ;
 }
 static bool bLessThanOrEqual(const double& a, const double& b) { return (a < b) || bEqual(a,b); }
+//=========================================================
+
+
+//=========================================================
+// WEB
+//=========================================================
+static bool url_decode(const std::string& in, std::string& out)
+{
+  out.clear();
+  out.reserve(in.size());
+  for (std::size_t i = 0; i < in.size(); ++i)
+  {
+    if (in[i] == '%')
+    {
+      if (i + 3 <= in.size())
+      {
+        int value = 0;
+        std::istringstream is(in.substr(i + 1, 2));
+        if (is >> std::hex >> value)
+        {
+          out += static_cast<char>(value);
+          i += 2;
+        }
+        else
+        {
+          return false;
+        }
+      }
+      else
+      {
+        return false;
+      }
+    }
+    else if (in[i] == '+')
+    {
+      out += ' ';
+    }
+    else
+    {
+      out += in[i];
+    }
+  }
+  return true;
+}
+static std::map<const std::string,std::string> parse_form(const std::string& formdata)
+{
+    typedef boost::tokenizer<boost::char_separator<char> > tokenizer;
+
+    std::map<const std::string,std::string> results;
+    
+    boost::char_separator<char> sep("&");
+    tokenizer tokens(formdata, sep);
+    for (auto tok_iter = tokens.begin(); tok_iter != tokens.end(); ++tok_iter)
+    {
+        size_t start_pos = (*tok_iter).find("=");
+        if(start_pos != std::string::npos)
+        {
+            string key_enc, key, value_enc, value;
+            key_enc = (*tok_iter).substr(0,start_pos);
+            value_enc = (*tok_iter).substr(start_pos+1);
+            if (url_decode(key_enc,key) && url_decode(value_enc,value))
+                results[key] = value;
+        }
+    }
+    return results;    
+}
 //=========================================================
 
 
@@ -720,45 +799,6 @@ static bool unzip_first_file(string& str_zip, string& str_unzipped)
 	return true;
 }
 
-
-static bool url_decode(const std::string& in, std::string& out)
-{
-  out.clear();
-  out.reserve(in.size());
-  for (std::size_t i = 0; i < in.size(); ++i)
-  {
-    if (in[i] == '%')
-    {
-      if (i + 3 <= in.size())
-      {
-        int value = 0;
-        std::istringstream is(in.substr(i + 1, 2));
-        if (is >> std::hex >> value)
-        {
-          out += static_cast<char>(value);
-          i += 2;
-        }
-        else
-        {
-          return false;
-        }
-      }
-      else
-      {
-        return false;
-      }
-    }
-    else if (in[i] == '+')
-    {
-      out += ' ';
-    }
-    else
-    {
-      out += in[i];
-    }
-  }
-  return true;
-}
 //=========================================================
 
 
