@@ -483,8 +483,11 @@ static bool backup_any_old_file(const string& filename, const string& prefix, co
         {
             // Make sure the target path exists.
             if (prefix.size()) 
-                if (!boost::filesystem::create_directories(prefix))
-                    return false;
+            {
+                // NOTE that this silly function returns false if nothing needed to be created.
+                // Just ignore the return value.
+                boost::filesystem::create_directories(prefix);
+            }
             
             stringstream ss;
             ss << prefix << filename << (suffix.empty() ? string(".") + generate_uuid() : suffix);
