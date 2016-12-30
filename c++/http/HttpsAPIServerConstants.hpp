@@ -59,14 +59,14 @@ public:
         HTML_METHOD method,
         vector<string> path_tokens,
         vector<string> types,
-        vector<pair<string,string>> pair_tokens = vector<pair<string,string>>(),
-        bool b_param_pairs_are_mandatory = true
+        map<const string,string> url_params = map<const string,string>(),
+        bool b_url_params_are_mandatory = true
     ) :
         method_(method),
         path_tokens_(path_tokens),
         types_(types),
-        pair_tokens_(pair_tokens),
-        b_param_pairs_are_mandatory_(b_param_pairs_are_mandatory)
+        url_params_(url_params),
+        b_url_params_are_mandatory_(b_url_params_are_mandatory)
     {}
 
     // This is used to create keys etc, but never for full API call objects.
@@ -130,13 +130,19 @@ public:
         }
         regex += ")";
         
-        if (!pair_tokens_.empty())
+        if (!url_params_.empty())
         {
-            if (b_param_pairs_are_mandatory_) {
-                for (auto& pair : pair_tokens_)
+            if (b_url_params_are_mandatory_) {
+                // We have to check for params in ANY ORDER.  
+                // Consolidate all param names into an OR, and check for that repeatedly for the number of times of the total param count.
+                // Can be done, but... Pita.  Screw it for now, just check for any character after the type.
+                regex += ".+";
+                /*
+                for (auto& pair : url_params_)
                 {
                     regex += string("[?&]")+pair.first+"=.+?";
                 }
+                */
             } else {
                 regex += ".*";
             }
@@ -184,8 +190,8 @@ public:
     HTML_METHOD method_;
     vector<string>  path_tokens_;
     vector<string>  types_;
-    vector<pair<string,string>> pair_tokens_;
-    bool b_param_pairs_are_mandatory_;
+    map<const string,string> url_params_;
+    bool b_url_params_are_mandatory_;
 
     string static_html_;
 };

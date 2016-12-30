@@ -347,19 +347,18 @@ inline string HttpsAPIServer::get_API_html()
             {
                 html += build_path(string(".")+type);
             }
-            for (int n = 0; n < ac.pair_tokens_.size(); ++n)
-            {
-                // We wrap the bit of non-param html in path tokens.
-                string nonparam;
-                const pair<string,string>& tokenpair = ac.pair_tokens_[n];
-                if (n==0) nonparam += " ? ";
-                else      nonparam += " & ";
-                nonparam += tokenpair.first + "=";
-                html += build_path(nonparam);
 
-                // Now the actual param.
-                html += build_param(tokenpair.second);
+            string separator(" ? ");
+            for (auto& pair : ac.url_params_)
+            {
+                // Separator + name + the actual param.
+                html += build_path(separator);
+                html += build_path(pair.first) + "=";
+                html += build_param(pair.second);
+
+                separator = " & ";
             }
+
             html += wrappers[HW_LINE_END];
         }
     }
@@ -393,7 +392,7 @@ inline bool HttpsAPIServer::tokenize_API_url(const std::string& url, std::string
     protocol.clear();
     host.clear();
     ac.path_tokens_.clear();
-    ac.pair_tokens_.clear();
+    ac.url_params_.clear();
 
     // ===================================
     // protocol
@@ -490,7 +489,7 @@ inline bool HttpsAPIServer::tokenize_API_url(const std::string& url, std::string
     // ===================================
 
     // ===================================
-    // pairs
+    // url params
     // break apart "param1=value1&param2=value2" name-value pairs
 
     // We should always be at the "?" here, skip over it.
@@ -505,12 +504,13 @@ inline bool HttpsAPIServer::tokenize_API_url(const std::string& url, std::string
             return false;
 
         size_t walk3 = url.find_first_of('&',walk2);
-        ac.pair_tokens_.push_back(
-            std::pair<string,string>(
-                url.substr(walk1,walk2-walk1),
-                url.substr(walk2+1,walk3-walk2-1)
-            )
-        );
+        string key, value;
+        if (
+                url_decode(url.substr(walk1,walk2-walk1),key) 
+            &&  url_decode(url.substr(walk2+1,walk3-walk2-1),value))
+        {
+            ac.url_params_[key] = value;
+        }
 
         // All done if we ran past the end.
         if (walk3 == std::string::npos)
