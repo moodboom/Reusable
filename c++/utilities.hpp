@@ -51,7 +51,10 @@
 //    static bool bLessThanOrEqual(const double& a, const double& b)
 // WEB
 //    static bool url_decode(const std::string& in, std::string& out)
-//    static std::map<const std::string,std::string> parse_form(const std::string& formdata)
+//    static std::map<const std::string,std::string> parse_cookies(const std::string& cookiedata)     { return parse_html(cookiedata,"; "); }
+//    static std::map<const std::string,std::string> parse_url_params(const std::string& urldata)     { return parse_html(urldata   ,"?&"); }
+//    static std::map<const std::string,std::string> parse_form(const std::string& formdata)          { return parse_html(formdata  ,"&"); }
+//    static std::map<const std::string,std::string> parse_html(...)
 // MISC
 //    static void sleep(int n_secs)
 //    static bool unzip_first_file(string& str_zip, string& str_unzipped)
@@ -710,17 +713,20 @@ static bool url_decode(const std::string& in, std::string& out)
   }
   return true;
 }
-static std::map<const std::string,std::string> parse_form(const std::string& formdata)
-{
+static std::map<const std::string,std::string> parse_html(
+    const std::string& htmldata,
+    const std::string& separator = "?&",
+    const std::string& name_and_value_separator = "="
+){
     typedef boost::tokenizer<boost::char_separator<char> > tokenizer;
 
     std::map<const std::string,std::string> results;
     
-    boost::char_separator<char> sep("&");
-    tokenizer tokens(formdata, sep);
+    boost::char_separator<char> sep(separator.c_str());
+    tokenizer tokens(htmldata, sep);
     for (auto tok_iter = tokens.begin(); tok_iter != tokens.end(); ++tok_iter)
     {
-        size_t start_pos = (*tok_iter).find("=");
+        size_t start_pos = (*tok_iter).find(name_and_value_separator);
         if(start_pos != std::string::npos)
         {
             string key_enc, key, value_enc, value;
@@ -732,6 +738,9 @@ static std::map<const std::string,std::string> parse_form(const std::string& for
     }
     return results;    
 }
+static std::map<const std::string,std::string> parse_cookies(const std::string& cookiedata)     { return parse_html(cookiedata,"; "); }
+static std::map<const std::string,std::string> parse_url_params(const std::string& urldata)     { return parse_html(urldata   ,"?&"); }
+static std::map<const std::string,std::string> parse_form(const std::string& formdata)          { return parse_html(formdata  ,"&" ); }
 //=========================================================
 
 
