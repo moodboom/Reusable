@@ -274,6 +274,10 @@ static time_t get_current_time_t()
 }
 
 
+//=========================================================
+// RANDOM
+//=========================================================
+
 static std::string generate_uuid()
 {
 	boost::uuids::random_generator rg;
