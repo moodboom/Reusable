@@ -62,6 +62,7 @@ public:
         config.timeout_request = timeout_request;
         config.timeout_content = timeout_content;
     }
+    virtual ~HttpsServer() {}
 
     std::shared_ptr<boost::asio::io_service>& get_io_service() { return io_service; }
 

@@ -69,6 +69,7 @@ public:
         assert(wrappers_.size() == HW_COUNT);
         set_html_includes(includes);
     }
+    virtual ~HttpsAPIServer() {}
 
     // THE RESTful API
     // Make sure you define this before calling startServer().
@@ -104,8 +105,8 @@ protected:
     // Helpers
     // -------
     bool tokenize_API_url(const std::string& url, std::string& protocol, std::string& host, API_call& ac);
-    void badCall(HRes response, const string msg);
-    string requestError(HReq request,const string msg);
+    void badCall(HRes &response, const string msg);
+    string requestError(const Request &request, const string msg);
 
 private:
     
@@ -170,17 +171,17 @@ inline void HttpsAPIServer::createAPIDocumentationHandler() {
 
 inline void HttpsAPIServer::createBadRequestHandler() {
     default_resource["GET"]=[this](HRes response, HReq request) {
-        badCall(response,requestError(request,"Received unrecognized request"));
+        badCall(response,requestError(*request,"Received unrecognized request"));
     };
 }
 
 
-inline string HttpsAPIServer::requestError(HReq request,const string msg) 
+inline string HttpsAPIServer::requestError(const HttpsServer::Request& request, const string msg) 
 { 
-    return msg + ": " + request->method + " " + request->path; 
+    return msg + ": " + request.method + " " + request.path; 
 }
 
-inline void HttpsAPIServer::badCall(HRes response, const string msg)
+inline void HttpsAPIServer::badCall(HRes& response, const string msg)
 {
     // We respond to all bad calls with a brief (2 second) message and then a redirect to the index.
     // Note that this is no place to prevent DDOS - DDOS'ing to legit API calls is trivial.
