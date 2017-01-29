@@ -50,6 +50,6 @@ public:
 };
 
 // Results extraction helpers
-static string get_body(std::shared_ptr<Client<HTTPS>::Response> response)           { return string(istreambuf_iterator<char>(response->content), {}); }
-static int32_t get_status_code(std::shared_ptr<Client<HTTPS>::Response> response)   { return boost::lexical_cast<int32_t>(response->status_code.substr(0,3));; }
+static string get_body(std::shared_ptr<Client<HTTPS>::Response> response)           { if (response) return string(istreambuf_iterator<char>(response->content), {}); return ""; }
+static int32_t get_status_code(std::shared_ptr<Client<HTTPS>::Response> response)   { if (response) return boost::lexical_cast<int32_t>(response->status_code.substr(0,3));; return 500; }
 
