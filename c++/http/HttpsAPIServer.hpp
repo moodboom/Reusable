@@ -39,6 +39,7 @@ public:
             
         // required params
         const vector<string>& includes,
+        const vector<string>& static_files,
         const string& title,
 
         // required base params
@@ -68,6 +69,7 @@ public:
     {
         assert(wrappers_.size() == HW_COUNT);
         set_html_includes(includes);
+        add_static_file_handlers(static_files);
     }
     virtual ~HttpsAPIServer() {}
 
@@ -121,6 +123,9 @@ private:
     
     // Called on startup using a constructor parameter
     void set_html_includes(const vector<string>& includes);
+
+    // Static includes are any files that are served up as-is by the webserver.
+    void add_static_file_handlers(const vector<string>& static_files);
     
     // Called on startup for each preloaded html file.
     // Search for any include files, and replace with the full script or style.
@@ -133,6 +138,7 @@ private:
 
     std::size_t max_body_size_;
     vector<pair<string,string>> includes_;
+    map<const string,const string> static_files_;
     const string title_;
     const vector<string>& wrappers_;
     string favicon_;
@@ -152,11 +158,53 @@ inline void HttpsAPIServer::createFaviconHandler() {
         log(LV_WARNING,"WARNING: No favicon.ico file was found in [htdocs/].");
     }
 
-    resource[".*favicon.ico"]["GET"]=[this](HRes response, HReq request) {
+    resource["[./]*favicon.ico"]["GET"]=[this](HRes response, HReq request) {
         string content = favicon_;
         request->header.insert(std::make_pair(string("Content-Type"),string("image/x-icon")));
         *response << cstr_HTML_HEADER1 << content.length() << cstr_HTML_HEADER2 << content;
     };
+}
+
+
+inline void HttpsAPIServer::add_static_file_handlers(const vector<string>& static_files) {
+
+    // NOTE that these are prefixed with [htdocs] when reading from file system,
+    // and expected to be requested with the exact url from clients.
+    
+    for (auto& file : static_files)
+    {
+        string body;
+        try
+        {
+            body = read_file(string("htdocs")+file);
+        }
+        catch(...)
+        {
+            log(LV_WARNING,string("WARNING: ")+file+" was not found and will not be served.");
+            return;
+        }
+
+        // We keep them all in memory and serve them up like lightning.
+        static_files_.insert(make_pair(file,body));
+
+        resource[file]["GET"]=[this](HRes response, HReq request) {
+            const string& body = static_files_[request->path];
+            
+            // We provide mime types of css, jss, x-icon.  Expand as needed.
+            string content_type;
+            if (request->path.substr(request->path.length()-4) == ".css")
+              content_type = "text/css";
+            else if (request->path.substr(request->path.length()-3) == ".js")
+              content_type = "text/javascript";
+            else if (request->path.substr(request->path.length()-4) == ".ico")
+              content_type = "image/x-icon";
+            else
+              content_type = "text/plain";
+              
+            // TODO if needed: request->header.insert(std::make_pair(string("Content-Type"),string("image/x-icon")));
+            *response << cstr_HTML_HEADER1 << body.length() << cstr_HTML_HEADER2 << body;
+        };
+    }
 }
 
 
