@@ -191,18 +191,22 @@ inline void HttpsAPIServer::add_static_file_handlers(const vector<string>& stati
             const string& body = static_files_[request->path];
             
             // We provide mime types of css, jss, x-icon.  Expand as needed.
-            string content_type;
-            if (request->path.substr(request->path.length()-4) == ".css")
-              content_type = "text/css";
-            else if (request->path.substr(request->path.length()-3) == ".js")
-              content_type = "text/javascript";
-            else if (request->path.substr(request->path.length()-4) == ".ico")
-              content_type = "image/x-icon";
+            
+            // NOTE that injecting header data into our header constants requires
+            // a CRLF at the START of the header.
+            
+            string content_type = "\r\nContent-Type: ";
+            if (strings_are_equal(request->path.substr(request->path.length()-4),".css"))
+              content_type += "text/css";
+            else if (strings_are_equal(request->path.substr(request->path.length()-3),".js"))
+              content_type += "text/javascript";
+            else if (strings_are_equal(request->path.substr(request->path.length()-4),".ico"))
+            if (request->path.substr(request->path.length()-4) == ".ico")
+              content_type += "image/x-icon";
             else
-              content_type = "text/plain";
-              
-            // TODO if needed: request->header.insert(std::make_pair(string("Content-Type"),string("image/x-icon")));
-            *response << cstr_HTML_HEADER1 << body.length() << cstr_HTML_HEADER2 << body;
+              content_type += "text/plain";
+
+            *response << cstr_HTML_HEADER1 << body.length() << content_type << cstr_HTML_HEADER2 << body;
         };
     }
 }
