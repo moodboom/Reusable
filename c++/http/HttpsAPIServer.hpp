@@ -50,6 +50,8 @@ public:
 
         // defaulted params
         const vector<string>& wrappers = c_default_wrappers,
+        bool bServeRootOnError = false,
+        bool bServeAPIAtRoot = false,
         int max_body_size = 100000,
 
         // defaulted base params
@@ -64,8 +66,9 @@ public:
         // Init vars
         title_(title),
         wrappers_(wrappers),
-        max_body_size_(max_body_size)
-        
+        bServeRootOnError_(bServeRootOnError),
+        bServeAPIAtRoot_(bServeAPIAtRoot),
+        max_body_size_(max_body_size)        
     {
         assert(wrappers_.size() == HW_COUNT);
         set_html_includes(includes);
@@ -95,8 +98,12 @@ public:
         }
 
         createFaviconHandler();
-        createAPIDocumentationHandler();
-        createBadRequestHandler();
+        
+        if (bServeAPIAtRoot_)
+          createAPIDocumentationHandler();
+          
+        if (bServeRootOnError_)
+          createBadRequestHandler();
 
         inherited::startServer();
     }
@@ -143,7 +150,9 @@ private:
     const vector<string>& wrappers_;
     string favicon_;
     string index_;
-
+    
+    bool bServeRootOnError_;
+    bool bServeAPIAtRoot_;
 };
 
 
