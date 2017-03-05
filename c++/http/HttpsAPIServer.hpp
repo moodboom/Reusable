@@ -114,7 +114,7 @@ protected:
     // Helpers
     // -------
     bool tokenize_API_url(const std::string& url, std::string& protocol, std::string& host, API_call& ac);
-    void badCall(HRes &response, const string msg);
+    void badCall(HRes &response, const string msg, int delay_secs = 1);
     string requestError(const Request &request, const string msg);
 
 private:
@@ -242,7 +242,7 @@ inline string HttpsAPIServer::requestError(const HttpsServer::Request& request, 
     return msg + ": " + request.method + " " + request.path; 
 }
 
-inline void HttpsAPIServer::badCall(HRes& response, const string msg)
+inline void HttpsAPIServer::badCall(HRes& response, const string msg, int delay_secs)
 {
     // We respond to all bad calls with a brief (2 second) message and then a redirect to the index.
     // Note that this is no place to prevent DDOS - DDOS'ing to legit API calls is trivial.
@@ -250,11 +250,14 @@ inline void HttpsAPIServer::badCall(HRes& response, const string msg)
 
     log(LV_ERROR,msg);
 
-    string html = "<html><head>";
-    html += "<meta http-equiv=\"refresh\" content=\"2; URL='/'\" />";
-    html += "</head><body>";
-    html += msg;
-    html += "</body></html>";
+    stringstream ss;
+    ss << 
+      R"(<html><head>)"
+      R"(<meta http-equiv="refresh" content=")" << delay_secs << R"(; URL='/'" />)"
+      R"(</head><body>)"
+      << msg << 
+      R"(</body></html>)";
+    string html = ss.str();
     
     *response << cstr_HTML_HEADER1 << html.length() << cstr_HTML_HEADER2 << html;
 }
