@@ -199,7 +199,8 @@ inline void HttpsAPIServer::add_static_file_handlers(const vector<string>& stati
         resource[file]["GET"]=[this](HRes response, HReq request) {
             const string& body = static_files_[request->path];
             
-            // We provide mime types of css, jss, x-icon.  Expand as needed.
+            // We provide mime types for extensions: css, jss, png, jpg, x-icon
+            // Expand as needed.
             
             // NOTE that injecting header data into our header constants requires
             // a CRLF at the START of the header.
@@ -209,8 +210,11 @@ inline void HttpsAPIServer::add_static_file_handlers(const vector<string>& stati
               content_type += "text/css";
             else if (strings_are_equal(request->path.substr(request->path.length()-3),".js"))
               content_type += "text/javascript";
+            else if (strings_are_equal(request->path.substr(request->path.length()-4),".png"))
+              content_type += "image/png";
+            else if (strings_are_equal(request->path.substr(request->path.length()-4),".jpg"))
+              content_type += "image/jpeg";
             else if (strings_are_equal(request->path.substr(request->path.length()-4),".ico"))
-            if (request->path.substr(request->path.length()-4) == ".ico")
               content_type += "image/x-icon";
             else
               content_type += "text/plain";
@@ -244,22 +248,16 @@ inline string HttpsAPIServer::requestError(const HttpsServer::Request& request, 
 
 inline void HttpsAPIServer::badCall(HRes& response, const string msg, int delay_secs)
 {
-    // We respond to all bad calls with a brief (2 second) message and then a redirect to the index.
+    // We respond to all bad calls with a redirect to the index.
     // Note that this is no place to prevent DDOS - DDOS'ing to legit API calls is trivial.
-    // Help the user out.
-
     log(LV_ERROR,msg);
 
-    stringstream ss;
-    ss << 
-      R"(<html><head>)"
-      R"(<meta http-equiv="refresh" content=")" << delay_secs << R"(; URL='/'" />)"
-      R"(</head><body>)"
-      << msg << 
-      R"(</body></html>)";
-    string html = ss.str();
-    
-    *response << cstr_HTML_HEADER1 << html.length() << cstr_HTML_HEADER2 << html;
+    // ALWAYS USE HTTP 302 HEADER for redirection!  
+    // Not perfect.  But anything else is worse.
+    // http://stackoverflow.com/questions/2839585/what-is-correct-http-status-code-when-redirecting-to-a-login-page
+    // Avoid this OLD way using spam-abused redirection method:
+    //  "<meta http-equiv=\"refresh\" content=\"1; URL='" + redirect + "'\" />";
+    *response << cstr_HTML_302_HEADER1 << "/" << cstr_HTML_HEADER2;
 }
 
 
@@ -449,6 +447,10 @@ inline bool HttpsAPIServer::tokenize_API_url(const std::string& url, std::string
     //
     // If we do not find such a format, it does not fit our RESTful API model and we return false.
     // Specifically, we REQUIRE version and action.
+
+    // One special case: /
+    // Valid, but nothing to do but return true.
+    if (url == "/") return true;
 
     // We must at least have /version/action.  No buffer overflow attempts please.
     if (url.length() < 4 || url.length() > 700)
