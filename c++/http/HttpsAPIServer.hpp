@@ -186,6 +186,11 @@ inline void HttpsAPIServer::add_static_file_handlers(const vector<string>& stati
         try
         {
             body = read_file(string("htdocs")+file);
+            
+            // Clean up any static data.
+            // Important so during development, js (etc) can be made directly observable in browser.
+            replace_with_regex(body,"<!-- DISCARDED BY SERVER BEGIN[\\s\\S]*?DISCARDED BY SERVER END -->","");
+        
         }
         catch(...)
         {
