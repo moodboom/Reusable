@@ -16,7 +16,18 @@ using namespace std;
 //    static bool replace_with_regex(string& str, const string& from, const string& to)
 //    static bool replace_once_with_regex(string& str, const string& from, const string& to)
 //    static bool b_string_ends_in(const string& source, const string& search)
-//  VERSIONING
+//    split string: vector<string> strs; boost::split(strs,line,boost::is_any_of("\t"));
+//   WEB
+//    static bool url_decode(const std::string& in, std::string& out)
+//    static string url_encode(const string &value)
+//    static std::map<const std::string,std::string> parse_cookies(const std::string& cookiedata)     { return parse_html(cookiedata,"; "); }
+//    static std::map<const std::string,std::string> parse_url_params(const std::string& urldata)     { return parse_html(urldata   ,"?&"); }
+//    static std::map<const std::string,std::string> parse_form(const std::string& formdata)          { return parse_html(formdata  ,"&"); }
+//    static std::map<const std::string,std::string> parse_html(...)
+//   JSON
+//    //      #include <json/json.hpp>                                // 2016 JSON handling
+//    //      using json = nlohmann::json;
+//   VERSIONING
 //    // class SemVer
 // TIME
 //    static ptime get_current_time()
@@ -40,9 +51,6 @@ using namespace std;
 // FILE
 //    //  #include <boost/filesystem.hpp>
 //    static string read_file(string filename)
-// JSON
-//    //      #include <json/json.hpp>                                // 2016 JSON handling
-//    //      using json = nlohmann::json;
 // PROFILING
 //    static void start_profile(time_t& start_time)
 //    static void end_profile(const time_t& start_time, std::string msg)
@@ -52,12 +60,6 @@ using namespace std;
 //    static bool bEqual(const double& a, const double& b)
 //    static bool bZero(const double& a)
 //    static bool bLessThanOrEqual(const double& a, const double& b)
-// WEB
-//    static bool url_decode(const std::string& in, std::string& out)
-//    static std::map<const std::string,std::string> parse_cookies(const std::string& cookiedata)     { return parse_html(cookiedata,"; "); }
-//    static std::map<const std::string,std::string> parse_url_params(const std::string& urldata)     { return parse_html(urldata   ,"?&"); }
-//    static std::map<const std::string,std::string> parse_form(const std::string& formdata)          { return parse_html(formdata  ,"&"); }
-//    static std::map<const std::string,std::string> parse_html(...)
 // MISC
 //    static void sleep(int n_secs)
 //    static bool unzip_first_file(string& str_zip, string& str_unzipped)
@@ -150,7 +152,187 @@ static bool b_string_ends_in(const string& source, const string& search)
         &&  source.substr(source.size()-search.size(),search.size()) == search
     );
 }
+
+
 //=========================================================
+// WEB
+//=========================================================
+static bool url_decode(const std::string& in, std::string& out)
+{
+  out.clear();
+  out.reserve(in.size());
+  for (std::size_t i = 0; i < in.size(); ++i)
+  {
+    if (in[i] == '%')
+    {
+      if (i + 3 <= in.size())
+      {
+        int value = 0;
+        std::istringstream is(in.substr(i + 1, 2));
+        if (is >> std::hex >> value)
+        {
+          out += static_cast<char>(value);
+          i += 2;
+        }
+        else
+        {
+          return false;
+        }
+      }
+      else
+      {
+        return false;
+      }
+    }
+    else if (in[i] == '+')
+    {
+      out += ' ';
+    }
+    else
+    {
+      out += in[i];
+    }
+  }
+  return true;
+}
+static string url_encode(const string &value) {
+    ostringstream escaped;
+    escaped.fill('0');
+    escaped << hex;
+
+    for (string::const_iterator i = value.begin(), n = value.end(); i != n; ++i) {
+        string::value_type c = (*i);
+
+        // Keep alphanumeric and other accepted characters intact
+        if (isalnum(c) || c == '-' || c == '_' || c == '.' || c == '~') {
+            escaped << c;
+            continue;
+        }
+
+        // Any other characters are percent-encoded
+        escaped << uppercase;
+        escaped << '%' << setw(2) << int((unsigned char) c);
+        escaped << nouppercase;
+    }
+
+    return escaped.str();
+}
+static std::map<const std::string,std::string> parse_html(
+    const std::string& htmldata,
+    const std::string& separator = "?&",
+    const std::string& name_and_value_separator = "="
+){
+    typedef boost::tokenizer<boost::char_separator<char> > tokenizer;
+
+    std::map<const std::string,std::string> results;
+    
+    boost::char_separator<char> sep(separator.c_str());
+    tokenizer tokens(htmldata, sep);
+    for (auto tok_iter = tokens.begin(); tok_iter != tokens.end(); ++tok_iter)
+    {
+        size_t start_pos = (*tok_iter).find(name_and_value_separator);
+        if(start_pos != std::string::npos)
+        {
+            string key_enc, key, value_enc, value;
+            key_enc = (*tok_iter).substr(0,start_pos);
+            value_enc = (*tok_iter).substr(start_pos+1);
+            if (url_decode(key_enc,key) && url_decode(value_enc,value))
+                results[key] = value;
+        }
+    }
+    return results;    
+}
+static std::map<const std::string,std::string> parse_cookies(const std::string& cookiedata)     { return parse_html(cookiedata,"; "); }
+static std::map<const std::string,std::string> parse_url_params(const std::string& urldata)     { return parse_html(urldata   ,"?&"); }
+static std::map<const std::string,std::string> parse_form(const std::string& formdata)          { return parse_html(formdata  ,"&" ); }
+
+
+// ===========================================
+// JSON
+// ===========================================
+
+// -----------------------------------------------------
+// https://gist.github.com/moodboom/0ad810280635ead63d0f
+// rapidjson.org
+// https://github.com/miloyip/rapidjson/
+// it's FAST: https://github.com/mloskot/json_benchmark
+// but it obsesses over allocation (read: F'IN INCONVENIENT for std::string's)
+// More useable: 
+//      
+//      #include <json/json.hpp>                                // 2016 JSON handling
+//      using json = nlohmann::json;
+//      json jsonOrder =
+//      {
+//          { "PlaceEquityOrder", {
+//              { "-xmlns", "http://order.etws.etrade.com" },
+//              { "EquityOrderRequest", {
+//                  { "marketSession","REGULAR"       },
+//                  { "orderTerm"    ,"GOOD_FOR_DAY"  }
+//              }}
+//          }}
+//      };
+//
+// Here we attempt to make rapidjson practical:
+//
+//   1) throw proper exceptions during runtime
+//   2) directly handle std::string
+
+// We override the default behavior of asserting on parse errors
+// with throwing of this exception.  Then we can gracefully handle errors.
+class rapidjson_exception : public std::runtime_error
+{
+public:
+    rapidjson_exception() : std::runtime_error("json schema invalid") {}
+};
+#define RAPIDJSON_ASSERT(x)  if(x); else throw rapidjson_exception();
+
+#include <rapidjson/document.h>
+#include <rapidjson/stringbuffer.h>       // These two includes allow you to get an object as a string
+#include <rapidjson/writer.h>             // That allows an array of objects to use an object parser function
+
+static string json_get_string(rapidjson::Document& d)
+{
+    rapidjson::StringBuffer sb;
+    rapidjson::Writer<rapidjson::StringBuffer> writer( sb );
+    d.Accept( writer );
+    return sb.GetString();
+}
+
+// 2016/03/12 Sure rapidjson is fast but it sucks ass at handling std::string.  No excuse.
+// See docs here:
+//
+//      https://github.com/miloyip/rapidjson/blob/master/example/tutorial/tutorial.cpp
+//
+static void json_add_string(rapidjson::Document& d, rapidjson::Value& parent, const string& name, const string& value)
+{
+    rapidjson::Value n;
+    n.SetString(name.c_str(),name.size(),d.GetAllocator());
+    rapidjson::Value v;
+    v.SetString(value.c_str(),value.size(),d.GetAllocator());
+    parent.AddMember(n,v,d.GetAllocator());
+}
+// -----------------------------------------------------
+
+
+// ===========================================
+//   boost XML parsing via property_tree
+// ===========================================
+// - Does not do SAX-style parsing
+// - Messy
+// - Uses RapidXML underneath (good i think)
+//
+// I'll keep the headers here since we only plan
+// to use it here to extract customer xml.
+//
+// NOTE that ptree JSON handling does not preserve
+// int/bool/etc type - rendering it totally useless.
+// ===========================================
+#define BOOST_SPIRIT_THREADSAFE
+#include <boost/property_tree/ptree.hpp>
+// #include <boost/property_tree/json_parser.hpp>
+#include <boost/property_tree/xml_parser.hpp>
+using boost::property_tree::ptree;
+// ===========================================
 
 
 //=========================================================
@@ -536,94 +718,6 @@ static string read_file(string filename)
 //=========================================================
 
 
-// ===========================================
-// JSON
-// ===========================================
-
-// -----------------------------------------------------
-// https://gist.github.com/moodboom/0ad810280635ead63d0f
-// rapidjson.org
-// https://github.com/miloyip/rapidjson/
-// it's FAST: https://github.com/mloskot/json_benchmark
-// but it obsesses over allocation (read: F'IN INCONVENIENT for std::string's)
-// More useable: 
-//      
-//      #include <json/json.hpp>                                // 2016 JSON handling
-//      using json = nlohmann::json;
-//      json jsonOrder =
-//      {
-//          { "PlaceEquityOrder", {
-//              { "-xmlns", "http://order.etws.etrade.com" },
-//              { "EquityOrderRequest", {
-//                  { "marketSession","REGULAR"       },
-//                  { "orderTerm"    ,"GOOD_FOR_DAY"  }
-//              }}
-//          }}
-//      };
-//
-// Here we attempt to make rapidjson practical:
-//
-//   1) throw proper exceptions during runtime
-//   2) directly handle std::string
-
-// We override the default behavior of asserting on parse errors
-// with throwing of this exception.  Then we can gracefully handle errors.
-class rapidjson_exception : public std::runtime_error
-{
-public:
-    rapidjson_exception() : std::runtime_error("json schema invalid") {}
-};
-#define RAPIDJSON_ASSERT(x)  if(x); else throw rapidjson_exception();
-
-#include <rapidjson/document.h>
-#include <rapidjson/stringbuffer.h>       // These two includes allow you to get an object as a string
-#include <rapidjson/writer.h>             // That allows an array of objects to use an object parser function
-
-static string json_get_string(rapidjson::Document& d)
-{
-    rapidjson::StringBuffer sb;
-    rapidjson::Writer<rapidjson::StringBuffer> writer( sb );
-    d.Accept( writer );
-    return sb.GetString();
-}
-
-// 2016/03/12 Sure rapidjson is fast but it sucks ass at handling std::string.  No excuse.
-// See docs here:
-//
-//      https://github.com/miloyip/rapidjson/blob/master/example/tutorial/tutorial.cpp
-//
-static void json_add_string(rapidjson::Document& d, rapidjson::Value& parent, const string& name, const string& value)
-{
-    rapidjson::Value n;
-    n.SetString(name.c_str(),name.size(),d.GetAllocator());
-    rapidjson::Value v;
-    v.SetString(value.c_str(),value.size(),d.GetAllocator());
-    parent.AddMember(n,v,d.GetAllocator());
-}
-// -----------------------------------------------------
-
-
-// ===========================================
-//   boost XML parsing via property_tree
-// ===========================================
-// - Does not do SAX-style parsing
-// - Messy
-// - Uses RapidXML underneath (good i think)
-//
-// I'll keep the headers here since we only plan
-// to use it here to extract customer xml.
-//
-// NOTE that ptree JSON handling does not preserve
-// int/bool/etc type - rendering it totally useless.
-// ===========================================
-#define BOOST_SPIRIT_THREADSAFE
-#include <boost/property_tree/ptree.hpp>
-// #include <boost/property_tree/json_parser.hpp>
-#include <boost/property_tree/xml_parser.hpp>
-using boost::property_tree::ptree;
-// ===========================================
-
-
 //=========================================================
 // PROFILING
 //=========================================================
@@ -676,100 +770,6 @@ static bool bZero(const double& a)
     ;
 }
 static bool bLessThanOrEqual(const double& a, const double& b) { return (a < b) || bEqual(a,b); }
-//=========================================================
-
-
-//=========================================================
-// WEB
-//=========================================================
-static bool url_decode(const std::string& in, std::string& out)
-{
-  out.clear();
-  out.reserve(in.size());
-  for (std::size_t i = 0; i < in.size(); ++i)
-  {
-    if (in[i] == '%')
-    {
-      if (i + 3 <= in.size())
-      {
-        int value = 0;
-        std::istringstream is(in.substr(i + 1, 2));
-        if (is >> std::hex >> value)
-        {
-          out += static_cast<char>(value);
-          i += 2;
-        }
-        else
-        {
-          return false;
-        }
-      }
-      else
-      {
-        return false;
-      }
-    }
-    else if (in[i] == '+')
-    {
-      out += ' ';
-    }
-    else
-    {
-      out += in[i];
-    }
-  }
-  return true;
-}
-static string url_encode(const string &value) {
-    ostringstream escaped;
-    escaped.fill('0');
-    escaped << hex;
-
-    for (string::const_iterator i = value.begin(), n = value.end(); i != n; ++i) {
-        string::value_type c = (*i);
-
-        // Keep alphanumeric and other accepted characters intact
-        if (isalnum(c) || c == '-' || c == '_' || c == '.' || c == '~') {
-            escaped << c;
-            continue;
-        }
-
-        // Any other characters are percent-encoded
-        escaped << uppercase;
-        escaped << '%' << setw(2) << int((unsigned char) c);
-        escaped << nouppercase;
-    }
-
-    return escaped.str();
-}
-static std::map<const std::string,std::string> parse_html(
-    const std::string& htmldata,
-    const std::string& separator = "?&",
-    const std::string& name_and_value_separator = "="
-){
-    typedef boost::tokenizer<boost::char_separator<char> > tokenizer;
-
-    std::map<const std::string,std::string> results;
-    
-    boost::char_separator<char> sep(separator.c_str());
-    tokenizer tokens(htmldata, sep);
-    for (auto tok_iter = tokens.begin(); tok_iter != tokens.end(); ++tok_iter)
-    {
-        size_t start_pos = (*tok_iter).find(name_and_value_separator);
-        if(start_pos != std::string::npos)
-        {
-            string key_enc, key, value_enc, value;
-            key_enc = (*tok_iter).substr(0,start_pos);
-            value_enc = (*tok_iter).substr(start_pos+1);
-            if (url_decode(key_enc,key) && url_decode(value_enc,value))
-                results[key] = value;
-        }
-    }
-    return results;    
-}
-static std::map<const std::string,std::string> parse_cookies(const std::string& cookiedata)     { return parse_html(cookiedata,"; "); }
-static std::map<const std::string,std::string> parse_url_params(const std::string& urldata)     { return parse_html(urldata   ,"?&"); }
-static std::map<const std::string,std::string> parse_form(const std::string& formdata)          { return parse_html(formdata  ,"&" ); }
 //=========================================================
 
 
