@@ -188,7 +188,36 @@ public:
     bool b_no_type() const { return types_.empty(); }
     bool b_type(const string& test_type) const { return !b_no_type() && strings_are_equal(types_[0],test_type); }
 
+    // Param helpers
+    inline bool getUrlParam_int64(
+        const string& key,      // in
+        int64_t& n_value        // out
+    ) {
+      string value;
+      if (!getUrlParam(key,value)) 
+        return false;
+      
+      try { 
+          n_value = boost::lexical_cast<int64_t>(value); 
+      } catch (...) { 
+          return false;
+      }
+      
+      return true;      
+    }
+    
+    inline bool getUrlParam(
+        const string& key,      // in
+        string& value           // out
+    ) {
+      auto it = url_params_.find(key);
+      if (it == url_params_.end())
+        return false;
 
+      value = it->second;
+      return true;
+    }
+    
     HTML_METHOD method_;
     vector<string>  path_tokens_;
     vector<string>  types_;
