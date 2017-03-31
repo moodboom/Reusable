@@ -169,8 +169,8 @@ inline void HttpsAPIServer::createFaviconHandler() {
 
     resource["[./]*favicon.ico"]["GET"]=[this](HRes response, HReq request) {
         string content = favicon_;
-        request->header.insert(std::make_pair(string("Content-Type"),string("image/x-icon")));
-        *response << cstr_HTML_HEADER1 << content.length() << cstr_HTML_HEADER2 << content;
+        string content_type = "\r\nContent-Type: image/x-icon";
+        *response << cstr_HTML_HEADER1 << content.length() << content_type << cstr_HTML_HEADER2 << content;
     };
 }
 
@@ -211,7 +211,7 @@ inline void HttpsAPIServer::add_static_file_handlers(const vector<string>& stati
             // a CRLF at the START of the header.
             
             string content_type = "\r\nContent-Type: ";
-            if (strings_are_equal(request->path.substr(request->path.length()-4),".css"))
+                 if (strings_are_equal(request->path.substr(request->path.length()-4),".css"))
               content_type += "text/css";
             else if (strings_are_equal(request->path.substr(request->path.length()-3),".js"))
               content_type += "text/javascript";
@@ -224,7 +224,12 @@ inline void HttpsAPIServer::add_static_file_handlers(const vector<string>& stati
             else
               content_type += "text/plain";
 
-            *response << cstr_HTML_HEADER1 << body.length() << content_type << cstr_HTML_HEADER2 << body;
+            // ALWAYS add caching to all static resources.
+            // If these resources are dynamic, add an API handler, or use versioning in the url (recommended).
+            // TODO Unfathomably, chrome would not cache css for me even when receiving this header (verified in devtools).
+            string str_long_cache = "\r\nCache-Control: public, max-age=31536000";
+            
+            *response << cstr_HTML_HEADER1 << body.length() << content_type << str_long_cache << cstr_HTML_HEADER2 << body;
         };
     }
 }
@@ -233,8 +238,8 @@ inline void HttpsAPIServer::add_static_file_handlers(const vector<string>& stati
 inline void HttpsAPIServer::createAPIDocumentationHandler() {
     resource["^/"]["GET"]=[this](HRes response, HReq request) {
         string content = index_;
-        request->header.insert(std::make_pair(string("Content-Type"),string("text/html")));
-        *response << cstr_HTML_HEADER1 << content.length() << cstr_HTML_HEADER2 << content;
+        string content_type = "\r\nContent-Type: text/html";
+        *response << cstr_HTML_HEADER1 << content.length() << content_type << cstr_HTML_HEADER2 << content;
     };
 }
 
