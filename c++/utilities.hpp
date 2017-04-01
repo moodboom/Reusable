@@ -770,6 +770,7 @@ static bool bZero(const double& a)
     ;
 }
 static bool bLessThanOrEqual(const double& a, const double& b) { return (a < b) || bEqual(a,b); }
+static bool bLessThan(const double& a, const double& b) { return (a + std::numeric_limits<double>::epsilon()) < b; }
 //=========================================================
 
 
