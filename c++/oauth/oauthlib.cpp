@@ -497,7 +497,8 @@ bool oAuth::getSignature( const eOAuthHttpRequestType eType,
     sigBase.append( "&" );
     sigBase.append( urlencode( rawParams ) );
 
-    stringstream ss; ss << "base imploded: " << sigBase; log(LV_DEBUG,ss.str(),true);
+    // DEBUG
+    // stringstream ss; ss << "base imploded: " << sigBase; log(LV_DEBUG,ss.str(),true);
 
     /* Now, hash the signature base string using HMAC_SHA1 class */
     CHMAC_SHA1 objHMACSHA1;
@@ -515,7 +516,8 @@ bool oAuth::getSignature( const eOAuthHttpRequestType eType,
         secretSigningKey.append( m_oAuthTokenSecret );
     }
   
-    ss.str(std::string()); ss << "key imploded:  " << secretSigningKey; log(LV_DEBUG,ss.str(),true);
+    // DEBUG
+    // ss.str(std::string()); ss << "key imploded:  " << secretSigningKey; log(LV_DEBUG,ss.str(),true);
 
     objHMACSHA1.HMAC_SHA1( (unsigned char*)sigBase.c_str(),
                            sigBase.length(),
@@ -523,17 +525,20 @@ bool oAuth::getSignature( const eOAuthHttpRequestType eType,
                            secretSigningKey.length(),
                            strDigest ); 
 
-    ss.str(std::string()); ss << "hash_hmac:     " << strDigest; log(LV_DEBUG,ss.str(),true);
+    // DEBUG
+    // ss.str(std::string()); ss << "hash_hmac:     " << strDigest; log(LV_DEBUG,ss.str(),true);
 
     /* Do a base64 encode of signature */
     std::string base64Str = base64_encode( strDigest, 20 /* SHA 1 digest is 160 bits */ );
 
-    ss.str(std::string()); ss << "base64:        " << base64Str; log(LV_DEBUG,ss.str(),true);
+    // DEBUG
+    // ss.str(std::string()); ss << "base64:        " << base64Str; log(LV_DEBUG,ss.str(),true);
 
     /* Do an url encode */
     m_oAuthSignature = urlencode( base64Str );
 
-    ss.str(std::string()); ss << "urlencode:     " << m_oAuthSignature; log(LV_DEBUG,ss.str(),true);
+    // DEBUG
+    // ss.str(std::string()); ss << "urlencode:     " << m_oAuthSignature; log(LV_DEBUG,ss.str(),true);
 
     return !m_oAuthSignature.empty();
 }
