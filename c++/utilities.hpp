@@ -16,13 +16,14 @@ using namespace std;
 //    static bool replace_with_regex(string& str, const string& from, const string& to)
 //    static bool replace_once_with_regex(string& str, const string& from, const string& to)
 //    static bool b_string_ends_in(const string& source, const string& search)
-//    split string: vector<string> strs; boost::split(strs,line,boost::is_any_of("\t"));
+//    static vector<int64_t> parse_csv_ints(const std::string& csvdata)
+//    split any string: vector<string> strs; boost::split(strs,line,boost::is_any_of("\t"));
 //   WEB
 //    static bool url_decode(const std::string& in, std::string& out)
 //    static string url_encode(const string &value)
 //    static std::map<const std::string,std::string> parse_cookies(const std::string& cookiedata)     { return parse_html(cookiedata,"; "); }
 //    static std::map<const std::string,std::string> parse_url_params(const std::string& urldata)     { return parse_html(urldata   ,"?&"); }
-//    static std::map<const std::string,std::string> parse_form(const std::string& formdata)          { return parse_html(formdata  ,"&"); }
+//    static std::map<const std::string,std::string> parse_form(const std::string& formdata)          { return parse_html(formdata  ,"&" ); }
 //    static std::map<const std::string,std::string> parse_html(...)
 //   JSON
 //    //      #include <json/json.hpp>                                // 2016 JSON handling
@@ -151,6 +152,23 @@ static bool b_string_ends_in(const string& source, const string& search)
         &&  source.size() >= search.size()
         &&  source.substr(source.size()-search.size(),search.size()) == search
     );
+}
+// NOTE that you should wrap with try/catch if you are unsure of data quality.
+// NOTE that the vector will return unsorted but will sort as expected when accessed.
+static sorted_vector<int64_t> parse_csv_ints(const std::string& csvdata)
+{
+    sorted_vector<int64_t> ints;
+    vector<string> strs; 
+    boost::split(strs,csvdata,boost::is_any_of(",\t"));
+    for (auto& str:strs)
+    {
+        ints.push_unsorted(boost::lexical_cast<int64_t>(str));
+    }
+
+    // NOTE no need to use C++11 move() to return by value.  
+    // Modern compilers know to move if needed.
+    // http://stackoverflow.com/questions/17473753/c11-return-value-optimization-or-move
+    return ints;
 }
 
 
