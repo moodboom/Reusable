@@ -39,6 +39,7 @@ using namespace std;
 //    static ptime time_t_to_ptime(const time_t& tt)
 //    static string time_t_to_string(const time_t& tt, const string& str_format)
 //    static time_t get_current_time_t()
+//    static time_t get_today_midnight()
 // RANDOM
 //    static std::string generate_uuid()
 //    static std::string generate_random_hex(uint_fast32_t length)
@@ -474,6 +475,11 @@ static string time_t_to_string(const time_t& tt, const string& str_format)
 static time_t get_current_time_t()
 {
     return ptime_to_time_t(get_current_time());
+}
+static time_t get_today_midnight()
+{
+    time_t now = time(0);
+    return now / 86400 * 86400;
 }
 
 
