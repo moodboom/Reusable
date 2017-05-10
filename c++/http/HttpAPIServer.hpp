@@ -217,6 +217,8 @@ inline void HttpAPIServer::add_static_file_handlers(const vector<string>& static
               content_type += "image/png";
             else if (strings_are_equal(request->path.substr(request->path.length()-4),".jpg"))
               content_type += "image/jpeg";
+            else if (strings_are_equal(request->path.substr(request->path.length()-4),".svg"))
+              content_type += "image/svg+xml";
             else if (strings_are_equal(request->path.substr(request->path.length()-4),".ico"))
               content_type += "image/x-icon";
             else
