@@ -458,6 +458,13 @@ static string ptime_to_string(const ptime& pt, const string& str_format)
     is << pt;
     return is.str();
 }
+static string date_to_string(const date& d, const string& str_format)
+{
+    std::ostringstream is;
+    is.imbue(std::locale(std::cout.getloc(),new boost::gregorian::date_facet(str_format.c_str())));
+    is << d;
+    return is.str();
+}
 static time_t ptime_to_time_t(const ptime& pt)
 {
     // Wow this is a lot of work.
