@@ -40,6 +40,7 @@ using namespace std;
 //    static string time_t_to_string(const time_t& tt, const string& str_format)
 //    static time_t get_current_time_t()
 //    static time_t get_today_midnight()
+//    static string americanFormat(date d)
 // RANDOM
 //    static std::string generate_uuid()
 //    static std::string generate_random_hex(uint_fast32_t length)
@@ -480,6 +481,12 @@ static time_t get_today_midnight()
 {
     time_t now = time(0);
     return now / 86400 * 86400;
+}
+static string americanFormat(date d)
+{
+  stringstream ss;
+  ss << boost::format("%02d-%02d-%4d") % d.month() % d.day() % d.year();
+  return ss.str();
 }
 
 

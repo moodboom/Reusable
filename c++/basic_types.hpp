@@ -41,7 +41,8 @@
 #include <boost/crc.hpp>
 
 #include <boost/date_time/posix_time/posix_time.hpp>
-using namespace boost::posix_time;
+using namespace boost::posix_time;    // for ptime
+using namespace boost::gregorian;     // for date
 
 // ranged for loops with an index:
 //      for (const auto& element : boost::adaptors::index(my_container))
