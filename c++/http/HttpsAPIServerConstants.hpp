@@ -44,8 +44,10 @@ const vector<string> c_default_wrappers =
 };
 
 const string cstr_HTML_HEADER1 = "HTTP/1.1 200 OK\r\nContent-Length: ";
-const string cstr_HTML_302_HEADER1 = "HTTP/1.1 302 Moved Temporarily\r\nLocation: ";     // for auth redirects
 const string cstr_HTML_HEADER2 = "\r\n\r\n";
+const string cstr_HTML_302_HEADER1 = "HTTP/1.1 302 Moved Temporarily\r\nLocation: ";     // for auth redirects
+const string cstr_HTML_MIMETYPE_HEADER = "\r\nContent-Type: text/html";
+const string cstr_HTML_FULLHEADER2 = cstr_HTML_MIMETYPE_HEADER + cstr_HTML_HEADER2;
 
 // ------------------------------------------------------------------------------
 

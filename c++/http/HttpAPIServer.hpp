@@ -46,6 +46,8 @@ public:
         unsigned short port, 
         size_t num_threads, 
 
+        // (no https params)
+
         // defaulted params
         const vector<string>& wrappers = c_default_wrappers,
         bool bServeRootOnError = false,
@@ -192,8 +194,13 @@ inline void HttpAPIServer::add_static_file_handlers(const vector<string>& static
         }
         catch(...)
         {
-            log(LV_WARNING,string("WARNING: ")+file+" was not found and will not be served.");
-            return;
+            log(LV_ERROR,"*************************************************************");
+            log(LV_ERROR,string("ERROR: ")+file+" was not found and cannot be served.");
+            log(LV_ERROR,"*************************************************************");
+
+            // Don't allow this!  A file we are expecting got lost, STOP NOW.
+            assert(false);            
+            // continue;
         }
 
         // We keep them all in memory and serve them up like lightning.
@@ -236,10 +243,9 @@ inline void HttpAPIServer::add_static_file_handlers(const vector<string>& static
 
 
 inline void HttpAPIServer::createAPIDocumentationHandler() {
-    resource["^/"]["GET"]=[this](HRes response, HReq request) {
+    resource["^/$"]["GET"]=[this](HRes response, HReq request) {
         string content = index_;
-        string content_type = "\r\nContent-Type: text/html";
-        *response << cstr_HTML_HEADER1 << content.length() << content_type << cstr_HTML_HEADER2 << content;
+        *response << cstr_HTML_HEADER1 << content.length() << cstr_HTML_FULLHEADER2 << content;
     };
 }
 
