@@ -30,6 +30,10 @@ using namespace std;
 //    //      using json = nlohmann::json;
 //   VERSIONING
 //    // class SemVer
+//   JWT
+//    class JWT;
+//    string url_encode_JWT(const JWT& j_input);
+//    void url_decode_JWT(string input, JWT& jwt);
 // TIME
 //    static ptime get_current_time()
 //    static ptime string_to_ptime(const string& str_time, const string& str_format)
@@ -425,6 +429,37 @@ public:
     int64_t semver_[4];
 };
 //=========================================================
+
+
+//=========================================================
+// JWT
+//=========================================================
+class JWT 
+{
+public:
+  
+  JWT(string shared_secret)
+  :
+    shared_secret_(shared_secret)
+  {}
+  
+  // get - NOT const as we set the timestamp when it was generated.
+  string url_encode();
+  
+  // set
+  void url_decode(string input);
+
+  time_t exp_;        // "expires-at"
+  string sub_;        // "subject" ie user/email/etc
+  int role_;          // permissions
+  
+  bool bOK() const { return bOK_; }
+  
+protected:
+  time_t iat_;              // "issued-at"
+  string shared_secret_;
+  bool bOK_;
+};
 
 
 //=========================================================
