@@ -3,6 +3,7 @@
 
 #include "basic_types.hpp"
 #include "miniz.h"
+#include <oauth/urlencode.h>  // For urlen/decode
 
 // 2017/01/05 tired of typing
 using namespace std;
@@ -20,7 +21,7 @@ using namespace std;
 //    split any string: vector<string> strs; boost::split(strs,line,boost::is_any_of("\t"));
 //   WEB
 //    static bool url_decode(const std::string& in, std::string& out)
-//    static string url_encode(const string &value)
+//    static string urlencode(const string &value) (from oauth code)
 //    static std::map<const std::string,std::string> parse_cookies(const std::string& cookiedata)     { return parse_html(cookiedata,"; "); }
 //    static std::map<const std::string,std::string> parse_url_params(const std::string& urldata)     { return parse_html(urldata   ,"?&"); }
 //    static std::map<const std::string,std::string> parse_form(const std::string& formdata)          { return parse_html(formdata  ,"&" ); }
@@ -181,6 +182,7 @@ static sorted_vector<int64_t> parse_csv_ints(const std::string& csvdata)
 //=========================================================
 // WEB
 //=========================================================
+
 static bool url_decode(const std::string& in, std::string& out)
 {
   out.clear();
@@ -219,6 +221,9 @@ static bool url_decode(const std::string& in, std::string& out)
   }
   return true;
 }
+// Actually this is already provided in our oauth code, don't duplicate.
+// (and this gives slightly different results, wtf [+] => %2B instead of %20)
+/*
 static string url_encode(const string &value) {
     ostringstream escaped;
     escaped.fill('0');
@@ -241,6 +246,9 @@ static string url_encode(const string &value) {
 
     return escaped.str();
 }
+*/
+
+
 static std::map<const std::string,std::string> parse_html(
     const std::string& htmldata,
     const std::string& separator = "?&",
@@ -449,7 +457,6 @@ public:
   // set
   void url_decode(string input);
 
-  time_t exp_;        // "expires-at"
   string sub_;        // "subject" ie user/email/etc
   int role_;          // permissions
   

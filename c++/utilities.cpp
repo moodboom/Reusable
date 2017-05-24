@@ -1,4 +1,10 @@
+#include <base64.hpp>         // For base64_en/decode
+#include <oauth/HMAC_SHA1.h>  // For HS256
+#include <oauth/oauthlib.h>   // For OAUTHLIB_BUFFSIZE_LARGE
+#include <json/json.hpp>      // 2016 JSON handling
+
 #include "utilities.hpp"
+
 
 // LOGGING GLOBAL SETTINGS
 // These are the default values.
@@ -24,51 +30,40 @@ stringstream g_ss;
 // I'm putting these here so we don't have to include encryption headers everywhere.
 // And because we need time functions.
 
-// get
+ // SHA 1 digest is 160 bits
+ const int cn_digest_length = 20;
+ 
+ // get
 string JWT::url_encode()
 {
+  bOK_ = false;
+  
   iat_ = get_current_time_t();
 
-  /*
-  // Now, hash the signature base string using HMAC_SHA1 class
+  string header   = R"({"alg":"HS256","typ":"JWT"})";
+  stringstream ss;
+  ss << R"({"sub":")" << sub_ << R"(","role":)" << role_ << R"(,"iat":)" << iat_ << R"(})";
+  string payload  = ss.str();
+  
+  string headerbase64   = base64_encode( (unsigned char const*)header.c_str(),  header.length()  );
+  string payloadbase64  = base64_encode( (unsigned char const*)payload.c_str(), payload.length() );
+
+  string unsigned_token = headerbase64 + "." + payloadbase64;
+
+  // string signature = HMAC-SHA256(key, unsignedToken) 
   CHMAC_SHA1 objHMACSHA1;
-  std::string secretSigningKey;
   unsigned char strDigest[oAuthLibDefaults::OAUTHLIB_BUFFSIZE_LARGE];
-
   memset( strDigest, 0, oAuthLibDefaults::OAUTHLIB_BUFFSIZE_LARGE );
-
-  // Signing key is composed of consumer_secret&token_secret
-  secretSigningKey.assign( m_consumerSecret );
-  secretSigningKey.append( "&" );
-
-  if( m_oAuthTokenSecret.length() )
-  {
-      secretSigningKey.append( m_oAuthTokenSecret );
-  }
-
-  // DEBUG
-  // ss.str(std::string()); ss << "key imploded:  " << secretSigningKey; log(LV_DEBUG,ss.str(),true);
-
-  objHMACSHA1.HMAC_SHA1( (unsigned char*)sigBase.c_str(),
-                         sigBase.length(),
-                         (unsigned char*)secretSigningKey.c_str(),
-                         secretSigningKey.length(),
-                         strDigest ); 
-
-  // DEBUG
-  // ss.str(std::string()); ss << "hash_hmac:     " << strDigest; log(LV_DEBUG,ss.str(),true);
-
-  // Do a base64 encode of signature 
-  std::string base64Str = base64_encode( strDigest, 20  ); // SHA 1 digest is 160 bits
-
-  // DEBUG
-  // ss.str(std::string()); ss << "base64:        " << base64Str; log(LV_DEBUG,ss.str(),true);
-
-  // Do an url encode 
-  m_oAuthSignature = urlencode( base64Str );
-  */
-
-  return "TODO";
+  objHMACSHA1.HMAC_SHA1( 
+    (unsigned char*)unsigned_token.c_str(),
+    unsigned_token.length(),
+    (unsigned char*)shared_secret_.c_str(),
+    shared_secret_.length(),
+    strDigest 
+  ); 
+  
+  bOK_ = true;
+  return headerbase64 + "." + payloadbase64 + "." + base64_encode(strDigest, cn_digest_length);
 }
 
 // set
@@ -76,9 +71,67 @@ void JWT::url_decode(string input)
 {
   bOK_ = false;
 
-  string jwt_unencoded;
-  if (!::url_decode(input,jwt_unencoded)) return;
+  // Split out the three parts.
+  string headerbase64;
+  string payloadbase64;
+  string signaturebase64;
+  typedef boost::tokenizer<boost::char_separator<char> > tokenizer;
+  boost::char_separator<char> sep(".");
+  tokenizer tokens(input, sep);
+  for (tokenizer::iterator tok_iter = tokens.begin(); tok_iter != tokens.end(); ++tok_iter)
+  {
+         if (headerbase64.empty())    { ::url_decode(string(*tok_iter),headerbase64   ); }
+    else if (payloadbase64.empty())   { ::url_decode(string(*tok_iter),payloadbase64  ); }
+    else if (signaturebase64.empty()) { ::url_decode(string(*tok_iter),signaturebase64); }
+    else return;
+  }
+  if (signaturebase64.empty()) return;
+  
+  string unsigned_token = headerbase64 + "." + payloadbase64;
+  
+  // string signature = HMAC-SHA256(key, unsignedToken) 
+  CHMAC_SHA1 objHMACSHA1;
+  unsigned char strDigest[oAuthLibDefaults::OAUTHLIB_BUFFSIZE_LARGE];
+  memset( strDigest, 0, oAuthLibDefaults::OAUTHLIB_BUFFSIZE_LARGE );
+  objHMACSHA1.HMAC_SHA1( 
+    (unsigned char*)unsigned_token.c_str(),
+    unsigned_token.length(),
+    (unsigned char*)shared_secret_.c_str(),
+    shared_secret_.length(),
+    strDigest 
+  ); 
+  string signaturebase64_check = base64_encode(strDigest,cn_digest_length);
 
+  if (signaturebase64_check != signaturebase64) return;  
+  
+  string header   = base64_decode(headerbase64);
+  string payload  = base64_decode(payloadbase64);
+
+  // Parse the JSON.  
+  try {
+      using json = nlohmann::json;
+      json jBody = json::parse(payload);
+
+      if (jBody.count("sub" )== 0) return;
+      if (jBody.count("role")== 0) return;
+      
+      sub_  = jBody["sub" ].get<string>();
+      role_ = jBody["role"].get<int>()   ;
+  }
+  catch(const std::exception& se)
+  {
+      stringstream ss;
+      ss << "Error [" << se.what() << "] parsing JWT: " << endl << input << endl;
+      log(LV_ERROR, ss.str());
+      return;
+  }
+  catch (...)
+  {
+      stringstream ss;
+      ss << "Error parsing JWT: " << endl << input << endl;
+      log(LV_ERROR, ss.str());
+      return;
+  }
 
   bOK_ = true;  
 }
