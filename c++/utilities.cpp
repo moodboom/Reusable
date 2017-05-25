@@ -63,7 +63,7 @@ string JWT::url_encode()
   ); 
   
   bOK_ = true;
-  return headerbase64 + "." + payloadbase64 + "." + base64_encode(strDigest, cn_digest_length);
+  return ::urlencode(headerbase64 + "." + payloadbase64 + "." + base64_encode(strDigest, cn_digest_length));
 }
 
 // set
