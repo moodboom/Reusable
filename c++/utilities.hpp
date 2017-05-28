@@ -19,6 +19,10 @@ using namespace std;
 //    static bool b_string_ends_in(const string& source, const string& search)
 //    static vector<int64_t> parse_csv_ints(const std::string& csvdata)
 //    static string escape_doublequotes(string& string_to_change)
+//    static bool escape_doublequotes(string& string_to_change)
+//    static bool escape_backslash(string& string_to_change)
+//    static bool double_doublequotes(string& string_to_change)
+//    static string raw_to_Javascript(const string& input)
 //    split any string: vector<string> strs; boost::split(strs,line,boost::is_any_of("\t"));
 //   WEB
 //    static bool url_decode(const std::string& in, std::string& out)
@@ -183,6 +187,20 @@ static sorted_vector<int64_t> parse_csv_ints(const std::string& csvdata)
 static bool escape_doublequotes(string& string_to_change) { return replace(string_to_change,"\"","\\\""); }
 static bool escape_backslash(string& string_to_change) { return replace(string_to_change,"\\","\\\\"); }
 static bool double_doublequotes(string& string_to_change) { return replace(string_to_change,"\"","\"\""); }
+static string raw_to_Javascript(const string& input)
+{
+  string output = input;
+  replace(output,"\b","\\b");
+  replace(output,"\f","\\f");
+  replace(output,"\n","\\n");
+  replace(output,"\r","\\r");
+  replace(output,"\t","\\t");
+  replace(output,"\v","\\v");
+  replace(output,"'","\\'");
+  replace(output,"\"","\\\"");
+  replace(output,"\\","\\\\");
+  return output;
+}
 
 //=========================================================
 // WEB
