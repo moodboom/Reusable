@@ -41,9 +41,38 @@ string JWT::url_encode()
   iat_ = get_current_time_t();
 
   string header   = R"({"alg":"HS256","typ":"JWT"})";
-  stringstream ss;
-  ss << R"({"sub":")" << sub_ << R"(","role":)" << role_ << R"(,"iat":)" << iat_ << R"(})";
-  string payload  = ss.str();
+
+  // sub_ ("subject") is typically an email address.  
+  // Email addresses are very tricky to validate, all kinds of crazy shit is allowed: 
+  //    https://emailregex.com/
+  //    https://stackoverflow.com/questions/201323/using-a-regular-expression-to-validate-an-email-address
+  // They should at least conform to: /\S+@[-0-9A-Za-z]+\.[-0-9A-Za-z]+/
+  // BUT it's impossible to get perfect.  So don't bother at all (say most people).
+  
+  // For the payload, we should use the official method so the JSON is properly escaped!
+  string payload;
+  try {
+    using json = nlohmann::json;
+    json j;
+    j["sub"] = sub_;
+    j["role"] = role_;
+    j["iat"] = iat_;
+    payload = j.dump();
+  }
+  catch(const std::exception& se)
+  {
+      stringstream ss;
+      ss << "Error [" << se.what() << "] encoding JWT for subject " << sub_;
+      log(LV_ERROR, ss.str());
+      return "";
+  }
+  catch (...)
+  {
+      stringstream ss;
+      ss << "Error encoding JWT for subject " << sub_;
+      log(LV_ERROR, ss.str());
+      return "";
+  }
   
   string headerbase64   = base64_encode( (unsigned char const*)header.c_str(),  header.length()  );
   string payloadbase64  = base64_encode( (unsigned char const*)payload.c_str(), payload.length() );
@@ -109,6 +138,14 @@ void JWT::url_decode(string input)
 
   // Parse the JSON.  
   try {
+
+      // sub_ ("subject") is typically an email address.  
+      // Email addresses are very tricky to validate, all kinds of crazy shit is allowed: 
+      //    https://emailregex.com/
+      //    https://stackoverflow.com/questions/201323/using-a-regular-expression-to-validate-an-email-address
+      // They should at least conform to: /\S+@[-0-9A-Za-z]+\.[-0-9A-Za-z]+/
+      // BUT it's impossible to get perfect.  So don't bother at all (say most people).
+
       using json = nlohmann::json;
       json jBody = json::parse(payload);
 

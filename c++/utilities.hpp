@@ -18,6 +18,7 @@ using namespace std;
 //    static bool replace_once_with_regex(string& str, const string& from, const string& to)
 //    static bool b_string_ends_in(const string& source, const string& search)
 //    static vector<int64_t> parse_csv_ints(const std::string& csvdata)
+//    static string escape_doublequotes(string& string_to_change)
 //    split any string: vector<string> strs; boost::split(strs,line,boost::is_any_of("\t"));
 //   WEB
 //    static bool url_decode(const std::string& in, std::string& out)
@@ -178,6 +179,10 @@ static sorted_vector<int64_t> parse_csv_ints(const std::string& csvdata)
     return ints;
 }
 
+// These can only be done once at the precise right moment, be careful.
+static bool escape_doublequotes(string& string_to_change) { return replace(string_to_change,"\"","\\\""); }
+static bool escape_backslash(string& string_to_change) { return replace(string_to_change,"\\","\\\\"); }
+static bool double_doublequotes(string& string_to_change) { return replace(string_to_change,"\"","\"\""); }
 
 //=========================================================
 // WEB
