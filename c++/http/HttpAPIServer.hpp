@@ -29,6 +29,9 @@
 // ------------------
 
 
+const string semanticVersion();
+
+
 class HttpAPIServer : public HttpServer
 {
     typedef HttpServer inherited;
@@ -203,10 +206,14 @@ inline void HttpAPIServer::add_static_file_handlers(const vector<string>& static
             // continue;
         }
 
+        // Fix version string in url.
+        string newfile = file;
+        replace(newfile,"#semver#",semanticVersion());
+    
         // We keep them all in memory and serve them up like lightning.
-        static_files_.insert(make_pair(file,body));
+        static_files_.insert(make_pair(newfile,body));
 
-        resource[file]["GET"]=[this](HRes response, HReq request) {
+        resource[newfile]["GET"]=[this](HRes response, HReq request) {
             const string& body = static_files_[request->path];
             
             // We provide mime types for extensions: css, jss, png, jpg, x-icon
