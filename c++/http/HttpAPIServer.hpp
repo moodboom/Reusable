@@ -29,9 +29,6 @@
 // ------------------
 
 
-const string semanticVersion();
-
-
 class HttpAPIServer : public HttpServer
 {
     typedef HttpServer inherited;

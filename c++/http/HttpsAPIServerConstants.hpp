@@ -4,6 +4,11 @@
 // ------------------------------------------------------------------------------
 // CONSTANTS GLOBALS STATICS
 // ------------------------------------------------------------------------------
+
+// NOTE: You must provide this in derived class.
+const string semanticVersion();
+
+
 typedef enum
 {
     // assert( HM_COUNT == 5 );
