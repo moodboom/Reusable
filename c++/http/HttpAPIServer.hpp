@@ -116,6 +116,16 @@ protected:
     // -------
     // Helpers
     // -------
+    virtual void url_upgrade_any_old_semver(string& url)
+    {
+      // Perform a regex to update the embedded version if needed.
+      // If that fails downstream, so be it; they can start over.      
+      replace_once_with_regex(
+          url,
+          "/[v0-9.]+/", 
+          string("/")+semanticVersion()+"/"
+      );
+    }
     bool tokenize_API_url(const std::string& url, std::string& protocol, std::string& host, API_call& ac);
     void badCall(HRes &response, const string msg, int delay_secs = 1);
     string requestError(const Request &request, const string msg);
@@ -206,9 +216,9 @@ inline void HttpAPIServer::add_static_file_handlers(const vector<string>& static
             // continue;
         }
 
-        // Fix version string in url.
+        // Fix version string in url.  v1 is used as our placeholder.
         string newfile = file;
-        replace(newfile,"#semver#",semanticVersion());
+        replace(newfile,"v1",semanticVersion());
     
         // We keep them all in memory and serve them up like lightning.
         static_files_.insert(make_pair(newfile,body));
