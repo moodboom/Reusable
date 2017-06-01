@@ -104,8 +104,8 @@ public:
     string regex() const
     {
         // result regex eg: 
-        //  source  /car/:id/:brand/pic.png
-        //  regex   "^/car/[0-9].*/[s]/pic.png"
+        //  source  /v1/car/:id/:brand/pic.png
+        //  regex   "^/#semver#/car/[0-9].*/[s]/pic.png"
         
         string regex("^");
         for (auto& token: path_tokens_)
@@ -123,6 +123,10 @@ public:
                 else if (strings_are_equal(id,"double")) regex += "[[:digit:].]*";
                 else                                     regex += "[[:alnum:].]*";
 
+            } else if (token == "v1")
+            {
+              // This is our placeholder for the semver, replace it.
+              regex += semanticVersion();
             } else {
                 regex += token;
             }
