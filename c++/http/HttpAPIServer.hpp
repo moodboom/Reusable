@@ -119,7 +119,7 @@ protected:
       // If that fails downstream, so be it; they can start over.      
       replace_once_with_regex(
           url,
-          "/[v0-9.]+/", 
+          "^/[v0-9.]+/", 
           string("/")+semanticVersion()+"/"
       );
     }
