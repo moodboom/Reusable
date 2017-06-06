@@ -113,15 +113,23 @@ protected:
     // -------
     // Helpers
     // -------
-    virtual void url_upgrade_any_old_semver(string& url)
+    virtual bool url_upgrade_any_old_semver(string& url)
     {
       // Perform a regex to update the embedded version if needed.
-      // If that fails downstream, so be it; they can start over.      
-      replace_once_with_regex(
-          url,
-          "^/[v0-9.]+/", 
-          string("/")+semanticVersion()+"/"
-      );
+      // TODO update this ridiculous double-search-to-know-if-we-found-anything approach.
+      const string reg("^/[v0-9.]+/");
+      boost::regex regex;
+      regex.assign(reg);
+      if (boost::regex_match(url,regex,boost::match_default | boost::format_first_only))
+      {
+        replace_once_with_regex(
+            url,
+            reg, 
+            string("/")+semanticVersion()+"/"
+        );
+        return true;
+      }
+      return false;
     }
     bool tokenize_API_url(const std::string& url, std::string& protocol, std::string& host, API_call& ac);
     void badCall(HRes &response, const string msg, int delay_secs = 1);

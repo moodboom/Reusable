@@ -48,14 +48,6 @@ const vector<string> c_default_wrappers =
     " <input type=\"text\" name=\"__API_token__\" class=\"form-control\" placeholder=\"__API_token__\"/> "          // HW_PARAM
 };
 
-const string cstr_HTML_HEADER1 = "HTTP/1.1 200 OK\r\nContent-Length: ";
-const string cstr_HTML_HEADER2 = "\r\n\r\n";
-const string cstr_HTML_302_HEADER1 = "HTTP/1.1 302 Moved Temporarily\r\nLocation: ";     // for auth redirects
-const string cstr_HTML_MIMETYPE = "\r\nContent-Type: text/html";
-const string cstr_JSON_MIMETYPE = "\r\nContent-Type: application/json";
-const string cstr_HTML_FULLHEADER2 = cstr_HTML_MIMETYPE + cstr_HTML_HEADER2;
-const string cstr_JSON_FULLHEADER2 = cstr_JSON_MIMETYPE + cstr_HTML_HEADER2;
-
 // ------------------------------------------------------------------------------
 
 
