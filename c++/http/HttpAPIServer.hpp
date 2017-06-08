@@ -116,18 +116,18 @@ protected:
     virtual bool url_upgrade_any_old_semver(string& url)
     {
       // Perform a regex to update the embedded version if needed.
-      // TODO update this ridiculous double-search-to-know-if-we-found-anything approach.
-      const string reg("^/[v0-9.]+/");
-      boost::regex regex;
-      regex.assign(reg);
-      if (boost::regex_match(url,regex,boost::match_default | boost::format_first_only))
+      // We have to see if (1) we have a semver and (2) it is not the current semver.
+      // Only then do we take action.
+      boost::regex regex("/([v0-9.]+?)/(.*)");
+      boost::smatch sm_res;
+      if (boost::regex_match(url,sm_res,regex,boost::match_default))
       {
-        replace_once_with_regex(
-            url,
-            reg, 
-            string("/")+semanticVersion()+"/"
-        );
-        return true;
+        string incoming_semver(sm_res[1].first,sm_res[1].second);
+        if (incoming_semver != semanticVersion())
+        {
+          url = string("/")+semanticVersion()+"/"+string(sm_res[2].first,sm_res[2].second);
+          return true;
+        }      
       }
       return false;
     }
