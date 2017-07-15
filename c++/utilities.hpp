@@ -33,6 +33,7 @@ using json = nlohmann::json;
 //    static std::map<const std::string,std::string> parse_url_params(const std::string& urldata)     { return parse_html(urldata   ,"?&"); }
 //    static std::map<const std::string,std::string> parse_form(const std::string& formdata)          { return parse_html(formdata  ,"&" ); }
 //    static std::map<const std::string,std::string> parse_html(...)
+//    For more powerful curl-like helpers, see: http/HttpsClientUtilities.hpp
 //   JSON
 //    //      #include <json/json.hpp>                                // 2016 JSON handling
 //    //      using json = nlohmann::json;
@@ -130,7 +131,7 @@ static bool replace_once(string& str, const string& from, const string& to)
 // The search term can go across lines if needed,
 // depending on the "from" search term.
 // Typically use "[\\s\\S]*" to accomplish this.
-#include <boost/regex.hpp>
+#include <boost/regex.hpp>    // For replace_with_regex etc.
 static bool replace_with_regex(string& str, const string& from, const string& to)
 {
     // ----------
