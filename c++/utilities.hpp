@@ -26,6 +26,7 @@ using json = nlohmann::json;
 //    static bool double_doublequotes(string& string_to_change)
 //    static string raw_to_Javascript(const string& input)
 //    split any string: vector<string> strs; boost::split(strs,line,boost::is_any_of("\t"));
+//    make lower case: boost::algorithm::to_lower()
 //   WEB
 //    static bool url_decode(const std::string& in, std::string& out)
 //    static string urlencode(const string &value) (from oauth code)
