@@ -1,25 +1,6 @@
-# MDM OLD NEWS
-# ===================
-# MDM Add libraries here as needed.
-# c++ scrap.cpp  -o scrap /usr/lib/libboost_regex-mt-1_46.so  # wimpy
-# c++ scrap.cpp  -o scrap /usr/lib/libboost_regex-mt-1_42.so  # dune
-# c++ scrap.cpp  -o scrap /usr/lib/libboost_regex-mt.so
-# MDM rollin on to c++11 on wimpy - it only has gcc 4.6 which only has "c++0x", not "c++11" (in 4.7)
-# c++ scrap.cpp  -std=c++0x -o scrap /usr/lib/libboost_regex-mt.so
-# MDM no boost atm
-# c++ scrap.cpp  -std=c++0x -o scrap
-# MDM 2015/01/24 upgraded to ubuntu env
-# c++ scrap.cpp -std=c++11 -o scrap -I /home/m/development/boost_1_57_0/include -L /home/m/development/boost_1_57_0/lib -lboost_regex -lboost_system
-#c++ scrap.cpp -std=c++11 -o scrap -lboost_regex -lboost_system
-# ===================
-
-# MDM One way: just call c++ / g++
-# But you have to hardcode boost paths, bleh
-#c++ scrap.cpp -std=c++11 -o scrap -I /home/m/development/boost_1_57_0/include -L /home/m/development/boost_1_57_0/lib -lboost_regex -lboost_system -lssl -lpthread -lcrypto && ./scrap
-
-# MDM 2016/04/26 Add reusable
-CPPFLAGS="$CPPFLAGS -I/home/m/development/Reusable/c++"
-
-# MDM 2015/01/24 OK AUTOTOOLS IS FIXED UP, see ~m/.bashrc for full explanation
-LDFLAGS="$RELEASE_LDFLAGS -lboost_regex -lboost_system -lpthread -lssl -lpthread -lcrypto"
-make scrap && ./scrap
+mkdir -p cmake-debug
+mkdir -p cmake-release
+cd cmake-debug && cmake -DCMAKE_BUILD_TYPE=DEBUG .. && make
+cd ..
+cd cmake-release && cmake .. && make
+cd ..
