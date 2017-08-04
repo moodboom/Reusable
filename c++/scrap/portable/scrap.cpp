@@ -580,9 +580,9 @@ int main( int argc, char * argv[] )
 
   // FWIW In all 4 cases (static/nonstatic, debug/release), unassigned memory was zeroed out.
 
-  const int charcount = 30;
-  char nonstatictest[charcount] = "small";
-  static char statictest[charcount] = "also";
+  const int charcount = 10;
+  char nonstatictest[charcount] = "12345";
+  static char statictest[charcount] = "12345";
 
   cout << "nonstatic init: ";
   for (int i = 0; i < charcount; ++i) cout << " 0x" << std::hex << std::uppercase << setw(2) << setfill('0') << (int)nonstatictest[i];
