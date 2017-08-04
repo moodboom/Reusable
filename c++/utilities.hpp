@@ -893,8 +893,12 @@ static void sleep(int n_secs)
 
 static bool unzip_first_file(string& str_zip, string& str_unzipped)
 {
-	// Using miniz:
-	//		http://code.google.com/p/miniz/
+	// Using miniz release 2.0.6 beta:
+  //    https://github.com/richgel999/miniz/releases/tag/2.0.6
+  //    NOTE!! YOU MUST USE .zip RELEASE DOWNLOAD "do not use github files directly, they are packaged into one file on release"
+  //    https://github.com/richgel999/miniz
+  //    Originally from http://code.google.com/p/miniz/
+  //
 
 	mz_zip_archive zip_archive;
 	mz_bool status;

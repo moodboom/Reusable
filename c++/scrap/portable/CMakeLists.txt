@@ -12,7 +12,7 @@ project(portable)
 # -------------------------------
 set(Reusable "../../")
 # set(ThirdParty ".../")
-set(BOOST_ROOT "../../../$ENV{boost_version}/")   # NOTE: boost_version is set in .bashrc
+set(BOOST_ROOT "../../../../$ENV{boost_version}/")   # NOTE: boost_version is set in .bashrc
 
 # MDM We want c++11 (or later)
 set(CMAKE_CXX_STANDARD 11)
@@ -22,7 +22,7 @@ set(CMAKE_CXX_STANDARD 11)
 # MDM external include dirs
 INCLUDE_DIRECTORIES(${Reusable})
 INCLUDE_DIRECTORIES(${Reusable}sqlite/)
-INCLUDE_DIRECTORIES(${ThirdParty})
+# INCLUDE_DIRECTORIES(${ThirdParty})
 
 # MDM CMake handles boost like this...
 set(BOOST_INCLUDE_DIR ${BOOST_ROOT})
@@ -40,5 +40,28 @@ set(SOURCE_FILES
         scrap.cpp
         scrap.hpp)
 
-add_executable(portable ${SOURCE_FILES})
+# -------------------------------
+# MDM Now add external modules
+# -------------------------------
+# orig added by clion: add_executable(portable ${SOURCE_FILES})
+add_executable(
+    ${PROJECT_NAME}
+    ${SOURCE_FILES}
+    ${Reusable}utilities.cpp
+    ${Reusable}RandomHelpers.cpp
+    ${Reusable}base64.cpp
+    ${Reusable}crypto/sha256/sha256.cpp
+    ${Reusable}miniz.c
+    ${Reusable}oauth/HMAC_SHA1.cpp
+    ${Reusable}oauth/oauthlib.cpp
+    ${Reusable}oauth/SHA1.cpp
+    ${Reusable}oauth/urlencode.cpp
+    ${Reusable}sqlite/sqlite3.c
+    ${Reusable}sqlite/SQLiteCpp/Column.cpp
+    ${Reusable}sqlite/SQLiteCpp/Database.cpp
+    ${Reusable}sqlite/SQLiteCpp/Statement.cpp
+    ${Reusable}sqlite/SQLiteCpp/Transaction.cpp
+)
 
+# dl is needed by sqlite
+TARGET_LINK_LIBRARIES(${PROJECT_NAME} pthread ssl crypto dl ${Boost_LIBRARIES})

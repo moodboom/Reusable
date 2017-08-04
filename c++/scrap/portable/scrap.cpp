@@ -1,10 +1,15 @@
 #include "scrap.hpp"
-#include <utilities.hpp>
 
 
 int main( int argc, char * argv[] )
 {
-    std::cout << "NOTE: NDEBUG is ";
+  // We have a VERY SMALL number of globals defined for us in utilities.cpp.
+  // Here we can initialize them to our values.
+  // g_ss - ok as is
+  g_current_log_verbosity = LV_ALWAYS;
+  g_base_log_filename = "portable";
+
+  std::cout << "NOTE: NDEBUG is ";
     #ifndef NDEBUG
         std::cout << "NOT";
     #endif
@@ -562,11 +567,11 @@ int main( int argc, char * argv[] )
 
     v1 = "0.1.2.3 and then some description";
     v2 = "1";
-    cout << "[" << v1 << "] is " << LessThanVersion(v1,v2) ? " less   " : " greater " << " than [" << v2 << "]" << endl;
+    cout << "[" << v1 << "] is " << (SemVer(v1).bLessThan(v2) ? " less   " : " greater ") << " than [" << v2 << "]" << endl;
 
     v1 = "0.57 desc";
     v2 = "1.0";
-    cout << "[" << v1 << "] is " << LessThanVersion(v1,v2) ? " less   " : " greater " << " than [" << v2 << "]" << endl;
+    cout << "[" << v1 << "] is " << (SemVer(v1).bLessThan(v2) ? " less   " : " greater ") << " than [" << v2 << "]" << endl;
 
 
 

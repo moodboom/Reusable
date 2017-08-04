@@ -10,6 +10,8 @@
 #include <algorithm>
 #include <sstream>
 
+#include <utilities.hpp>  // For logging globals
+
 using namespace std;
 using namespace boost;
 
@@ -111,20 +113,6 @@ typedef std::unordered_multimap<std::string, int> hashmmap;
 #include <boost/config.hpp>
 #include <boost/utility.hpp>                // for boost::tie
 #include <boost/graph/adjacency_list.hpp>
-// ----------------------------------------------------------
-// 10 
-#include <ctime>
-static void start_profile(time_t& start_time)
-{
-	time(&start_time);
-}
-static void end_profile(const time_t& start_time, std::string msg)
-{
-	time_t now;
-	time(&now);
-	int n_seconds = (int)(now - start_time);
-	cout << msg << ": " << n_seconds / 60 << ":" << n_seconds % 60 << endl;
-}
 // ----------------------------------------------------------
 // 11
 // unordered set of pointers
