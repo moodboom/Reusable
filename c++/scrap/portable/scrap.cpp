@@ -16,7 +16,7 @@ int main( int argc, char * argv[] )
     std::cout << " defined\n\n";
 
     // 1 ===================================================================================
-    std::cout << "== 1 === cast ==========" << endl;
+  cout << endl << "== 1 === cast ==========" << endl;
     // 1 ===================================================================================
 
     // const_cast<>() does no error checking.
@@ -58,7 +58,7 @@ int main( int argc, char * argv[] )
 
 
     // 2 ===================================================================================
-    std::cout << "== 2 === lambda ========" << endl;
+  cout << endl << "== 2 === lambda ========" << endl;
     // 2 ===================================================================================
 
     // lamba test.  simple and does not require build of boost, just access to headers.
@@ -76,7 +76,7 @@ int main( int argc, char * argv[] )
 
 
     // 3 ===================================================================================
-    std::cout << "== 3 === regex =========" << endl;
+  cout << endl << "== 3 === regex =========" << endl;
     // 3 ===================================================================================
 
     // regex test.  requires fully-built boost.
@@ -102,7 +102,7 @@ int main( int argc, char * argv[] )
 
 
     // 4 =================================================================================== 
-    std::cout << "== 4 === hash ==========" << endl;
+  cout << endl << "== 4 === hash ==========" << endl;
     // 4 ===================================================================================
 
     // hash tables
@@ -128,7 +128,7 @@ int main( int argc, char * argv[] )
 
 
     // 6 ===================================================================================
-    std::cout << "== 6 === sort iterator =" << endl;
+  cout << endl << "== 6 === sort iterator =" << endl;
     // 6 ===================================================================================
 
 	// let's find out what happens to iterators and pointers on a sort...
@@ -186,7 +186,7 @@ int main( int argc, char * argv[] )
 
 
     // 7 ===================================================================================
-    std::cout << "== 7 === rvalues =======" << endl;
+  cout << endl << "== 7 === rvalues =======" << endl;
     // 7 ===================================================================================
 
     // c++11 rvalues
@@ -214,7 +214,7 @@ int main( int argc, char * argv[] )
 
 
     // 8 ===================================================================================
-    std::cout << "== 8 === hashmap =======" << endl;
+  cout << endl << "== 8 === hashmap =======" << endl;
     // 8 ===================================================================================
 
     // hash tables
@@ -317,7 +317,7 @@ int main( int argc, char * argv[] )
 
 
     // 9 ===================================================================================
-    std::cout << "== 9 === BGL ===========" << endl;
+  cout << endl << "== 9 === BGL ===========" << endl;
     // 9 ===================================================================================
 
 	//
@@ -363,7 +363,7 @@ int main( int argc, char * argv[] )
 
 
     // 10 ==================================================================================
-    std::cout << "== 10 === storage vs speed" << endl;
+  cout << endl << "== 10 === storage vs speed" << endl;
     // 10 ==================================================================================
 
     // Compare int8 vs bit storage and speed
@@ -474,7 +474,7 @@ int main( int argc, char * argv[] )
 
 
     // 11 ================================================================================== 
-    std::cout << "== 11 === unordered_set of pointers ftw! ==" << endl;
+  cout << endl << "== 11 === unordered_set of pointers ftw! ==" << endl;
     // 11 ==================================================================================
 
     // unordered set of pointers
@@ -521,7 +521,7 @@ int main( int argc, char * argv[] )
 
 
       // 12 ==================================================================================
-      std::cout << "== 12 === streams =======" << endl;
+      cout << endl << "== 12 === streams =======" << endl;
       // 12 ==================================================================================
 
       boost::asio::streambuf asio_buf;
@@ -545,41 +545,59 @@ int main( int argc, char * argv[] )
       cout << endl;
 
 
-    // 13 ================================================================================== 
-    std::cout << "== 13 === unordered_multiset secondary index that includes dupe keys ==" << endl;
-    // 13 ==================================================================================
+  // 13 ==================================================================================
+  cout << endl << "== 13 === unordered_multiset secondary index that includes dupe keys ==" << endl;
+  // 13 ==================================================================================
 
-    // We want a master container with pointers to objects.  There will be many objects in the container.
-    // Use unique_ptr to allocate, and let it do the cleanup automatically when the container goes out of scope.
-    // We use an unordered_set for fast lookup.  That means we need both equals and hash functions for the object.
+  // We want a master container with pointers to objects.  There will be many objects in the container.
+  // Use unique_ptr to allocate, and let it do the cleanup automatically when the container goes out of scope.
+  // We use an unordered_set for fast lookup.  That means we need both equals and hash functions for the object.
 
-    // We also want a secondary container of pointers to the same objects, using a different key.
-    // This secondary container can use a key that is not unique across the objects.
-    // This is very common to be able to quickly gather "categories" of objects.
-    // We use an unordered_multiset.  We need equals and hash functions, and we need to walk through similar key values.
-    // (TODO)
-
-
-    // 14 ==================================================================================
-    std::cout << "== 14 === version strings =======" << endl;
-    // 14 ==================================================================================
-    string v1,v2;
-
-    v1 = "0.1.2.3 and then some description";
-    v2 = "1";
-    cout << "[" << v1 << "] is " << (SemVer(v1).bLessThan(v2) ? " less   " : " greater ") << " than [" << v2 << "]" << endl;
-
-    v1 = "0.57 desc";
-    v2 = "1.0";
-    cout << "[" << v1 << "] is " << (SemVer(v1).bLessThan(v2) ? " less   " : " greater ") << " than [" << v2 << "]" << endl;
+  // We also want a secondary container of pointers to the same objects, using a different key.
+  // This secondary container can use a key that is not unique across the objects.
+  // This is very common to be able to quickly gather "categories" of objects.
+  // We use an unordered_multiset.  We need equals and hash functions, and we need to walk through similar key values.
+  // (TODO)
 
 
+  // 14 ==================================================================================
+  cout << endl << "== 14 === version strings =======" << endl;
+  // 14 ==================================================================================
+  string v1,v2;
+
+  v1 = "0.1.2.3 and then some description";
+  v2 = "1";
+  cout << "[" << v1 << "] is " << (SemVer(v1).bLessThan(v2) ? " less   " : " greater ") << " than [" << v2 << "]" << endl;
+
+  v1 = "0.57 desc";
+  v2 = "1.0";
+  cout << "[" << v1 << "] is " << (SemVer(v1).bLessThan(v2) ? " less   " : " greater ") << " than [" << v2 << "]" << endl;
 
 
-    
+  // 15 ==================================================================================
+  cout << endl << "== 15 === 0xdeadbeef =======" << endl;
+  // 15 ==================================================================================
 
-    // We can keep it running if needed to better see the output.
-    // while (true)
-    // {}
+  // FWIW In all 4 cases (static/nonstatic, debug/release), unassigned memory was zeroed out.
 
+  const int charcount = 30;
+  char nonstatictest[charcount] = "small";
+  static char statictest[charcount] = "also";
+
+  cout << "nonstatic init: ";
+  for (int i = 0; i < charcount; ++i) cout << " 0x" << std::hex << std::uppercase << setw(2) << setfill('0') << (int)nonstatictest[i];
+  cout << endl;
+
+  cout << "static init:    ";
+  for (int i = 0; i < charcount; ++i) cout << " 0x" << std::hex << std::uppercase << setw(2) << setfill('0') << (int)statictest[i];
+  cout << endl;
+
+
+
+
+
+  // ========= end ========
+  // We can keep it running if needed to better see the output.
+  // while (true)
+  // {}
 }
