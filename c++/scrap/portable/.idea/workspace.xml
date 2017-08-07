@@ -12,9 +12,7 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="32a3d30c-29a4-4a8d-8aa5-a1b84cb04564" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-    </list>
+    <list default="true" id="32a3d30c-29a4-4a8d-8aa5-a1b84cb04564" name="Default" comment="" />
     <ignored path="$PROJECT_DIR$/cmake-build-debug/" />
     <ignored path="$PROJECT_DIR$/cmake-build-release/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -41,8 +39,8 @@
       <file leaf-file-name="ToDo.txt" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/../../../../cisco/log/ToDo.txt">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="288">
-              <caret line="7012" column="42" lean-forward="false" selection-start-line="7012" selection-start-column="42" selection-end-line="7012" selection-end-column="42" />
+            <state relative-caret-position="339">
+              <caret line="7015" column="23" lean-forward="false" selection-start-line="7015" selection-start-column="23" selection-end-line="7015" selection-end-column="23" />
               <folding />
             </state>
           </provider>
@@ -88,7 +86,7 @@
     <option name="x" value="14" />
     <option name="y" value="20" />
     <option name="width" value="1194" />
-    <option name="height" value="434" />
+    <option name="height" value="583" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectView">
@@ -176,15 +174,15 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1501847924224</updated>
-      <workItem from="1501847925950" duration="30577000" />
+      <workItem from="1501847925950" duration="31185000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="30577000" />
+    <option name="totallyTimeSpent" value="31185000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="14" y="20" width="1194" height="434" extended-state="0" />
+    <frame x="14" y="20" width="1194" height="583" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
@@ -333,8 +331,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/../../../../cisco/log/ToDo.txt">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="288">
-          <caret line="7012" column="42" lean-forward="false" selection-start-line="7012" selection-start-column="42" selection-end-line="7012" selection-end-column="42" />
+        <state relative-caret-position="339">
+          <caret line="7015" column="23" lean-forward="false" selection-start-line="7015" selection-start-column="23" selection-end-line="7015" selection-end-column="23" />
           <folding />
         </state>
       </provider>
