@@ -13,7 +13,6 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="32a3d30c-29a4-4a8d-8aa5-a1b84cb04564" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/javascript.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="$PROJECT_DIR$/cmake-build-debug/" />
@@ -42,8 +41,8 @@
       <file leaf-file-name="ToDo.txt" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/../../../../cisco/log/ToDo.txt">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="547">
-              <caret line="7331" column="29" lean-forward="false" selection-start-line="7331" selection-start-column="29" selection-end-line="7331" selection-end-column="29" />
+            <state relative-caret-position="391">
+              <caret line="7904" column="8" lean-forward="false" selection-start-line="7904" selection-start-column="8" selection-end-line="7904" selection-end-column="8" />
               <folding />
             </state>
           </provider>
@@ -70,6 +69,16 @@
       <find>Cornelius</find>
       <find>Ceetet1!!</find>
       <find>ian</find>
+      <find>govcloud acc</find>
+      <find>govramp</find>
+      <find>tags</find>
+      <find>linux</find>
+      <find>cloudwatch1</find>
+      <find>mobilepass</find>
+      <find>anyconnect</find>
+      <find>iso</find>
+      <find>^ D</find>
+      <find>set that to mount on boot, let's go!</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -98,9 +107,9 @@
     <sorting>DEFINITION_ORDER</sorting>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="14" />
+    <option name="x" value="862" />
     <option name="y" value="20" />
-    <option name="width" value="1258" />
+    <option name="width" value="837" />
     <option name="height" value="1405" />
   </component>
   <component name="ProjectInspectionProfilesVisibleTreeState">
@@ -223,15 +232,15 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1501847924224</updated>
-      <workItem from="1501847925950" duration="61052000" />
+      <workItem from="1501847925950" duration="109488000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="61052000" />
+    <option name="totallyTimeSpent" value="109488000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="14" y="20" width="1258" height="1405" extended-state="0" />
+    <frame x="862" y="20" width="837" height="1405" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
@@ -241,7 +250,7 @@
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32949087" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.5110357" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.5109447" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.36124402" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Inspection Results" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.15326253" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
@@ -397,8 +406,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/../../../../cisco/log/ToDo.txt">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="547">
-          <caret line="7331" column="29" lean-forward="false" selection-start-line="7331" selection-start-column="29" selection-end-line="7331" selection-end-column="29" />
+        <state relative-caret-position="391">
+          <caret line="7904" column="8" lean-forward="false" selection-start-line="7904" selection-start-column="8" selection-end-line="7904" selection-end-column="8" />
           <folding />
         </state>
       </provider>
