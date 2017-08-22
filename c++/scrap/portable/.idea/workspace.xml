@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="BookmarkManager">
+    <bookmark url="file://$PROJECT_DIR$/../../../../cisco/log/ToDo.txt" line="8223" />
+  </component>
   <component name="CMakeRunConfigurationManager" shouldGenerate="true" shouldDeleteObsolete="true" buildAllGenerated="true">
     <generated>
       <config projectName="portable" targetName="portable" />
@@ -39,8 +42,8 @@
       <file leaf-file-name="ToDo.txt" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/../../../../cisco/log/ToDo.txt">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-153">
-              <caret line="7909" column="35" lean-forward="true" selection-start-line="7909" selection-start-column="35" selection-end-line="7909" selection-end-column="35" />
+            <state relative-caret-position="431">
+              <caret line="8309" column="20" lean-forward="false" selection-start-line="8309" selection-start-column="20" selection-end-line="8309" selection-end-column="20" />
               <folding />
             </state>
           </provider>
@@ -85,6 +88,8 @@
       <find>hg clone</find>
       <find>./update</find>
       <find>audit_syslog.cpp</find>
+      <find>code review</find>
+      <find>arc diff --</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -113,10 +118,10 @@
     <sorting>DEFINITION_ORDER</sorting>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="402" />
-    <option name="y" value="530" />
-    <option name="width" value="897" />
-    <option name="height" value="820" />
+    <option name="x" value="1493" />
+    <option name="y" value="20" />
+    <option name="width" value="778" />
+    <option name="height" value="688" />
   </component>
   <component name="ProjectInspectionProfilesVisibleTreeState">
     <entry key="Project Default">
@@ -238,19 +243,19 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1501847924224</updated>
-      <workItem from="1501847925950" duration="128431000" />
+      <workItem from="1501847925950" duration="149353000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="128431000" />
+    <option name="totallyTimeSpent" value="149353000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="402" y="530" width="897" height="820" extended-state="0" />
+    <frame x="1493" y="20" width="778" height="688" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.5523535" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.18469217" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
       <window_info id="CMake" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32928678" sideWeight="0.5" order="-1" side_tool="true" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32949087" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
@@ -258,7 +263,7 @@
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.5109447" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.36124402" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
-      <window_info id="Inspection Results" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.2755798" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
+      <window_info id="Inspection Results" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.37546468" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.68421054" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -412,8 +417,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/../../../../cisco/log/ToDo.txt">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-153">
-          <caret line="7909" column="35" lean-forward="true" selection-start-line="7909" selection-start-column="35" selection-end-line="7909" selection-end-column="35" />
+        <state relative-caret-position="431">
+          <caret line="8309" column="20" lean-forward="false" selection-start-line="8309" selection-start-column="20" selection-end-line="8309" selection-end-column="20" />
           <folding />
         </state>
       </provider>
