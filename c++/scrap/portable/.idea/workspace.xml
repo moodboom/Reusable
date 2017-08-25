@@ -42,8 +42,8 @@
       <file leaf-file-name="ToDo.txt" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/../../../../cisco/log/ToDo.txt">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="170">
-              <caret line="8655" column="48" lean-forward="true" selection-start-line="8655" selection-start-column="48" selection-end-line="8655" selection-end-column="48" />
+            <state relative-caret-position="222">
+              <caret line="8747" column="24" lean-forward="false" selection-start-line="8747" selection-start-column="24" selection-end-line="8747" selection-end-column="24" />
               <folding />
             </state>
           </provider>
@@ -123,9 +123,9 @@
   </component>
   <component name="ProjectFrameBounds">
     <option name="x" value="14" />
-    <option name="y" value="381" />
-    <option name="width" value="532" />
-    <option name="height" value="537" />
+    <option name="y" value="339" />
+    <option name="width" value="481" />
+    <option name="height" value="366" />
   </component>
   <component name="ProjectInspectionProfilesVisibleTreeState">
     <entry key="Project Default">
@@ -248,15 +248,15 @@
       <option name="presentableId" value="Default" />
       <updated>1501847924224</updated>
       <workItem from="1501847925950" duration="149953000" />
-      <workItem from="1503411489559" duration="41617000" />
+      <workItem from="1503411489559" duration="45134000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="191570000" />
+    <option name="totallyTimeSpent" value="195087000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="14" y="381" width="532" height="537" extended-state="0" />
+    <frame x="14" y="339" width="481" height="366" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.5109447" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
@@ -412,8 +412,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/../../../../cisco/log/ToDo.txt">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="170">
-          <caret line="8655" column="48" lean-forward="true" selection-start-line="8655" selection-start-column="48" selection-end-line="8655" selection-end-column="48" />
+        <state relative-caret-position="222">
+          <caret line="8747" column="24" lean-forward="false" selection-start-line="8747" selection-start-column="24" selection-end-line="8747" selection-end-column="24" />
           <folding />
         </state>
       </provider>
