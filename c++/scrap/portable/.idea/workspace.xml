@@ -43,7 +43,7 @@
         <entry file="file://$PROJECT_DIR$/../../../../cisco/log/ToDo.txt">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="170">
-              <caret line="8655" column="48" lean-forward="false" selection-start-line="8655" selection-start-column="48" selection-end-line="8655" selection-end-column="48" />
+              <caret line="8655" column="48" lean-forward="true" selection-start-line="8655" selection-start-column="48" selection-end-line="8655" selection-end-column="48" />
               <folding />
             </state>
           </provider>
@@ -248,12 +248,12 @@
       <option name="presentableId" value="Default" />
       <updated>1501847924224</updated>
       <workItem from="1501847925950" duration="149953000" />
-      <workItem from="1503411489559" duration="40835000" />
+      <workItem from="1503411489559" duration="41617000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="190788000" />
+    <option name="totallyTimeSpent" value="191570000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="14" y="381" width="532" height="537" extended-state="0" />
@@ -413,7 +413,7 @@
     <entry file="file://$PROJECT_DIR$/../../../../cisco/log/ToDo.txt">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="170">
-          <caret line="8655" column="48" lean-forward="false" selection-start-line="8655" selection-start-column="48" selection-end-line="8655" selection-end-column="48" />
+          <caret line="8655" column="48" lean-forward="true" selection-start-line="8655" selection-start-column="48" selection-end-line="8655" selection-end-column="48" />
           <folding />
         </state>
       </provider>
