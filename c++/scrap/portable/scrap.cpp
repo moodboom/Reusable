@@ -1,5 +1,10 @@
 #include "scrap.hpp"
 
+// 16 c++11 futures and atomic variables
+#include <future>
+#include <thread>
+#include <chrono>
+
 
 int main(int argc, char *argv[])
 {
@@ -613,10 +618,141 @@ int main(int argc, char *argv[])
 
 
     // 16 ==================================================================================
-    cout << endl << "== 16 === thread completion =======" << endl;
+    cout << endl << "== 16 === thread stage detection =======" << endl;
     // 16 ==================================================================================
 
+    // NOTE that chrono_literals requires c++14!  time to push portable there - updating CMakeLists.txt...
+    using namespace std::chrono_literals; // c++14; for 2s, 0ms, etc; so cool!
 
+    // ----------
+    // std::async
+    // Not sure what it gets us.
+    // ----------
+    // Run some task on new thread. The launch policy std::launch::async
+    // makes sure that the task is run asynchronously on a new thread.
+    auto future = std::async(std::launch::async, [] {
+        std::this_thread::sleep_for(200ms);
+        return 8;
+    });
+
+    // Use wait_for() with zero milliseconds to check thread status.
+    auto status = future.wait_for(20ms);
+
+    // Print status.
+    if (status == std::future_status::ready) {
+        std::cout << "Thread finished" << std::endl;
+    } else {
+        std::cout << "Thread still running" << std::endl;
+    }
+
+    // THIS SUCKS don't do it...
+    std::cout << "std::future get() will block until done... :-( " << std::endl;
+    auto result = future.get(); // Get result.
+    std::cout << "Thread finished" << std::endl;
+    // ----------
+
+    /*
+    // ----------
+    // c++11 has atomic variables, here's why they ROCK, you can use them to get thread status
+    // ----------
+    std::atomic<int32_t> job_count(0);
+    std::thread t([&job_count] {
+        for (int loop = 0; loop < 20 && job_count < 100; ++loop)
+        {
+            std::this_thread::sleep_for(100ms);
+            job_count++; // Is done atomically.
+        }
+        std::cout << "thread exiting..." << std::endl;
+    });
+
+    for (int check = 0; check < 7; ++check)
+    {
+        std::this_thread::sleep_for(200ms);
+        // not sure why i was getting std::hex output...
+        std::cout << "check " << check << " job count: " << std::dec << job_count << std::endl;
+    }
+
+    // We can trigger the thread to exit.
+    // If we don't do this, the loop will complete after 20 times, which the join() will wait for.
+    // job_count.store(101);
+    job_count = 101;
+
+    // Let's see what happens if we don't join until after the thread is done.
+    std::this_thread::sleep_for(300ms);
+    std::cout << "done sleeping" << std::endl;
+
+    // NOW we will block to ensure the thread finishes.
+    std::cout << "joining" << std::endl;
+    t.join();
+    std::cout << "all done" << std::endl;
+    // ----------
+    */
+
+    // --------------------------------------------------------------------
+    // CONCISE EXAMPLE OF THREAD WITH EXTERNALLY-ACCESSIBLE STATUS AND DATA
+    // --------------------------------------------------------------------
+    // We create a vector, and create a thread to start stuffing it.
+    // Externally, we can check the status of the job, and have mutex access to the data.
+    // The atomic job stage is SO CHEAP to change and check, do it all day long as needed.
+    // Initially, externally, we check the job stage.
+    // Meanwhile, we do a bunch of intense work inside the mutex.
+    // Then we do smaller work with frequent mutexing, allowing interruption.
+    // Great patterns, use them brother!
+    // Hells to the yeah.
+    // --------------------------------------------------------------------
+    std::atomic<int32_t> job_stage(0);
+    std::unordered_set<int> data;
+    boost::shared_mutex data_guard;
+    data.insert(-1);
+    std::thread t([&job_stage,&data,&data_guard] {
+        // stage 1 = jam in data
+        job_stage = 1;
+        {
+            boost::upgrade_lock<boost::shared_mutex> lock(data_guard);
+            boost::upgrade_to_unique_lock<boost::shared_mutex> uniqueLock(lock);
+            for (int loop = 0; loop < 2000; ++loop)
+            {
+                std::this_thread::sleep_for(1ms);
+                data.insert(loop);
+            }
+        }
+        // stage 2 = mutex-jam data, allowing intervention
+        job_stage = 2;
+        for (int loop = 3000000; loop < 4000000 && job_stage == 2; ++loop)
+        {
+            boost::upgrade_lock<boost::shared_mutex> lock(data_guard);
+            boost::upgrade_to_unique_lock<boost::shared_mutex> uniqueLock(lock);
+            data.insert(loop);
+        }
+        cout << "thread exiting..." << endl;
+    });
+
+    cout << "pre mutex job stage: " << job_stage << endl;
+
+    for (int check = 0; check < 5; ++check)
+    {
+        std::this_thread::sleep_for(200ms);
+        // not sure why i was getting std::hex output...
+        cout << "check " << check << " job stage: ";
+        {
+            boost::upgrade_lock<boost::shared_mutex> lock(data_guard);
+            cout  << dec << job_stage << " data size " << data.size();
+        }
+        cout << endl;
+    }
+
+    // We can trigger the thread to exit.
+    job_stage = 3;
+
+    // Let's see what happens if we don't join until after the thread is done.
+    std::this_thread::sleep_for(300ms);
+    cout << "done sleeping" << endl;
+
+    // NOW we will block to ensure the thread finishes.
+    cout << "joining" << endl;
+    t.join();
+    cout << "all done" << endl;
+    // --------------------------------------------------------------------
 
 
     // ========= end ========

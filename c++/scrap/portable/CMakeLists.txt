@@ -15,7 +15,8 @@ set(Reusable "../../")
 set(BOOST_ROOT "../../../../$ENV{boost_version}/")   # NOTE: boost_version is set in .bashrc
 
 # MDM We want c++11 (or later)
-set(CMAKE_CXX_STANDARD 11)
+# MDM MOVING TO C++14 to get chrono literals!  why not, stay ahead of it
+set(CMAKE_CXX_STANDARD 14)
 # This is the old way for CMake <3.1
 #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
