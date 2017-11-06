@@ -729,7 +729,7 @@ int main(int argc, char *argv[])
 
     cout << "pre mutex job stage: " << job_stage << endl;
 
-    for (int check = 0; check < 5; ++check)
+    for (int check = 0; check < 6; ++check)
     {
         std::this_thread::sleep_for(200ms);
         // not sure why i was getting std::hex output...
