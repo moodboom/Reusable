@@ -80,6 +80,7 @@ using json = nlohmann::json;
 // MISC
 //    static void sleep(int n_secs)
 //    static bool unzip_first_file(string& str_zip, string& str_unzipped)
+//    stacktraces - using boost stacktrace - see notes to compile with CMake
 // ~~~~~~~
 
 
@@ -959,6 +960,29 @@ static bool unzip_first_file(string& str_zip, string& str_unzipped)
 
 	return true;
 }
+
+// ----------------
+// BOOST STACKTRACE
+// ----------------
+// We are using boost::stacktrace (similar to google's backward-cpp).
+//
+// TO USE IN CODE:
+// Turn it on like this:
+//  #define BOOST_STACKTRACE_USE_BACKTRACE
+//  #include <boost/stacktrace.hpp>
+// Use it like this:
+//  std::cout << boost::stacktrace::stacktrace();
+//
+// TO COMPILE with CMake:
+// We need to include debug info, even in our release builds, by using -g, eg:
+//  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -g")
+// No worries, it will NOT fluff up the code, it only adds a debug glob in the binary but outside the code.
+// Include the static lib, eg:
+//  find_package(Boost COMPONENTS system thread date_time filesystem regex stacktrace_backtrace REQUIRED)
+// For it to convert addresses to actual lines of code, we also need libdl and libbacktrace, eg:
+//  TARGET_LINK_LIBRARIES(${PROJECT_NAME} pthread ssl crypto dl backtrace ${Boost_LIBRARIES})
+// ----------------
+
 
 //=========================================================
 
