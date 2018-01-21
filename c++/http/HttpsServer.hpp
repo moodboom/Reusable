@@ -82,31 +82,6 @@ public:
     
     // helpers
     string get_request_content(std::shared_ptr<HttpsServer::Request> request) { return request->content.string(); }
-
-protected:
-    
-    // This function sends the response to the client.
-    // The response buffer was created previously by a handler.
-    // This code is from Simple-Web-Server https_examples.cpp.
-    // It is all we have needed so far, so we have not needed to make it virtual.
-    void default_resource_send(
-        std::shared_ptr<HttpsServer::Response> response,
-        std::shared_ptr<ifstream> ifs, 
-        std::shared_ptr<vector<char> > buffer
-    ) {
-        streamsize read_length;
-        if((read_length=ifs->read(&(*buffer)[0], buffer->size()).gcount())>0) {
-            response->write(&(*buffer)[0], read_length);
-            if(read_length==static_cast<streamsize>(buffer->size())) {
-                send(response, [this, response, ifs, buffer](const boost::system::error_code &ec) {
-                    if(!ec)
-                        default_resource_send(response, ifs, buffer);
-                    else
-                        cerr << "Connection interrupted" << endl;
-                });
-            }
-        }
-    }
 };
 
 

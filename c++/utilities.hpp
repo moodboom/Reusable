@@ -629,14 +629,35 @@ typedef enum
     LOG_TO_FILE_VERBOSITY_COUNT
 } LOG_TO_FILE_VERBOSITY;
 
+// ----------------------------------------------------------
+// A courtesy global current lv.
+// This usage is DISCOURAGED.
 extern LOG_TO_FILE_VERBOSITY g_current_log_verbosity;
+// Instead, consider using an lv_current setting maintained in some singleton.
+// Then define a logging function in the singleton that mirrors the ones below
+// but provides the lv_current value on every log call.
+// That allows more complex scenarios rather than one ugly global to rule them all.
+//
+// Example singleton member var and functions:
+//
+//  LOG_TO_FILE_VERBOSITY current_log_verbosity_;
+//  void log(LOG_TO_FILE_VERBOSITY v, string str, bool b_suppress_console = false, bool b_suppress_newline = false, bool b_suppress_file = false, int indent = 0) const
+//  {
+//      ::log(v,str,b_suppress_console,b_suppress_newline,b_suppress_file,indent,current_log_verbosity_);
+//  }
+//  void log(LOG_TO_FILE_VERBOSITY v, int n, bool b_suppress_console = false, bool b_suppress_newline = false, bool b_suppress_file = false, int indent = 0) const
+//  {
+//      ::log(v,n,b_suppress_console,b_suppress_newline,b_suppress_file,indent,current_log_verbosity_);
+//  }
+// ----------------------------------------------------------
+
 extern string g_base_log_filename;
 
-static void log(LOG_TO_FILE_VERBOSITY v, string str, bool b_suppress_console = false, bool b_suppress_newline = false, bool b_suppress_file = false, int indent = 0)
+static void log(LOG_TO_FILE_VERBOSITY v, string str, bool b_suppress_console = false, bool b_suppress_newline = false, bool b_suppress_file = false, int indent = 0, LOG_TO_FILE_VERBOSITY lv_current = g_current_log_verbosity)
 {
     static boost::mutex log_guard_;
     
-    if (v >= g_current_log_verbosity)
+    if (v >= lv_current)
     {
         // Lock and open file for appended output.
         boost::mutex::scoped_lock scoped_lock(log_guard_);
@@ -650,10 +671,11 @@ static void log(LOG_TO_FILE_VERBOSITY v, string str, bool b_suppress_console = f
                 cout << " ";
         }
 
+        string now = time_t_to_string(get_current_time_t(), "%H:%M:%S ");
         if (!b_suppress_file)
-            ofs_log << str;
+            ofs_log << now << str;
         if (!b_suppress_console)
-            cout << str;
+            cout << now << str;
 
         // NOTE that [<< endl] will do a flush.
         // If we don't do a newline, we should add in a [<< std::flush] instead.
@@ -669,9 +691,9 @@ static void log(LOG_TO_FILE_VERBOSITY v, string str, bool b_suppress_console = f
             cout << std::flush;
     }
 }
-static void log(LOG_TO_FILE_VERBOSITY v, int n, bool b_suppress_console = false, bool b_suppress_newline = false, int indent = 0)
+static void log(LOG_TO_FILE_VERBOSITY v, int n, bool b_suppress_console = false, bool b_suppress_newline = false, bool b_suppress_file = false, int indent = 0, LOG_TO_FILE_VERBOSITY lv_current = g_current_log_verbosity)
 {
-    log(v,lexical_cast<string>(n),b_suppress_console,b_suppress_newline,indent);
+    log(v,lexical_cast<string>(n),b_suppress_console,b_suppress_newline,b_suppress_file,indent,lv_current);
 }
 
 // Declarations with default params.
@@ -682,7 +704,7 @@ static void archive_any_old_log_file()
 {
     archive_any_old_file(g_base_log_filename+".log","backup/",string("__old__") + generate_uuid() + ".log");
 }
-static bool set_log_verbosity(string str_v)
+static bool set_global_log_verbosity(string str_v)
 {
     bool b_return = false;
 
@@ -965,10 +987,12 @@ static bool unzip_first_file(string& str_zip, string& str_unzipped)
 // BOOST STACKTRACE
 // ----------------
 // We are using boost::stacktrace (similar to google's backward-cpp).
+// There are two flavors, libbacktrace and addr2line.
+// We use the second, since it was the only one available by default on gentoo.
 //
 // TO USE IN CODE:
 // Turn it on like this:
-//  #define BOOST_STACKTRACE_USE_BACKTRACE
+//  #define BOOST_STACKTRACE_USE_ADDR2LINE
 //  #include <boost/stacktrace.hpp>
 // Use it like this:
 //  std::cout << boost::stacktrace::stacktrace();
@@ -978,9 +1002,10 @@ static bool unzip_first_file(string& str_zip, string& str_unzipped)
 //  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -g")
 // No worries, it will NOT fluff up the code, it only adds a debug glob in the binary but outside the code.
 // Include the static lib, eg:
-//  find_package(Boost COMPONENTS system thread date_time filesystem regex stacktrace_backtrace REQUIRED)
-// For it to convert addresses to actual lines of code, we also need libdl and libbacktrace, eg:
-//  TARGET_LINK_LIBRARIES(${PROJECT_NAME} pthread ssl crypto dl backtrace ${Boost_LIBRARIES})
+//  find_package(Boost COMPONENTS system thread date_time filesystem regex stacktrace_addr2line REQUIRED)
+// For it to convert addresses to actual lines of code, we also need libdl, eg:
+//  TARGET_LINK_LIBRARIES(${PROJECT_NAME} pthread ssl crypto dl ${Boost_LIBRARIES})
+// And finally, it uses the addr2line cmd, which should be in /usr/bin (probably already is).
 // ----------------
 
 

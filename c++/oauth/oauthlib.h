@@ -10,6 +10,9 @@
 #include <list>
 #include <map>
 
+// For stupid CaseInsensitiveMultimap
+#include <Simple-Web-Server/utility.hpp>
+using namespace SimpleWeb;
 
 // ================================================================================================
 // MDM these are defined by client in the sample code
@@ -95,13 +98,13 @@ public:
     bool getOAuthHeader(const eOAuthHttpRequestType eType, /* in */
                          const std::string& rawUrl, /* in */
                          const std::string& rawData, /* in */                       // MDM: can be empty for GETs, or include request key1=value1&key2=value2 pairs for POSTs
-                         std::map<std::string, std::string>& oAuthHttpHeader, /* out */
+                         CaseInsensitiveMultimap& oAuthHttpHeader, /* out */
                          const bool includeOAuthVerifierPin = false /* in */ );
     bool getEtradeHeader(
         const eOAuthHttpRequestType eType, /* in */
         const std::string& rawUrl, /* in */
         const std::string& rawData, /* in */
-        std::map<std::string, std::string>& oAuthHttpHeader, /* out */
+        CaseInsensitiveMultimap& oAuthHttpHeader, /* out */
         const bool includeOAuthVerifierPin = false, /* in */
         const bool includeOAuthTokenPin = false /* in */
     );

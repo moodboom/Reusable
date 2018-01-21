@@ -560,7 +560,7 @@ bool oAuth::getSignature( const eOAuthHttpRequestType eType,
 bool oAuth::getOAuthHeader( const eOAuthHttpRequestType eType,
                             const std::string& rawUrl,
                             const std::string& rawData,
-                            std::map<std::string, std::string>& oAuthHttpHeader, /* out */
+                            CaseInsensitiveMultimap& oAuthHttpHeader, /* out */
                             const bool includeOAuthVerifierPin )
 {
     oAuthKeyValuePairs rawKeyValuePairs;
@@ -611,10 +611,7 @@ bool oAuth::getOAuthHeader( const eOAuthHttpRequestType eType,
     getStringFromOAuthKeyValuePairs( rawKeyValuePairs, rawParams, paramsSeperator );
 
     /* Build authorization header */
-    oAuthHttpHeader["Authorization"] = std::string("OAuth ") + rawParams;
-    // OLD string way
-    // oAuthHttpHeader.assign( oAuthLibDefaults::OAUTHLIB_AUTHHEADER_STRING );
-    // oAuthHttpHeader.append( rawParams );
+    oAuthHttpHeader.emplace("Authorization",std::string("OAuth ") + rawParams);
 
     return !oAuthHttpHeader.empty();
 }
@@ -622,7 +619,7 @@ bool oAuth::getOAuthHeader( const eOAuthHttpRequestType eType,
 bool oAuth::getEtradeHeader(const eOAuthHttpRequestType eType, /* in */
     const std::string& rawUrl, /* in */
     const std::string& rawData, /* in */
-    std::map<std::string, std::string>& oAuthHttpHeader, /* out */
+    CaseInsensitiveMultimap& oAuthHttpHeader, /* out */
     const bool includeOAuthVerifierPin, /* in */
     const bool includeOAuthTokenPin /* in */
 ) {
@@ -631,7 +628,7 @@ bool oAuth::getEtradeHeader(const eOAuthHttpRequestType eType, /* in */
     // Build the header in the only field order that I know that works with E*Trade's API.  Id10ts.
     if (includeOAuthVerifierPin)
     {
-        oAuthHttpHeader["Authorization"] =
+        oAuthHttpHeader.emplace("Authorization",
               string("OAuth oauth_nonce=\"")
             + getNonce()
             + "\",oauth_timestamp=\""
@@ -644,10 +641,11 @@ bool oAuth::getEtradeHeader(const eOAuthHttpRequestType eType, /* in */
             + m_oAuthPin
             + "\",oauth_signature_method=\"HMAC-SHA1\",oauth_signature=\""
             + getOAuthSignature()
-            + "\"";
+            + "\""
+        );
     } else if (includeOAuthTokenPin)
     {
-        oAuthHttpHeader["Authorization"] =
+        oAuthHttpHeader.emplace("Authorization",
               string("OAuth oauth_nonce=\"")
             + getNonce()
             + "\",oauth_timestamp=\""
@@ -658,10 +656,11 @@ bool oAuth::getEtradeHeader(const eOAuthHttpRequestType eType, /* in */
             + m_oAuthTokenKey
             + "\",oauth_signature_method=\"HMAC-SHA1\",oauth_signature=\""
             + getOAuthSignature()
-            + "\"";
+            + "\""
+        );
     } else
     {
-        oAuthHttpHeader["Authorization"] =
+        oAuthHttpHeader.emplace("Authorization",
               string("OAuth oauth_nonce=\"")
             + getNonce()
             + "\",oauth_timestamp=\""
@@ -670,7 +669,8 @@ bool oAuth::getEtradeHeader(const eOAuthHttpRequestType eType, /* in */
             + getConsumerKey()
             + "\",oauth_callback=\"oob\",oauth_signature_method=\"HMAC-SHA1\",oauth_signature=\""
             + getOAuthSignature()
-            + "\"";
+            + "\""
+        );
     }
 
     return b_return;

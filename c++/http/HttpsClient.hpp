@@ -21,9 +21,9 @@ public:
 
     std::shared_ptr<Response> make_request(
         const std::string& request_type, 
-        const std::string& path="/", 
-        boost::string_ref content="",
-        const std::map<std::string, std::string>& header=std::map<std::string, std::string>()
+        const std::string& path="/",
+        string_view content="",
+        const CaseInsensitiveMultimap& header = CaseInsensitiveMultimap()
     ) {
         try {
             return inherited::request(
@@ -45,9 +45,6 @@ public:
             return std::shared_ptr<Response>();
         }
     }
-
-    boost::asio::io_service& get_io_service() { return io_service; }
-
 };
 
 // Results extraction helpers
@@ -73,8 +70,8 @@ public:
   std::shared_ptr<Response> make_request(
     const std::string& request_type,
     const std::string& path="/",
-    boost::string_ref content="",
-    const std::map<std::string, std::string>& header=std::map<std::string, std::string>()
+    string_view content="",
+    const CaseInsensitiveMultimap& header = CaseInsensitiveMultimap()
   ) {
       try {
           return inherited::request(
@@ -96,13 +93,10 @@ public:
           return std::shared_ptr<Response>();
       }
   }
-
-  boost::asio::io_service& get_io_service() { return io_service; }
-
 };
 
 // Results extraction helpers
-static string get_body(std::shared_ptr<Client<HTTP>::Response> response)           { if (response) return string(istreambuf_iterator<char>(response->content), {}); return ""; }
+static string get_body(std::shared_ptr<Client<HTTP>::Response> response)           { if (response) return response->content.string(); return ""; }
 static int32_t get_status_code(std::shared_ptr<Client<HTTP>::Response> response)   { if (response) return boost::lexical_cast<int32_t>(response->status_code.substr(0,3));; return 500; }
 
 
