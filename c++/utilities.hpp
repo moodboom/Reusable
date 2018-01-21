@@ -18,6 +18,7 @@ using json = nlohmann::json;
 //    static bool replace_once(string& str, const string& from, const string& to)
 //    static bool replace_with_regex(string& str, const string& from, const string& to)
 //    static bool replace_once_with_regex(string& str, const string& from, const string& to)
+//    static bool find_substring(const string& body, const string& regex, string& result)
 //    static bool b_string_ends_in(const string& source, const string& search)
 //    static vector<int64_t> parse_csv_ints(const std::string& csvdata)
 //    static string escape_doublequotes(string& string_to_change)
@@ -59,8 +60,9 @@ using json = nlohmann::json;
 //    static std::string generate_uuid()
 //    static std::string generate_random_hex(uint_fast32_t length)
 // LOGGING TO FILE
-//    static void log(LOG_TO_FILE_VERBOSITY v, string str, bool b_suppress_console = false, bool b_suppress_newline = false, bool b_suppress_file = false, int indent = 0)
-//    static void log(LOG_TO_FILE_VERBOSITY v, int n, bool b_suppress_console = false, bool b_suppress_newline = false, int indent = 0)
+//    static void log(LOG_TO_FILE_VERBOSITY v, string str, bool b_suppress_console = false, bool b_suppress_newline = false, bool b_suppress_file = false, int indent = 0, LOG_TO_FILE_VERBOSITY lv_current = g_current_log_verbosity)
+//    static void log(LOG_TO_FILE_VERBOSITY v, int n, bool b_suppress_console = false, bool b_suppress_newline = false, bool b_suppress_file = false, int indent = 0, LOG_TO_FILE_VERBOSITY lv_current = g_current_log_verbosity)
+//    static void log_test(const string &desc, bool bTestPassed)
 //    static bool backup_any_old_file(const string& filename, const string& prefix = "", const string& suffix = "");
 //    static bool archive_any_old_file(const string& filename, const string& prefix = "", const string& suffix = "");
 //    static void archive_any_old_log_file()
@@ -161,6 +163,20 @@ static bool replace_once_with_regex(string& str, const string& from, const strin
     reg.assign(from);
     str = boost::regex_replace(str,reg,to,boost::match_default | boost::format_first_only);
     return true;
+}
+static bool find_substring(const string& body, const string& regex, string& result)
+{
+    boost::match_results<std::string::const_iterator> mresults;
+    boost::regex reg;
+    reg.assign(regex);
+
+    // We want regex_search, not regex_match (which must match the entire input).
+    bool bSuccess = boost::regex_search(body,mresults,reg,boost::match_default);
+
+    if (bSuccess && mresults.size() > 1)
+        result = string(mresults[1].first,mresults[1].second);
+
+    return bSuccess;
 }
 static bool b_string_ends_in(const string& source, const string& search)
 {
@@ -696,6 +712,15 @@ static void log(LOG_TO_FILE_VERBOSITY v, int n, bool b_suppress_console = false,
     log(v,lexical_cast<string>(n),b_suppress_console,b_suppress_newline,b_suppress_file,indent,lv_current);
 }
 
+// This helper logs test results with sane defaults, and will BLOW YOUR SHIT UP if one fails.  You're welcome!  :-)
+static void log_test(const string &desc, bool bTestPassed)
+{
+    stringstream ss;
+    ss << (bTestPassed ? "[OK] " : "[*ERROR*] ") << desc;
+    log(LV_ALWAYS,ss.str(),false,false,false,0,LV_ALWAYS);
+    assert(bTestPassed);    // ALWAYS STOP on error
+}
+
 // Declarations with default params.
 static bool backup_any_old_file(const string& filename, const string& prefix = "", const string& suffix = "");
 static bool archive_any_old_file(const string& filename, const string& prefix = "", const string& suffix = "");
@@ -704,6 +729,7 @@ static void archive_any_old_log_file()
 {
     archive_any_old_file(g_base_log_filename+".log","backup/",string("__old__") + generate_uuid() + ".log");
 }
+// Discouraged, see above
 static bool set_global_log_verbosity(string str_v)
 {
     bool b_return = false;
