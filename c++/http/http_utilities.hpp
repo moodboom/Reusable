@@ -15,7 +15,7 @@ using namespace std;
 // Results extraction helpers
 static string get_body(std::shared_ptr<Client<HTTP>::Response> response)          { if (response) return response->content.string(); return ""; }
 static int32_t get_status_code(std::shared_ptr<Client<HTTP>::Response> response)  { if (response) return boost::lexical_cast<int32_t>(response->status_code.substr(0,3));; return 500; }
-static string get_body(std::shared_ptr<Client<HTTPS>::Response> response)         { if (response) return string(istreambuf_iterator<char>(response->content), {}); return ""; }
+static string get_body(std::shared_ptr<Client<HTTPS>::Response> response)         { if (response) return response->content.string(); return ""; }
 static int32_t get_status_code(std::shared_ptr<Client<HTTPS>::Response> response) { if (response) return boost::lexical_cast<int32_t>(response->status_code.substr(0,3));; return 500; }
 
 
@@ -70,7 +70,7 @@ static bool scrape_website(
   assert(regex.find('(') != std::string::npos);  // Remember to always provide a "(group)" in your regex!
   auto http_response = client.request_without_exception("GET",path);
   return
-      get_status_code(http_response) == 200
+          get_status_code(http_response) == 200
       &&  find_substring(http_response->content.string(),regex,result);
 }
 static bool scrape_website(
