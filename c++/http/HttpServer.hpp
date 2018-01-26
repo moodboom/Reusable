@@ -67,8 +67,28 @@ public:
     std::shared_ptr<boost::asio::io_service>& get_io_service() { return io_service; }
 
     virtual void startServer() {
-        // The server now handles threading in server_http.h start()
-        inherited::start();        
+
+        inherited::start();
+
+        // NOTE The base start() call avoids starting the io service
+        // because we created it earlier, externally.
+        // So once we get back from start(),
+        // we still have to start the io service up.
+        // If thread_pool_size>1, start m_io_service.run() in (thread_pool_size-1) threads for thread-pooling
+        threads.clear();
+        for(std::size_t c = 1; c < config.thread_pool_size; c++) {
+            threads.emplace_back([this]() {
+                this->io_service->run();
+            });
+        }
+
+        // Main thread
+        if(config.thread_pool_size > 0)
+            io_service->run();
+
+        // Wait for the rest of the threads, if any, to finish as well
+        for(auto &t : threads)
+            t.join();
     }
     
     // helpers
