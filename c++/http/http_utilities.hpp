@@ -61,27 +61,35 @@ static int32_t get_status_code(std::shared_ptr<Client<HTTPS>::Response> response
 // Results in a shittone of dupe code, the bane of my existence.
 // And should be yours too.  Rewrite SWS some day.
 // ALWAYS USE A NON-TEMPLATED BASE CLASS for all your templates!
+static bool scrape_website_body(
+    const string& body,
+    const string& regex,
+    string& result
+) {
+    assert(regex.find('(') != std::string::npos);  // Remember to always provide a "(group)" in your regex!
+    return find_substring(body,regex,result);
+}
+
 static bool scrape_website(
     Client<HTTP>& client,     // Use: Client<HTTP> client("mydomain");
     const string& path,
     const string& regex,
     string& result
 ) {
-  assert(regex.find('(') != std::string::npos);  // Remember to always provide a "(group)" in your regex!
   auto http_response = client.request_without_exception("GET",path);
   return
           get_status_code(http_response) == 200
-      &&  find_substring(http_response->content.string(),regex,result);
+      &&  scrape_website_body(http_response->content.string(),regex,result);
 }
+
 static bool scrape_website(
     Client<HTTPS>& client,     // Use: Client<HTTPS> client("mysecuredomain");
     const string& path,
     const string& regex,
     string& result
 ) {
-  assert(regex.find('(') != std::string::npos);  // Remember to always provide a "(group)" in your regex!
   auto http_response = client.request_without_exception("GET",path);
   return
-      get_status_code(http_response) == 200
-      &&  find_substring(http_response->content.string(),regex,result);
+          get_status_code(http_response) == 200
+      &&  scrape_website_body(http_response->content.string(),regex,result);
 }
