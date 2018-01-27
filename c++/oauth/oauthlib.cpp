@@ -561,7 +561,8 @@ bool oAuth::getOAuthHeader( const eOAuthHttpRequestType eType,
                             const std::string& rawUrl,
                             const std::string& rawData,
                             CaseInsensitiveMultimap& oAuthHttpHeader, /* out */
-                            const bool includeOAuthVerifierPin )
+                            const bool includeOAuthVerifierPin,
+                            const bool bUpdateHeader )
 {
     oAuthKeyValuePairs rawKeyValuePairs;
     std::string rawParams;
@@ -611,9 +612,11 @@ bool oAuth::getOAuthHeader( const eOAuthHttpRequestType eType,
     getStringFromOAuthKeyValuePairs( rawKeyValuePairs, rawParams, paramsSeperator );
 
     /* Build authorization header */
-    oAuthHttpHeader.emplace("Authorization",std::string("OAuth ") + rawParams);
+    // MDM Note that in some cases we do this later, eg to build in an Etrade-specific order.
+    if (bUpdateHeader)
+        oAuthHttpHeader.emplace("Authorization",std::string("OAuth ") + rawParams);
 
-    return !oAuthHttpHeader.empty();
+    return !rawParams.empty();
 }
 
 bool oAuth::getEtradeHeader(const eOAuthHttpRequestType eType, /* in */
@@ -623,7 +626,7 @@ bool oAuth::getEtradeHeader(const eOAuthHttpRequestType eType, /* in */
     const bool includeOAuthVerifierPin, /* in */
     const bool includeOAuthTokenPin /* in */
 ) {
-    bool b_return = getOAuthHeader( eType, rawUrl, rawData, oAuthHttpHeader, includeOAuthVerifierPin );
+    bool b_return = getOAuthHeader( eType, rawUrl, rawData, oAuthHttpHeader, includeOAuthVerifierPin, false );
 
     // Build the header in the only field order that I know that works with E*Trade's API.  Id10ts.
     if (includeOAuthVerifierPin)

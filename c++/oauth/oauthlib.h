@@ -99,7 +99,9 @@ public:
                          const std::string& rawUrl, /* in */
                          const std::string& rawData, /* in */                       // MDM: can be empty for GETs, or include request key1=value1&key2=value2 pairs for POSTs
                          CaseInsensitiveMultimap& oAuthHttpHeader, /* out */
-                         const bool includeOAuthVerifierPin = false /* in */ );
+                         const bool includeOAuthVerifierPin = false, /* in */
+                         const bool bUpdateHeader = true  /* in */
+    );
     bool getEtradeHeader(
         const eOAuthHttpRequestType eType, /* in */
         const std::string& rawUrl, /* in */
