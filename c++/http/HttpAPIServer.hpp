@@ -487,6 +487,9 @@ inline bool HttpAPIServer::tokenize_API_querystring(const std::string& querystri
 {
     ac.url_params_.clear();
 
+    // TODO this duplicates parse_query_string, replace
+    // (but then we need to use CaseInsensitiveMultimap in API_call)
+
     typedef boost::tokenizer<boost::char_separator<char> > tokenizer;
     boost::char_separator<char> sep("&");
     tokenizer tokens(querystring, sep);
