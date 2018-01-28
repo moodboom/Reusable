@@ -292,7 +292,7 @@ inline void HttpAPIServer::createBadRequestHandler() {
 
 inline string HttpAPIServer::requestError(const inherited::Request& request, const string msg) 
 { 
-    return msg + ": " + request.method + " " + request.path; 
+    return msg + ": " + request.method + " " + request.path + " ? " + request.query_string;
 }
 
 inline void HttpAPIServer::badCall(HRes& response, const string msg, int delay_secs)
