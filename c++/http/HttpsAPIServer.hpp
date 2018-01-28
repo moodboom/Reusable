@@ -114,6 +114,7 @@ protected:
     // Helpers
     // -------
     bool tokenize_API_url(const std::string& url, std::string& protocol, std::string& host, API_call& ac);
+    bool tokenize_API_querystring(const std::string& querystring, API_call& ac);
     void badCall(HRes &response, const string msg, int delay_secs = 1);
     string requestError(const Request &request, const string msg);
 
@@ -449,6 +450,28 @@ inline string HttpsAPIServer::get_API_html()
 // -------
 // Helpers
 // -------
+
+inline bool HttpsAPIServer::tokenize_API_querystring(const std::string& querystring, API_call& ac)
+{
+    // TODO
+    // using namespace boost;
+
+    typedef boost::tokenizer<boost::char_separator<char> > tokenizer;
+    boost::char_separator<char> sep("&");
+    tokenizer tokens(querystring, sep);
+    for (tokenizer::iterator tok_iter = tokens.begin(); tok_iter != tokens.end(); ++tok_iter)
+    {
+        boost::char_separator<char> sep2("=");
+        tokenizer pairs(*tok_iter, sep);
+        tokenizer::iterator key_iter = tokens.begin();
+        tokenizer::iterator value_iter = key_iter; ++value_iter;
+        if (key_iter != tokens.end())
+        {
+            ac.url_params_[*key_iter] = (value_iter == tokens.end())? "" : *value_iter;
+        }
+    }
+}
+
 
 inline bool HttpsAPIServer::tokenize_API_url(const std::string& url, std::string& protocol, std::string& host, API_call& ac)
 {
