@@ -18,7 +18,6 @@ static int32_t get_status_code(std::shared_ptr<Client<HTTP>::Response> response)
 static string get_body(std::shared_ptr<Client<HTTPS>::Response> response)         { if (response) return response->content.string(); return ""; }
 static int32_t get_status_code(std::shared_ptr<Client<HTTPS>::Response> response) { if (response) return boost::lexical_cast<int32_t>(response->status_code.substr(0,3));; return 500; }
 
-
 // scrape_website
 // --------------
 // Scraping websites in general is an ugly brittle job.

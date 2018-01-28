@@ -137,25 +137,6 @@ public:
         }
         regex += ")";
 
-        // MDM 2018-01-28 SWS now stores url params in query_string not url or url regex.
-        /*
-        if (!url_params_.empty())
-        {
-            if (b_url_params_are_mandatory_) {
-                // We have to check for params in ANY ORDER.  
-                // Consolidate all param names into an OR, and check for that repeatedly for the number of times of the total param count.
-                // Can be done, but... Pita.  Screw it for now, just check for any character after the type.
-                regex += ".+";
-                // for (auto& pair : url_params_)
-                // {
-                //     regex += string("[?&]")+pair.first+"=.+?";
-                // }
-            } else {
-                regex += ".*";
-            }
-        }
-        */
-        
         return regex;
     }
 

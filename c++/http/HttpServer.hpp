@@ -94,6 +94,24 @@ public:
     // helpers
     string get_request_content(std::shared_ptr<HttpServer::Request> request) { return request->content.string(); }
 
+    // For debugging, this helps log an entire http request.
+    string request_details(std::shared_ptr<HttpServer::Request>& request)
+    {
+        stringstream ss;
+        ss << "url: " << request->path << (request->query_string.empty()?"":"?") << request->query_string << endl;
+
+        ss << "header:" << endl;
+        for (auto& h : request->header )
+        {
+            ss << h.first << " : " << h.second << endl;
+        }
+
+        string body = request->content.string();
+        ss << "content:" << endl << body << endl;
+
+        return ss.str();
+    }
+
 };
 
 
