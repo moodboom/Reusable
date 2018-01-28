@@ -141,7 +141,7 @@ protected:
       }
       return false;
     }
-    bool tokenize_API_url(const std::string& url, std::string& protocol, std::string& host, API_call& ac);
+    bool tokenize_API_url(HReq &request, std::string& protocol, std::string& host, API_call& ac);
     bool tokenize_API_querystring(const std::string& querystring, API_call& ac);
     void badCall(HRes &response, const string msg, int delay_secs = 1);
     string requestError(const Request &request, const string msg);
@@ -485,8 +485,7 @@ inline string HttpAPIServer::get_API_html()
 
 inline bool HttpAPIServer::tokenize_API_querystring(const std::string& querystring, API_call& ac)
 {
-    // TODO
-    // using namespace boost;
+    ac.url_params_.clear();
 
     typedef boost::tokenizer<boost::char_separator<char> > tokenizer;
     boost::char_separator<char> sep("&");
@@ -494,19 +493,36 @@ inline bool HttpAPIServer::tokenize_API_querystring(const std::string& querystri
     for (tokenizer::iterator tok_iter = tokens.begin(); tok_iter != tokens.end(); ++tok_iter)
     {
         boost::char_separator<char> sep2("=");
-        tokenizer pairs(*tok_iter, sep);
-        tokenizer::iterator key_iter = tokens.begin();
+        tokenizer pairs(*tok_iter, sep2);
+        tokenizer::iterator key_iter = pairs.begin();
         tokenizer::iterator value_iter = key_iter; ++value_iter;
-        if (key_iter != tokens.end())
+        if (key_iter != pairs.end())
         {
-            ac.url_params_[*key_iter] = (value_iter == tokens.end())? "" : *value_iter;
+            string key;
+            if (url_decode(*key_iter,key))
+            {
+                if (value_iter == pairs.end())
+                    ac.url_params_[key] = "";
+                else
+                {
+                    string value;
+                    if (url_decode(*value_iter,value))
+                        ac.url_params_[key] = value;
+                }
+            }
         }
     }
+    return !ac.b_url_params_are_mandatory_ || !ac.url_params_.empty();
 }
 
 
-inline bool HttpAPIServer::tokenize_API_url(const std::string& url, std::string& protocol, std::string& host, API_call& ac)
+inline bool HttpAPIServer::tokenize_API_url(HReq &request, std::string& protocol, std::string& host, API_call& ac)
 {
+    const string& url = request->path;
+
+    if (!tokenize_API_querystring(request->query_string,ac))
+        return false;
+
     // This is not the ultimate URL parser (there are libraries for that when you need it - google-url, StrTk, etc.).
     // It only handles the formats we expect for our RESTful API.
     //
@@ -530,7 +546,6 @@ inline bool HttpAPIServer::tokenize_API_url(const std::string& url, std::string&
     protocol.clear();
     host.clear();
     ac.path_tokens_.clear();
-    ac.url_params_.clear();
 
     // ===================================
     // protocol
@@ -628,6 +643,10 @@ inline bool HttpAPIServer::tokenize_API_url(const std::string& url, std::string&
 
     // ===================================
     // url params
+    // MDM 2018-01-28 SWS now stores url params in query_string not url or url regex.
+    if (walk1 == url.length())
+        return true;
+    /*
     // break apart "param1=value1&param2=value2" name-value pairs
 
     // We should always be at the "?" here, skip over it.
@@ -656,6 +675,7 @@ inline bool HttpAPIServer::tokenize_API_url(const std::string& url, std::string&
 
         walk1 = walk3 + 1;
     }
+    */
     // ===================================
 
     // We actually shouldn't hit this.
