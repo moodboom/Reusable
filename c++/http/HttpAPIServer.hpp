@@ -105,6 +105,16 @@ public:
         if (bServeRootOnError_)
           createBadRequestHandler();
 
+        // DEBUG
+        /*
+        // Write out the available web routes
+        log(LV_ALWAYS,string("=================="));
+        log(LV_ALWAYS,string("    ROUTES:"));
+        log(LV_ALWAYS,string("=================="));
+        log(LV_ALWAYS,routes());
+        log(LV_ALWAYS,string("=================="));
+        */
+
         inherited::startServer();
     }
     
