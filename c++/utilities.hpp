@@ -46,15 +46,18 @@ using json = nlohmann::json;
 //    string url_encode_JWT(const JWT& j_input);
 //    void url_decode_JWT(string input, JWT& jwt);
 // TIME
-//    static ptime get_current_time()
+//    static time_t ptime_to_time_t(const ptime& pt)
+//    static ptime  get_utc_current_time()              // Always prefer UTC
+//    static time_t get_utc_current_time_t()
+//    static time_t get_utc_today_midnight()
+//    static ptime  get_local_current_time()
+//    static time_t get_local_current_time_t()
+//    static time_t get_local_today_midnight()
 //    static ptime string_to_ptime(const string& str_time, const string& str_format)
 //    static ptime iso_string_to_ptime(const string& str_time)
 //    static string ptime_to_string(const ptime& pt, const string& str_format)
-//    static time_t ptime_to_time_t(const ptime& pt)
 //    static ptime time_t_to_ptime(const time_t& tt)
 //    static string time_t_to_string(const time_t& tt, const string& str_format)
-//    static time_t get_current_time_t()
-//    static time_t get_today_midnight()
 //    static string americanFormat(date d)
 // RANDOM
 //    static std::string generate_uuid()
@@ -516,11 +519,24 @@ protected:
 //=========================================================
 // TIME
 //=========================================================
-static ptime get_current_time()
+static time_t ptime_to_time_t(const ptime& pt)
 {
-    // return second_clock::local_time();       // LOCAL
-    return second_clock::universal_time();      // UTC
+    // Wow this is a lot of work.
+    ptime epoch(boost::gregorian::date(1970,1,1));
+    time_duration::sec_type x = (pt - epoch).total_seconds();
+    return time_t(x);
 }
+
+// ALWAYS PREFER UTC TIME, especially when persisting.
+
+static ptime  get_utc_current_time()     { return second_clock::universal_time();            }
+static time_t get_utc_current_time_t()   { return ptime_to_time_t(get_utc_current_time());   }
+static time_t get_utc_today_midnight()   { time_t now = get_utc_current_time_t(); return now / 86400 * 86400; }
+
+static ptime  get_local_current_time()   { return second_clock::local_time();                }
+static time_t get_local_current_time_t() { return ptime_to_time_t(get_local_current_time()); }
+static time_t get_local_today_midnight() { time_t now = get_local_current_time_t(); return now / 86400 * 86400; }
+
 static ptime string_to_ptime(const string& str_time, const string& str_format)
 {
     std::istringstream is(str_time);
@@ -551,13 +567,6 @@ static string date_to_string(const date& d, const string& str_format)
     is << d;
     return is.str();
 }
-static time_t ptime_to_time_t(const ptime& pt)
-{
-    // Wow this is a lot of work.
-    ptime epoch(boost::gregorian::date(1970,1,1));
-    time_duration::sec_type x = (pt - epoch).total_seconds();
-    return time_t(x);
-}
 static ptime time_t_to_ptime(const time_t& tt)
 {
     return from_time_t(tt);
@@ -565,15 +574,6 @@ static ptime time_t_to_ptime(const time_t& tt)
 static string time_t_to_string(const time_t& tt, const string& str_format)
 {
     return ptime_to_string(time_t_to_ptime(tt), str_format);
-}
-static time_t get_current_time_t()
-{
-    return ptime_to_time_t(get_current_time());
-}
-static time_t get_today_midnight()
-{
-    time_t now = time(0);
-    return now / 86400 * 86400;
 }
 static string americanFormat(date d)
 {
@@ -687,7 +687,7 @@ static void log(LOG_TO_FILE_VERBOSITY v, string str, bool b_suppress_console = f
                 cout << " ";
         }
 
-        string now = time_t_to_string(get_current_time_t(), "%H:%M:%S ");
+        string now = time_t_to_string(get_local_current_time_t(), "%H:%M:%S ");
         if (!b_suppress_file)
             ofs_log << now << str;
         if (!b_suppress_console)
