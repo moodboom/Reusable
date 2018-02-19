@@ -758,6 +758,26 @@ int main(int argc, char *argv[])
     // --------------------------------------------------------------------
 
 
+    // 17 ==================================================================================
+    cout << endl << "== 17 === repeat var name in deeper scope =======" << endl;
+    // 17 ==================================================================================
+
+    int sloppy;
+    sloppy = 1;
+    {
+        int sloppy;
+        sloppy = 2;
+        {
+            cout << "inner scope outer var = " << sloppy;
+            int sloppy;
+            sloppy = 3;
+            cout << "inner scope = " << sloppy;
+        }
+        cout << "mid scope = " << sloppy;
+    }
+    cout << "outer scope = " << sloppy;
+
+
     // ========= end ========
     // We can keep it running if needed to better see the output.
     // while (true)
