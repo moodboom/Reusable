@@ -768,14 +768,14 @@ int main(int argc, char *argv[])
         int sloppy;
         sloppy = 2;
         {
-            cout << "inner scope outer var = " << sloppy;
+            cout << "inner scope outer var = " << sloppy << endl;
             int sloppy;
             sloppy = 3;
-            cout << "inner scope = " << sloppy;
+            cout << "inner scope = " << sloppy << endl;
         }
-        cout << "mid scope = " << sloppy;
+        cout << "mid scope = " << sloppy << endl;
     }
-    cout << "outer scope = " << sloppy;
+    cout << "outer scope = " << sloppy << endl;
 
 
     // ========= end ========
