@@ -11,7 +11,7 @@ project(portable)
 # MDM Set up relative paths to external folders
 # -------------------------------
 set(Reusable "../../")
-set(ThirdParty "../../../Libraries/c++/")
+set(ThirdParty "../../../../Libraries/c++/")
 set(BOOST_ROOT "../../../../$ENV{boost_version}/")   # NOTE: boost_version is set in .bashrc
 
 # MDM We want c++11 (or later)

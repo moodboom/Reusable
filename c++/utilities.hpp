@@ -365,9 +365,9 @@ public:
 };
 #define RAPIDJSON_ASSERT(x)  if(x); else throw rapidjson_exception();
 
-#include <rapidjson/document.h>
-#include <rapidjson/stringbuffer.h>       // These two includes allow you to get an object as a string
-#include <rapidjson/writer.h>             // That allows an array of objects to use an object parser function
+#include <rapidjson/include/rapidjson/document.h>
+#include <rapidjson/include/rapidjson/stringbuffer.h>       // These two includes allow you to get an object as a string
+#include <rapidjson/include/rapidjson/writer.h>             // That allows an array of objects to use an object parser function
 
 static string json_get_string(rapidjson::Document& d)
 {
