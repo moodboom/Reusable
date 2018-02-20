@@ -11,7 +11,7 @@ project(portable)
 # MDM Set up relative paths to external folders
 # -------------------------------
 set(Reusable "../../")
-# set(ThirdParty ".../")
+set(ThirdParty "../../../Libraries/c++/")
 set(BOOST_ROOT "../../../../$ENV{boost_version}/")   # NOTE: boost_version is set in .bashrc
 
 # MDM We want c++11 (or later)
@@ -23,7 +23,7 @@ set(CMAKE_CXX_STANDARD 14)
 # MDM external include dirs
 INCLUDE_DIRECTORIES(${Reusable})
 INCLUDE_DIRECTORIES(${Reusable}sqlite/)
-# INCLUDE_DIRECTORIES(${ThirdParty})
+INCLUDE_DIRECTORIES(${ThirdParty})
 
 # MDM CMake handles boost like this...
 set(BOOST_INCLUDE_DIR ${BOOST_ROOT})
