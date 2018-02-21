@@ -18,6 +18,7 @@ using json = nlohmann::json;
 //    static bool replace_once(string& str, const string& from, const string& to)
 //    static bool replace_with_regex(string& str, const string& from, const string& to)
 //    static bool replace_once_with_regex(string& str, const string& from, const string& to)
+//    static void trim(string &s)      (and starttrim and endtrim)
 //    static bool find_substring(const string& body, const string& regex, string& result)
 //    static bool b_string_ends_in(const string& source, const string& search)
 //    static vector<int64_t> parse_csv_ints(const std::string& csvdata)
@@ -167,6 +168,23 @@ static bool replace_once_with_regex(string& str, const string& from, const strin
     str = boost::regex_replace(str,reg,to,boost::match_default | boost::format_first_only);
     return true;
 }
+static inline void starttrim(std::string &s) {
+    s.erase(s.begin(), std::find_if(s.begin(), s.end(), [](int ch) {
+        return !std::isspace(ch);
+    }));
+}
+static inline void endtrim(std::string &s) {
+    s.erase(std::find_if(s.rbegin(), s.rend(), [](int ch) {
+        return !std::isspace(ch);
+    }).base(), s.end());
+}
+
+// trim from both ends (in place)
+static inline void trim(std::string &s) {
+    starttrim(s);
+    endtrim(s);
+}
+
 static bool find_substring(const string& body, const string& regex, string& result)
 {
     boost::match_results<std::string::const_iterator> mresults;
