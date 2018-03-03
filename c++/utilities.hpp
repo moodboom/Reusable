@@ -74,6 +74,7 @@ using json = nlohmann::json;
 // FILE
 //    //  #include <boost/filesystem.hpp>
 //    static string read_file(string filename)
+//    static string read_file_end(string filename, streampos max_bytes)     << preferred
 // PROFILING
 //    static void start_profile(time_t& start_time)
 //    static void end_profile(const time_t& start_time, std::string msg)
@@ -889,6 +890,25 @@ static string read_file(string filename)
     return(contents);
   }
   throw(errno);
+}
+// Always prefer this over read_file, to avoid reading a massive file by mistake.
+static string read_file_end(string filename, streampos max_bytes)
+{
+    std::ifstream in(filename.c_str(), std::ios::in | std::ios::binary);
+    if (in)
+    {
+        in.seekg(0, std::ios::end);
+        int64_t length = min(in.tellg(),max_bytes);
+
+        std::string contents;
+        contents.resize(length);
+
+        in.seekg(-length, std::ios::end);
+        in.read(&contents[0], contents.size());
+        in.close();
+        return(contents);
+    }
+    throw(errno);
 }
 //=========================================================
 
