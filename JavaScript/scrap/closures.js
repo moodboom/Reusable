@@ -24,6 +24,7 @@ var globalVar = "xyz";
 var cascade = function() {
 
   // Sorry charlie, the loop will complete before any timeout fires, you'll get all 5's
+  // BUT, the timing of the output will be good :-)
   for (var i = 0; i < 5; i++) {
     setTimeout(function() { console.log(i); }, i * 1000 );
   }
