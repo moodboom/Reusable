@@ -745,10 +745,7 @@ int main(int argc, char *argv[])
     job_stage = 3;
 
     // Let's see what happens if we don't join until after the thread is done.
-
-
-
-
+    std::this_thread::sleep_for(300ms);
     cout << "done sleeping" << endl;
 
     // NOW we will block to ensure the thread finishes.
