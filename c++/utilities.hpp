@@ -70,7 +70,7 @@ using json = nlohmann::json;
 //    static bool backup_any_old_file(const string& filename, const string& prefix = "", const string& suffix = "");
 //    static bool archive_any_old_file(const string& filename, const string& prefix = "", const string& suffix = "");
 //    static void archive_any_old_log_file()
-//    static bool set_log_verbosity(string str_v)
+//    static bool set_global_log_verbosity(string str_v)
 // FILE
 //    //  #include <boost/filesystem.hpp>
 //    static string read_file(string filename)
