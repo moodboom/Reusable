@@ -694,7 +694,7 @@ extern LOG_TO_FILE_VERBOSITY g_current_log_verbosity;
 
 extern string g_base_log_filename;
 
-static void log(LOG_TO_FILE_VERBOSITY v, string str, bool b_suppress_console = false, bool b_suppress_newline = false, bool b_suppress_file = false, int indent = 0, LOG_TO_FILE_VERBOSITY lv_current = g_current_log_verbosity)
+static void log(LOG_TO_FILE_VERBOSITY v, string str, bool b_suppress_console = false, bool b_suppress_newline = false, bool b_suppress_file = false, int indent = 0, LOG_TO_FILE_VERBOSITY lv_current = g_current_log_verbosity, const string& base_log_filename = g_base_log_filename)
 {
     static boost::mutex log_guard_;
     
@@ -702,7 +702,7 @@ static void log(LOG_TO_FILE_VERBOSITY v, string str, bool b_suppress_console = f
     {
         // Lock and open file for appended output.
         boost::mutex::scoped_lock scoped_lock(log_guard_);
-        boost::filesystem::ofstream ofs_log(g_base_log_filename + ".log",boost::filesystem::ofstream::out | boost::filesystem::ofstream::app);
+        boost::filesystem::ofstream ofs_log(base_log_filename + ".log",boost::filesystem::ofstream::out | boost::filesystem::ofstream::app);
 
         for (int loop=0;loop<indent;++loop)
         {
