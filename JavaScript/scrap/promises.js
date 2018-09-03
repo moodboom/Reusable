@@ -1,5 +1,10 @@
 #!/usr/bin/env node
 
+
+// https://javascript.info/promise-chaining
+// "As a rule, an asynchronous action should always return a promise."
+
+
 // -----------------------
 // BASIC THEN AND CATCH
 // -----------------------
@@ -41,9 +46,29 @@ var myBadCall = MyPromiseFunction(2,2)
 
 
 // -----------------------
-// CHAINING
+// ALL
+// -----------------------
+// TODO
+/*
+let urls = [
+    'https://api.github.com/users/iliakan',
+    'https://api.github.com/users/remy',
+    'https://api.github.com/users/jeresig'
+];
+  
+Promise.all(urls.map(url => { console.log(url) }))
+// for each response show its status
+.then(responses => { // (*)
+    for(let response of responses) {
+    alert(`${response.url}: ${response.status}`);
+    }
+});
+*/
 // -----------------------
 
-// function MyPromiseChain
 
+// -----------------------
+// CHAINING
+// -----------------------
+// TODO
 // -----------------------
