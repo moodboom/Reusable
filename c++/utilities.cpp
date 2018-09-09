@@ -1,7 +1,6 @@
 #include <base64.hpp>         // For base64_en/decode
 #include <oauth/HMAC_SHA1.h>  // For HS256
 #include <oauth/oauthlib.h>   // For OAUTHLIB_BUFFSIZE_LARGE
-#include <json/json.hpp>      // 2016 JSON handling
 
 #include "utilities.hpp"
 

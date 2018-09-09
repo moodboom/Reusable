@@ -3,8 +3,8 @@
 
 #include "basic_types.hpp"
 #include "miniz.h"
-#include <oauth/urlencode.h>  // For urlen/decode
-#include <json/json.hpp>      // 2016 JSON handling
+#include <oauth/urlencode.h>    // For urlen/decode
+#include <json.hpp>             // 2018 JSON handling using external single-header lib from https://github.com/nlohmann/json
 
 // 2017/01/05 tired of typing
 using namespace std;
