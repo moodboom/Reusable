@@ -303,11 +303,17 @@ public:
     void assignNewDbIdAsNeeded()
     {
         if (db_id_ == DBID_UNSAVED)
-        {
-            ++static_max_db_id_;
-            db_id_ = static_max_db_id_;
-            setDirty();
-        }
+            assignNewDbId();
+    }
+
+    // Call this to force a new ID when appropriate.
+    // This works great for our newer more-agile default-constructor pattern.
+    // We default db_id_ to DB_DO_NOT_SAVE, then call this when we want to persist a new object.
+    void assignNewDbId()
+    {
+        ++static_max_db_id_;
+        db_id_ = static_max_db_id_;
+        setDirty();
     }
 
     // These will persist, and require room for growth.  Use an exact and generous bit size.
