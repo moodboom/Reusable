@@ -124,9 +124,14 @@ typedef ssl::stream<tcp::socket> ssl_embedded_socket;
 //		-D_SCL_SECURE_NO_WARNINGS 
 //
 // so VS doesn't spew "checked iterators" warnings.
-#include <boost/uuid/uuid.hpp>            // uuid class
-#include <boost/uuid/uuid_generators.hpp> // generators
-#include <boost/uuid/uuid_io.hpp>         // streaming operators etc.
+// ===========================================
+// NOTE in boost 1.69 you get some erroneous dumb deprecated warning, here is a workaround that can come out once we have 1.70.
+#define BOOST_PENDING_INTEGER_LOG2_HPP
+#include <boost/integer/integer_log2.hpp>
+// ===========================================
+#include <boost/uuid/uuid.hpp>            	// uuid class
+#include <boost/uuid/random_generator.hpp>	// uuid generators
+#include <boost/uuid/uuid_io.hpp>         	// streaming operators etc.
 // ===========================================
 
 
