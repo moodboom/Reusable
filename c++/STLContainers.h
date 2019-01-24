@@ -303,7 +303,10 @@ public:
     void assignNewDbIdAsNeeded()
     {
         if (db_id_ == DBID_UNSAVED)
+        {
             assignNewDbId();
+            setDirty();
+        }
     }
 
     // Call this to force a new ID when appropriate.
@@ -313,7 +316,6 @@ public:
     {
         ++static_max_db_id_;
         db_id_ = static_max_db_id_;
-        setDirty();
     }
 
     // These will persist, and require room for growth.  Use an exact and generous bit size.
