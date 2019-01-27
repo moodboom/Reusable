@@ -594,17 +594,21 @@ static string time_t_to_string(const time_t& tt, const string& str_format)
 {
     return ptime_to_string(time_t_to_ptime(tt), str_format);
 }
-static string stdFormat(date d)
+static string stdFormat(const date& d)
 {
     stringstream ss;
     ss << boost::format("%4d-%02d-%02d") % d.year() % d.month() % d.day();
     return ss.str();
 }
-static string americanFormat(date d)
+static string americanFormat(const date& d)
 {
     stringstream ss;
     ss << boost::format("%02d-%02d-%4d") % d.month() % d.day() % d.year();
     return ss.str();
+}
+static string stdFormat(const ptime& pt)
+{
+    return ptime_to_string(pt,"%Y-%m-%dT%H:%M:%S");
 }
 
 
