@@ -188,7 +188,7 @@ void TraceList( std::stringstream& strm, std::list< T >& listTarget, int nMaxObj
 //=========================================================
 // PersistentObject
 //=========================================================
-// Basic object that tracks dirty and deleted statuses, for the sake of delayed writes.
+// Basic object that tracks dirty status, for the sake of delayed writes.
 // All containers should consider using a delayed-write pattern.
 //=========================================================
 class PersistentObject
@@ -198,8 +198,7 @@ public:
     PersistentObject()
     :
         // init vars
-        bSaved_(false),
-        bDeleted_(false)
+        bSaved_(false)
     {}
 
     // We provide diff functions for dirty vs saved.
@@ -211,18 +210,8 @@ public:
     virtual void setDirty() { bSaved_ = false; }
     virtual void setSaved() { bSaved_ = true; }
 
-    // We need delayed deletion as well.
-    // NOTE that the memory manager may need to use this trigger
-    // to delay-delete from containers as well as db.  It should have access to do so.
-    virtual bool bDeleted() const             { return bDeleted_; }
-    virtual void setDeleted(bool bNew = true) { bDeleted_ = bNew; }
-    
-    // This helper lets us check for the need to write in one call.
-    bool bDirtyOrDeleted() const { return bDeleted() || bDirty(); }
-
 protected:
     bool bSaved_;
-    bool bDeleted_;
 };
 
 
