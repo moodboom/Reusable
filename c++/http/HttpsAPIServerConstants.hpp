@@ -63,13 +63,15 @@ public:
         vector<string> path_tokens,
         vector<string> types,
         map<const string,string> url_params = map<const string,string>(),
-        bool b_url_params_are_mandatory = true
+        bool b_url_params_are_mandatory = true,
+        bool b_has_static_html = true
     ) :
         method_(method),
         path_tokens_(path_tokens),
         types_(types),
         url_params_(url_params),
-        b_url_params_are_mandatory_(b_url_params_are_mandatory)
+        b_url_params_are_mandatory_(b_url_params_are_mandatory),
+        b_has_static_html_(b_has_static_html)
     {}
 
     // This is used to create keys etc, but never for full API call objects.
@@ -210,6 +212,7 @@ public:
     vector<string>  types_;
     map<const string,string> url_params_;
     bool b_url_params_are_mandatory_;
+    bool b_has_static_html_;
 
     string static_html_;
 };
