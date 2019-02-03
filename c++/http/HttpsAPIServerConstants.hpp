@@ -220,6 +220,9 @@ public:
 
 bool API_call::load_static_html()
 {
+    if (!b_has_static_html_)
+        return false;
+
     if (types_.empty() || types_[0] != "html")
         return false;
 
