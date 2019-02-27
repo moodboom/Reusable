@@ -6,7 +6,9 @@
     body { margin:0;position:fixed;top:0;right:0;bottom:0;left:0; }
     
     polygon { 
-      fill: CadetBlue 
+      stroke: grey;
+      /*stroke-width: 2px;*/
+      stroke-linejoin: round;
     }
   </style>
 </head>
@@ -28,25 +30,86 @@
   var x = d3.scaleLinear().range([0, 500]);
 	var y = d3.scaleLinear().range([500, 0]);
   
-  x.domain([0, 50]);
-  y.domain([0, 50]);
+  x.domain([0, 1500]);
+  y.domain([0, 500]);
   
   var point = {"x": 24, "y": 31}
-  
-  var poly = [{"x":10, "y":50},
-        {"x":20,"y":20},
-        {"x":50,"y":10},
-        {"x":30,"y":30}];
-  
+
+  // EITHER RANDOM POINTS
+  /*
+  var randomX = d3.randomNormal(width / 2, 60),
+    randomY = d3.randomNormal(height / 2, 60),
+    poly = d3.range(100).map(function() { return {"x":randomX(), "y":randomY()}; });
+  */
+
+  // OR ONE WELL-DEFINED POLYGON
+  /*
+  */
+  var poly = {
+    // Colors are from this wheel, using first-lightest for highlight, and fourth-darkest for color.
+    // https://www.designbombs.com/pair-colors-like-a-pro-tips-examples/
+    // red
+    hilight_color:"#ed1b24",
+    color:"#f47a6b",
+    points: [
+        {"x":40, "y":200},
+        {"x":60,"y":205},
+        {"x":90,"y":210},
+        {"x":250,"y":220},
+        {"x":370,"y":250},
+        {"x":450,"y":210},
+        {"x":450,"y":200},
+        {"x":420,"y":180},
+        {"x":350,"y":170},
+        {"x":250,"y":130},
+        {"x":170,"y":80},
+        {"x":150,"y":100},
+        {"x":90,"y":110},
+        {"x":30,"y":190}
+    ]
+  };
+  var poly2 = {
+    // blue
+    hilight_color:"#0266b2",
+    color:"#5b88c3",
+    points: [
+        {"x":840, "y":200},
+        {"x":860,"y":205},
+        {"x":890,"y":210},
+        {"x":1250,"y":220},
+        {"x":1370,"y":250},
+        {"x":1450,"y":210},
+        {"x":1450,"y":200},
+        {"x":1420,"y":180},
+        {"x":1350,"y":170},
+        {"x":1250,"y":130},
+        {"x":1170,"y":80},
+        {"x":1150,"y":100},
+        {"x":890,"y":110},
+        {"x":830,"y":190}
+    ]
+  };
   
   svg.selectAll("polygon")
-    .data([poly])
-  .enter().append("polygon")
+    .data([poly,poly2])
+    .enter().append("polygon")
     .attr("points",function(d) { 
-        return d.map(function(d) {
+        return d.points.map(function(d) {
             return [x(d.x),y(d.y)].join(",");
         }).join(" ");
-    });
+    })
+
+  // MDM add attributes
+  .attr("fill", function(d) { return d.color; })
+  .on("mouseover", function(d) {
+    d3.select(this)
+      .attr("fill", d.hilight_color);
+  })
+  .on("mouseout", function(d) {
+    d3.select(this)
+      .attr("fill", d.color);
+  });
+  ;
   
   svg.append("circle")
     .attr("r", 4)
