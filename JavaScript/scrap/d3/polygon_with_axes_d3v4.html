@@ -6,9 +6,9 @@
     body { margin:0;position:fixed;top:0;right:0;bottom:0;left:0; }
     
     polygon { 
-      stroke: grey;
-      /*stroke-width: 2px;*/
-      stroke-linejoin: round;
+      stroke: black;
+      stroke-width: 2px;
+      /*stroke-linejoin: round;*/
     }
   </style>
 </head>
@@ -46,11 +46,11 @@
   /*
   */
   var poly = {
-    // Colors are from this wheel, using first-lightest for highlight, and fourth-darkest for color.
-    // https://www.designbombs.com/pair-colors-like-a-pro-tips-examples/
+    // Colors are from wheels, see:
+    // /spiceflow/bitpost/softraid/projects/artwork/web/
     // red
-    hilight_color:"#ed1b24",
-    color:"#f47a6b",
+    hilight_color:"#f7796b",
+    color:"#f8d2cf",
     points: [
         {"x":40, "y":200},
         {"x":60,"y":205},
@@ -70,8 +70,8 @@
   };
   var poly2 = {
     // blue
-    hilight_color:"#0266b2",
-    color:"#5b88c3",
+    hilight_color:"#5c88c5",
+    color:"#aec5e5",
     points: [
         {"x":840, "y":200},
         {"x":860,"y":205},
@@ -89,9 +89,22 @@
         {"x":830,"y":190}
     ]
   };
+  var poly3 = {
+    // green
+    hilight_color:"#61c295",
+    color:"#bfdfd2",
+    points: [
+      {"x":450, "y":300},
+      {"x":600, "y":250},
+      {"x":800, "y":200},
+      {"x":800, "y": 30},
+      {"x":400, "y": 90},
+      {"x":600, "y":175}
+    ]
+  };
   
   svg.selectAll("polygon")
-    .data([poly,poly2])
+    .data([poly,poly2,poly3])
     .enter().append("polygon")
     .attr("points",function(d) { 
         return d.points.map(function(d) {
