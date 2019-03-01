@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<head>
+  <meta charset="utf-8">
+  <script src="https://d3js.org/d3.v4.min.js"></script>
+  <script src="https://cdn.rawgit.com/wiremind/d3-xyzoom/9bd110c6/build/d3-xyzoom.min.js"></script>
+  <style>
+body {
+  font: 10px sans-serif;
+  margin: 50px;
+}
+ 
+.grid .tick {
+	stroke: lightgrey;
+	opacity: 0.7;
+	shape-rendering: crispEdges;
+}
+ 
+.grid path {
+	stroke-width: 0;
+}
+ 
+.axis path {
+	fill: none;
+	stroke: #bbb;
+	shape-rendering: crispEdges;
+}
+ 
+.axis text {
+	fill: #555;
+}
+ 
+.axis line {	
+	stroke: #e7e7e7;
+	shape-rendering: crispEdges;
+}
+ 
+.axis .axis-label {
+	font-size: 14px;
+}
+ 
+.line {
+	fill: none;
+	stroke-width: 1.5px;
+}
+  </style>
+</head>
+
+<body>
+<script>
+
+const svgWidth = 600
+const svgHeight = 400
+
+// TODO support t/r/b/l margins
+// var margin = {top: 20, right: 20, bottom: 30, left: 50},
+//     clientWidth = svgWidth - margin.left - margin.right,
+//     clientHeight = svgHeight - margin.top - margin.bottom;
+
+var margin = 20,
+    clientWidth = svgWidth - margin * 2,
+    clientHeight = svgHeight - margin * 2;
+
+const worldMinX = 1548982699000  // ~2019-02-01
+const worldMaxX = 1551401899000  // ~2019-03-01
+const worldWidth = worldMaxX - worldMinX
+const worldCenterX = (worldMinX + worldMaxX) / 2
+const worldMinY = 0
+const worldMaxY = 300
+const worldHeight = worldMaxY - worldMinY
+const worldCenterY = (worldMinY + worldMaxY) / 2
+
+  // ======================================
+  // === WORLD-COORDINATE DATA ===
+  // ======================================
+  var poly1 = {
+    // Colors are from wheels, see:
+    // /spiceflow/bitpost/softraid/projects/artwork/web/
+    // red
+    hilight_color:"#f7796b",
+    color:"#f8d2cf",
+    points: [
+        {"x":worldMinX + worldWidth * 40  / 1500, "y":200},
+        {"x":worldMinX + worldWidth * 60  / 1500,"y":205},
+        {"x":worldMinX + worldWidth * 90  / 1500,"y":210},
+        {"x":worldMinX + worldWidth * 250 / 1500,"y":220},
+        {"x":worldMinX + worldWidth * 370 / 1500,"y":250},
+        {"x":worldMinX + worldWidth * 450 / 1500,"y":210},
+        {"x":worldMinX + worldWidth * 450 / 1500,"y":200},
+        {"x":worldMinX + worldWidth * 420 / 1500,"y":180},
+        {"x":worldMinX + worldWidth * 350 / 1500,"y":170},
+        {"x":worldMinX + worldWidth * 250 / 1500,"y":130},
+        {"x":worldMinX + worldWidth * 170 / 1500,"y":80},
+        {"x":worldMinX + worldWidth * 150 / 1500,"y":100},
+        {"x":worldMinX + worldWidth * 90  / 1500,"y":110},
+        {"x":worldMinX + worldWidth * 30  / 1500,"y":190}
+    ]
+  };
+  var poly2 = {
+    // blue
+    hilight_color:"#5c88c5",
+    color:"#aec5e5",
+    points: [
+        {"x":worldMinX + worldWidth * 840  / 1500, "y":200},
+        {"x":worldMinX + worldWidth * 860  / 1500,"y":205},
+        {"x":worldMinX + worldWidth * 890  / 1500,"y":210},
+        {"x":worldMinX + worldWidth * 1250 / 1500,"y":220},
+        {"x":worldMinX + worldWidth * 1370 / 1500,"y":250},
+        {"x":worldMinX + worldWidth * 1450 / 1500,"y":210},
+        {"x":worldMinX + worldWidth * 1450 / 1500,"y":200},
+        {"x":worldMinX + worldWidth * 1420 / 1500,"y":180},
+        {"x":worldMinX + worldWidth * 1350 / 1500,"y":170},
+        {"x":worldMinX + worldWidth * 1250 / 1500,"y":130},
+        {"x":worldMinX + worldWidth * 1170 / 1500,"y":80},
+        {"x":worldMinX + worldWidth * 1150 / 1500,"y":100},
+        {"x":worldMinX + worldWidth * 890  / 1500,"y":110},
+        {"x":worldMinX + worldWidth * 830  / 1500,"y":190}
+    ]
+  };
+  var poly3 = {
+    // green
+    hilight_color:"#61c295",
+    color:"#bfdfd2",
+    points: [
+      {"x":worldMinX + worldWidth * 450 / 1500, "y":300},
+      {"x":worldMinX + worldWidth * 600 / 1500, "y":250},
+      {"x":worldMinX + worldWidth * 800 / 1500, "y":200},
+      {"x":worldMinX + worldWidth * 800 / 1500, "y": 30},
+      {"x":worldMinX + worldWidth * 400 / 1500, "y": 90},
+      {"x":worldMinX + worldWidth * 600 / 1500, "y":175}
+    ]
+  };
+  var point = {"x": worldCenterX, "y": worldCenterY}
+
+  var lineData = [
+    [worldMinX + worldWidth * 100 / 1500, worldMinY + worldHeight * 1500 / 1500],
+    [worldMinX + worldWidth * 600 / 1500, worldMinY + worldHeight * 1200 / 1500],
+    [worldMinX + worldWidth * 900 / 1500, worldMinY + worldHeight *  600 / 1500],
+    [worldMinX + worldWidth *1300 / 1500, worldMinY + worldHeight *  300 / 1500]
+  ];
+  // ======================================
+
+const tickPadding = 5
+	
+const x = d3.scaleTime()
+    .domain([worldMinX, worldMaxX])
+    .range([0, clientWidth])
+ 
+const y = d3.scaleLinear()
+    .domain([worldMinY, worldMaxY])
+    .range([clientHeight, 0])
+	
+var gTop = d3.select("body").append("svg")
+    .attr("width", svgWidth)
+    .attr("height", svgHeight)
+    .append("g")
+    .attr("transform", "translate(" + margin + "," + margin + ")")
+
+
+
+    // Add polygons
+  var polygons = gTop.selectAll("polygon")
+    .data([poly1,poly2,poly3])
+    .enter().append("polygon")
+    .attr("points",function(d) { 
+        return d.points.map(function(d) {
+            return [x(d.x),y(d.y)].join(",");
+        }).join(" ");
+    })
+
+  // Add a point!
+  gTop.append("circle")
+    .attr("r", 4)
+    .attr("cx", x(point.x))
+    .attr("cy", y(point.y))
+
+    // Add a line!
+    var lineGenerator = d3.line()
+    .x(function(d) {
+        return x(d[0]);
+    })
+    .y(function(d) {
+        return y(d[1]);
+    });
+    var ourLine = gTop.append("path")
+    .attr('d', lineGenerator(lineData)).attr("fill","none").attr("stroke", "blue").attr("stroke-width",4)
+    
+    // What translation are we missing?
+    // .attr("transform", "translate(" + x + "," + y + ")")
+
+
+
+
+const xAxis = d3.axisBottom(x)
+  .tickSize(-clientHeight)
+	.tickPadding(tickPadding)	
+	
+const yAxis = d3.axisLeft(y)
+	.tickPadding(tickPadding)
+	.tickSize(-clientWidth)
+
+const extent = [[0, 0], [clientWidth, clientHeight]]
+const translateExtent = [[0, 0], [clientWidth, clientHeight]]
+const scaleExtent = [[1, 1000], [1, 100]]
+
+const newZoom = (handler) => d3.xyzoom()
+  .extent(extent)
+  .scaleExtent(scaleExtent)
+  .translateExtent(translateExtent)
+  .on("zoom", handler)
+
+const xzoom = newZoom(xzoomed)
+const yzoom = newZoom(yzoomed)
+const xyzoom = newZoom(xyzoomed)
+
+const newRect = (x, y, w, h, zoom) => gTop.append("svg:rect")
+  .attr("width", w)
+  .attr("height", h)
+  .attr("transform", "translate(" + x + "," + y + ")")
+  .attr("pointer-events", "all")
+  .call(zoom)
+
+const xrect = newRect(0, clientHeight, clientWidth, margin, xzoom)  
+.attr("fill", 'red').attr("opacity", "0.5");
+const yrect = newRect(-margin, 0, margin, clientHeight, yzoom)
+.attr("fill", 'green').attr("opacity", "0.5");
+const xyrect = newRect(0, 0, clientWidth, clientHeight, xyzoom)
+.attr("fill", 'orange').attr("opacity", "0.5");
+
+function newTransform(x, y, kx, ky) {
+  return d3.xyzoomIdentity.translate(x, y).scale(kx, ky)
+}
+
+const gX = gTop.append("g")
+  .attr("class", "x axis")
+  .attr("transform", "translate(0," + clientHeight + ")")
+  .attr("pointer-events", "none")
+  .call(xAxis)
+ 
+const gY = gTop.append("g")
+  .attr("class", "y axis")
+  .attr("pointer-events", "none")
+  .call(yAxis)
+
+function xzoomed() {
+  const t = d3.event.transform
+  if (t.y != 0 || t.ky != 1) {
+    return xrect.call(xzoom.transform, newTransform(t.x, 0, t.kx, 1))
+  }
+  const xOld = d3.xyzoomTransform(xrect.node())  
+  const xyOld = d3.xyzoomTransform(xyrect.node())
+  const xyNew = newTransform(t.x, xyOld.y, t.kx, xyOld.ky)
+  // gX.transition().duration(0).call(xAxis.scale(t.rescaleX(x)))
+  if (xyNew.x != xyOld.x || xyNew.kx != xyOld.kx) {
+    xyrect.call(xyzoom.transform, xyNew)    
+  }
+}
+
+function yzoomed() {
+  const t = d3.event.transform
+  if (t.x != 0 || t.kx != 1) {
+    return yrect.call(yzoom.transform, newTransform(0, t.y, 1, t.ky))
+  }
+  const xyOld = d3.xyzoomTransform(xyrect.node())
+  const xyNew = d3.xyzoomIdentity
+    .translate(xyOld.x, t.y)
+    .scale(xyOld.kx, t.ky)
+  // gY.transition().duration(0).call(yAxis.scale(t.rescaleY(y)))
+  if (xyNew.y != xyOld.y || xyNew.ky != xyOld.ky) {
+    xyrect.call(xyzoom.transform, xyNew)    
+  }
+}
+
+function xyzoomed() {
+  const t = d3.event.transform
+  const xOld = d3.xyzoomTransform(xrect.node())  
+  const yOld = d3.xyzoomTransform(yrect.node())  
+  gX.transition().duration(0).call(xAxis.scale(t.rescaleX(x)))
+  gY.transition().duration(0).call(yAxis.scale(t.rescaleY(y)))
+  if (xOld.x != t.x || xOld.kx != t.kx) {
+    xrect.call(xzoom.transform, newTransform(t.x, 0, t.kx, 1))
+  }
+  if (yOld.y != t.y || yOld.ky != t.ky) {
+    yrect.call(yzoom.transform, newTransform(0, t.y, 1, t.ky))
+  }
+}
+
+</script>
