@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<head>
+  <meta charset="utf-8">
+  <script src="https://d3js.org/d3.v4.min.js"></script>
+  <style>
+    body { margin:0;position:fixed;top:0;right:0;bottom:0;left:0; }
+    
+    polygon { 
+      /*stroke: black;*/
+      /*stroke-width: 2px;*/
+      /*stroke-linejoin: round;*/
+    }
+  </style>
+</head>
+
+<body>
+<script>
+  var margin = {top: 20, right: 20, bottom: 30, left: 50},
+    clientWidth = 600 - margin.left - margin.right,
+    clientHeight = 500 - margin.top - margin.bottom;
+    
+    const worldMinX = 1548982699000  // ~2019-02-01
+    const worldMaxX = 1551401899000  // ~2019-03-01
+    const worldWidth = worldMaxX - worldMinX
+    const worldCenterX = (worldMinX + worldMaxX) / 2
+    const worldMinY = 0
+    const worldMaxY = 300
+    const worldHeight = worldMaxY - worldMinY
+    const worldCenterY = (worldMinY + worldMaxY) / 2
+
+    var svg = d3.select("body").append("svg")
+    .attr("class", "everything")
+    .attr("width", clientWidth + margin.left + margin.right)
+    .attr("height", clientHeight + margin.top + margin.bottom)
+    .append("g")
+    .attr("transform",
+          "translate(" + margin.left + "," + margin.top + ")");
+  
+  const x = d3.scaleTime()
+    .domain([worldMinX, worldMaxX])
+    .range([0, clientWidth])
+
+  const y = d3.scaleLinear()
+    .domain([worldMinY, worldMaxY])
+    .range([clientHeight, 0])
+    
+  var poly1 = {
+    // Colors are from wheels, see:
+    // /spiceflow/bitpost/softraid/projects/artwork/web/
+    // red
+    hilight_color:"#f7796b",
+    color:"#f8d2cf",
+    points: [
+        {"x":worldMinX + worldWidth * 40  / 1500, "y":200},
+        {"x":worldMinX + worldWidth * 60  / 1500,"y":205},
+        {"x":worldMinX + worldWidth * 90  / 1500,"y":210},
+        {"x":worldMinX + worldWidth * 250 / 1500,"y":220},
+        {"x":worldMinX + worldWidth * 370 / 1500,"y":250},
+        {"x":worldMinX + worldWidth * 450 / 1500,"y":210},
+        {"x":worldMinX + worldWidth * 450 / 1500,"y":200},
+        {"x":worldMinX + worldWidth * 420 / 1500,"y":180},
+        {"x":worldMinX + worldWidth * 350 / 1500,"y":170},
+        {"x":worldMinX + worldWidth * 250 / 1500,"y":130},
+        {"x":worldMinX + worldWidth * 170 / 1500,"y":80},
+        {"x":worldMinX + worldWidth * 150 / 1500,"y":100},
+        {"x":worldMinX + worldWidth * 90  / 1500,"y":110},
+        {"x":worldMinX + worldWidth * 30  / 1500,"y":190}
+    ]
+  };
+  var poly2 = {
+    // blue
+    hilight_color:"#5c88c5",
+    color:"#aec5e5",
+    points: [
+        {"x":worldMinX + worldWidth * 840  / 1500, "y":200},
+        {"x":worldMinX + worldWidth * 860  / 1500,"y":205},
+        {"x":worldMinX + worldWidth * 890  / 1500,"y":210},
+        {"x":worldMinX + worldWidth * 1250 / 1500,"y":220},
+        {"x":worldMinX + worldWidth * 1370 / 1500,"y":250},
+        {"x":worldMinX + worldWidth * 1450 / 1500,"y":210},
+        {"x":worldMinX + worldWidth * 1450 / 1500,"y":200},
+        {"x":worldMinX + worldWidth * 1420 / 1500,"y":180},
+        {"x":worldMinX + worldWidth * 1350 / 1500,"y":170},
+        {"x":worldMinX + worldWidth * 1250 / 1500,"y":130},
+        {"x":worldMinX + worldWidth * 1170 / 1500,"y":80},
+        {"x":worldMinX + worldWidth * 1150 / 1500,"y":100},
+        {"x":worldMinX + worldWidth * 890  / 1500,"y":110},
+        {"x":worldMinX + worldWidth * 830  / 1500,"y":190}
+    ]
+  };
+  var poly3 = {
+    // green
+    hilight_color:"#61c295",
+    color:"#bfdfd2",
+    points: [
+      {"x":worldMinX + worldWidth * 450 / 1500, "y":300},
+      {"x":worldMinX + worldWidth * 600 / 1500, "y":250},
+      {"x":worldMinX + worldWidth * 800 / 1500, "y":200},
+      {"x":worldMinX + worldWidth * 800 / 1500, "y": 30},
+      {"x":worldMinX + worldWidth * 400 / 1500, "y": 90},
+      {"x":worldMinX + worldWidth * 600 / 1500, "y":175}
+    ]
+  };
+
+  // Add polygons
+  var polygons = svg.selectAll("polygon")
+    .data([poly1,poly2,poly3])
+    .enter().append("polygon")
+    .attr("points",function(d) { 
+        return d.points.map(function(d) {
+            return [x(d.x),y(d.y)].join(",");
+        }).join(" ");
+    })
+
+  // Add a point!
+  var point = {"x": worldCenterX, "y": worldCenterY}
+  svg.append("circle")
+    .attr("r", 4)
+    .attr("cx", x(point.x))
+    .attr("cy", y(point.y))
+
+    // add the X Axis
+  svg.append("g")
+    .attr("transform", "translate(0," + clientHeight + ")")
+    .call(d3.axisBottom(x));
+
+  // add the Y Axis
+  svg.append("g")
+    .call(d3.axisLeft(y));
+
+  // MDM MOUSEOVER FILL
+  polygons
+  .attr("fill", function(d) { return d.color; })
+  .on("mouseover", function(d) {
+    d3.select(this)
+      .attr("fill", d.hilight_color);
+  })
+  .on("mouseout", function(d) {
+    d3.select(this)
+      .attr("fill", d.color);
+  });
+  ;
+
+</script>
+</body>

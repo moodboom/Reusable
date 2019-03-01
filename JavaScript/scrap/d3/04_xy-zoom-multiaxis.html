@@ -56,19 +56,19 @@ const margin = 40
 const clientWidth = svgWidth - 2 * margin
 const clientHeight = svgHeight - 2 * margin
 
-const worldMinX = 1
-const worldMaxX = 22
+const worldMinX = 1548982699000  // ~2019-02-01
+const worldMaxX = 1551401899000  // ~2019-03-01
 const worldWidth = worldMaxX - worldMinX
 const worldCenterX = (worldMinX + worldMaxX) / 2
-const worldMinY = -4
-const worldMaxY = 7
+const worldMinY = 0
+const worldMaxY = 300
 const worldHeight = worldMaxY - worldMinY
 const worldCenterY = (worldMinY + worldMaxY) / 2
 
 const tickPadding = 5
 	
 const x = d3.scaleTime()
-    .domain([worldMinX * 2000000, worldMaxX * 2000000])
+    .domain([worldMinX, worldMaxX])
     .range([0, clientWidth])
  
 const y = d3.scaleLinear()
