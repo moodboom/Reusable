@@ -155,10 +155,12 @@ var gTop = d3.select("body").append("svg")
     .append("g")
     .attr("transform", "translate(" + margin + "," + margin + ")")
 
-
+  // add encompassing World group for the zoom 
+  var gWorld = gTop.append("g")
+    .attr("class", "everything");
 
     // Add polygons
-  var polygons = gTop.selectAll("polygon")
+  var polygons = gWorld.selectAll("polygon")
     .data([poly1,poly2,poly3])
     .enter().append("polygon")
     .attr("points",function(d) { 
@@ -168,7 +170,7 @@ var gTop = d3.select("body").append("svg")
     })
 
   // Add a point!
-  gTop.append("circle")
+  gWorld.append("circle")
     .attr("r", 4)
     .attr("cx", x(point.x))
     .attr("cy", y(point.y))
@@ -181,7 +183,7 @@ var gTop = d3.select("body").append("svg")
     .y(function(d) {
         return y(d[1]);
     });
-    var ourLine = gTop.append("path")
+    var ourLine = gWorld.append("path")
     .attr('d', lineGenerator(lineData)).attr("fill","none").attr("stroke", "blue").attr("stroke-width",4)
     
     // What translation are we missing?
@@ -284,6 +286,7 @@ function xyzoomed() {
   if (yOld.y != t.y || yOld.ky != t.ky) {
     yrect.call(yzoom.transform, newTransform(0, t.y, 1, t.ky))
   }
+  gWorld.attr("transform", d3.event.transform)
 }
 
 </script>
