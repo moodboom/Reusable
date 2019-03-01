@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <head>
   <meta charset="utf-8">
-  <script src="https://d3js.org/d3.v4.min.js"></script>
-  <script src="https://cdn.rawgit.com/wiremind/d3-xyzoom/9bd110c6/build/d3-xyzoom.min.js"></script>
+  <script src="https://d3js.org/d3.v5.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/d3-xyzoom@1.5.0/build/d3-xyzoom.min.js"></script>
   <style>
 body {
   font: 10px sans-serif;
@@ -168,6 +168,7 @@ var gTop = d3.select("body").append("svg")
             return [x(d.x),y(d.y)].join(",");
         }).join(" ");
     })
+    .attr("fill", function(d) { return d.color; })
 
   // Add a point!
   gWorld.append("circle")
@@ -221,14 +222,15 @@ const newRect = (x, y, w, h, zoom) => gTop.append("svg:rect")
   .attr("height", h)
   .attr("transform", "translate(" + x + "," + y + ")")
   .attr("pointer-events", "all")
+  .attr("opacity", "0")
   .call(zoom)
 
 const xrect = newRect(0, clientHeight, clientWidth, margin, xzoom)  
-.attr("fill", 'red').attr("opacity", "0.5");
+// .attr("fill", 'red')
 const yrect = newRect(-margin, 0, margin, clientHeight, yzoom)
-.attr("fill", 'green').attr("opacity", "0.5");
+// .attr("fill", 'green')
 const xyrect = newRect(0, 0, clientWidth, clientHeight, xyzoom)
-.attr("fill", 'orange').attr("opacity", "0.5");
+// .attr("fill", 'orange')
 
 function newTransform(x, y, kx, ky) {
   return d3.xyzoomIdentity.translate(x, y).scale(kx, ky)
@@ -288,5 +290,20 @@ function xyzoomed() {
   }
   gWorld.attr("transform", d3.event.transform)
 }
+
+  // MDM MOUSEOVER FILL
+  // TODO Event is not being captured
+  /*
+  polygons
+  .on("mouseover", function(d) {
+      d3.select(this)
+        .attr("fill", d.hilight_color);
+    })
+    .on("mouseout", function(d) {
+      d3.select(this)
+        .attr("fill", d.color);
+    });
+  ;
+  */
 
 </script>
