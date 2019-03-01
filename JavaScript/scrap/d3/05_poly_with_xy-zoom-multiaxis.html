@@ -166,14 +166,12 @@ var gTop = d3.select("body").append("svg")
             return [x(d.x),y(d.y)].join(",");
         }).join(" ");
     })
-    .attr("transform", "translate(" + x + "," + y + ")")
 
   // Add a point!
   gTop.append("circle")
     .attr("r", 4)
     .attr("cx", x(point.x))
     .attr("cy", y(point.y))
-    .attr("transform", "translate(" + x + "," + y + ")")
 
     // Add a line!
     var lineGenerator = d3.line()
@@ -187,8 +185,10 @@ var gTop = d3.select("body").append("svg")
     .attr('d', lineGenerator(lineData)).attr("fill","none").attr("stroke", "blue").attr("stroke-width",4)
     
     // What translation are we missing?
+    // Should we be replacing x() and y(), above?
     // .attr("transform", "translate(" + x + "," + y + ")")
-
+    
+      ;
 
 
 
