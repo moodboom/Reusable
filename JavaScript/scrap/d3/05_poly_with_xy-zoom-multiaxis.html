@@ -166,12 +166,14 @@ var gTop = d3.select("body").append("svg")
             return [x(d.x),y(d.y)].join(",");
         }).join(" ");
     })
+    .attr("transform", "translate(" + x + "," + y + ")")
 
   // Add a point!
   gTop.append("circle")
     .attr("r", 4)
     .attr("cx", x(point.x))
     .attr("cy", y(point.y))
+    .attr("transform", "translate(" + x + "," + y + ")")
 
     // Add a line!
     var lineGenerator = d3.line()
