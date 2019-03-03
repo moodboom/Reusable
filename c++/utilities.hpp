@@ -84,6 +84,7 @@ using json = nlohmann::json;
 //    static bool bEqual(const double& a, const double& b)
 //    static bool bZero(const double& a)
 //    static bool bLessThanOrEqual(const double& a, const double& b)
+//    static double roundToHundredths(const double& value)
 // MISC
 //    static void sleep(int n_secs)
 //    static bool unzip_first_file(string& str_zip, string& str_unzipped)
@@ -984,6 +985,7 @@ static bool bZero(const double& a)
 }
 static bool bLessThanOrEqual(const double& a, const double& b) { return (a < b) || bEqual(a,b); }
 static bool bLessThan(const double& a, const double& b) { return (a + std::numeric_limits<double>::epsilon()) < b; }
+static double roundToHundredths(const double& value) { return (int) (value * 100.0 + 0.5) / 100.0; }
 //=========================================================
 
 
