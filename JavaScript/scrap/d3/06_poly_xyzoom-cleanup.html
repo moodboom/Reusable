@@ -43,6 +43,7 @@
       stroke-width: 1.5px; /* desired stroke width (line height) */
       vector-effect: non-scaling-stroke; /* line height won't scale - NOPE, fails */
     }
+
   </style>
 </head>
 
@@ -82,29 +83,39 @@
         {x:1551346201000,y:19.071250000000003},{x:1551347116000,y:19.071250000000003},{x:1551347233000,y:19.071250000000003},
         {x:1551347233000,y:19.0},{x:1551347116000,y:19.0},{x:1551346201000,y:19.0}
       ]
-    },
-    {
-      hilight_color: "red",
-      color: "red",
+    }
+    ,{
+      // lightblue
+      hilight_color: "#5c88c5", 
+      color: "#5c88c5",
       points: [
         {x:1551347233000,y:20.5745575},{x:1551347348000,y:20.5745575},
         ,{x:1551347348000,y:20.6054425},{x:1551347233000,y:20.6054425}
       ]
-    },
-    {
+    }
+    ,{
       hilight_color: "orange",
       color: "orange",
       points: [
         {x:1551347348000,y:19.625},{x:1551347408000,y:19.8},{x:1551347457000,y:19.8}
         ,{x:1551347457000,y:19.78515},{x:1551347408000,y:19.78515},{x:1551347348000,y:19.61028125}    
       ]
-    },
-    {
+    }
+    ,{
       hilight_color: "yellow",
       color: "yellow",
       points: [
         {x:1551347457000,y:19.452675000000003},{x:1551347619000,y:19.452675000000003},{x:1551347940000,y:19.452675000000003}
         ,{x:1551347940000,y:19.62},{x:1551347619000,y:19.8},{x:1551347457000,y:19.38}    
+      ]
+    }
+    ,{
+      // lightblue
+      hilight_color: "#5c88c5", 
+      color: "#5c88c5",
+      points: [
+        {x:1551347940000,y:19.605285000000002},{x:1551348063000,y:19.605285000000002},
+        {x:1551348063000,y:19.634715},{x:1551347940000,y:19.634715}
       ]
     }
     ];
@@ -261,7 +272,7 @@
       .attr("d", lineGenerator(lineData))
       .attr("fill", "none")
       .attr("stroke", "blue")
-      .attr("stroke-width", 1); // How do we make it fatter in CLIENT PIXELS not f'in zoomed thickness
+      // .attr("stroke-width", 1); // How do we make it fatter in CLIENT PIXELS not f'in zoomed thickness
     const xAxis = d3
       .axisBottom(x)
       .tickSize(-clientHeight)
