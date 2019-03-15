@@ -48,6 +48,12 @@
       font: .4em sans-serif; /* axis font below has no effect, rrrr */
     }
 
+    .polygon {
+      stroke-linejoin: round;
+      stroke: gray;
+      stroke-width: 1px;
+    }
+
   </style>
 </head>
 
@@ -68,162 +74,80 @@
 
     // Fucking shit dont work
     // I had to jack this down and crank down .y font to see values
-    // Fuck you d3 do a better default job with axis label handling, assfuckers
+    // Gonna have to dig in to add label autosizing - research, don't reinvent
     const tickPadding = 5;
 
 
     // ======================================
     // === WORLD-COORDINATE DATA ===
     // ======================================
-    // const worldMinX = 1548982699000; // ~2019-02-01
-    // const worldMaxX = 1551401899000; // ~2019-03-01
-    const worldMinX = 1551346201000; // 2019-02-01 4:30am (GMT of stockmarket open, hrmm)
-    const worldMaxX = 1551350842000; // ~1.5 hr later
-    const worldMinY = 18.5;
-    const worldMaxY = 21;
-    var lineData = [
+    const chartData = {
+      worldMinX: 1551346201000,
+      worldMaxX: 1551350842000,
+      worldMinY: 18.5,
+      worldMaxY: 21,
+      lineData: [
         [1551346201000,19.0],[1551346201000,19.0],[1551346201000,19.0],[1551346201000,19.0],[1551347116000,19.53],[1551347233000,20.59],[1551347291000,20.305],[1551347348000,19.625],[1551347408000,19.8],[1551347457000,19.38],[1551347619000,19.8],[1551347940000,19.62],[1551347984000,19.495],[1551348063000,19.35],[1551348120000,19.3],[1551348178000,19.205],[1551348194000,19.29],[1551348362000,19.3],[1551348384000,19.35],[1551348431000,19.36],[1551348536000,19.3],[1551348558000,18.8],[1551348657000,18.9],[1551348657000,18.9],[1551348926000,19.68],[1551348926000,19.68],[1551348973000,19.22],[1551349073000,19.29],[1551349105000,19.15],[1551349168000,19.37],[1551349222000,19.25],[1551349494000,19.0448],[1551349604000,19.2659],[1551349758000,19.36],[1551349758000,19.36],[1551349944000,19.4],[1551350000000,19.5],[1551350108000,19.8],[1551350189000,19.9995],[1551350356000,19.92],[1551350526000,20.49],[1551350842000,20.0]
-    ];
-    var polydata = [
-    {
-      hilight_color: "yellow",
-      color: "yellow",
-      points: [
-        {x:1551346201000,y:19.071250000000003},{x:1551347116000,y:19.071250000000003},{x:1551347233000,y:19.071250000000003},
-        {x:1551347233000,y:19.0},{x:1551347116000,y:19.0},{x:1551346201000,y:19.0}
-      ]
-    }
-    ,{
-      // lightblue
-      hilight_color: "#5c88c5", 
-      color: "#5c88c5",
-      points: [
-        {x:1551347233000,y:20.5745575},{x:1551347348000,y:20.5745575},
-        ,{x:1551347348000,y:20.6054425},{x:1551347233000,y:20.6054425}
-      ]
-    }
-    ,{
-      hilight_color: "orange",
-      color: "orange",
-      points: [
-        {x:1551347348000,y:19.625},{x:1551347408000,y:19.8},{x:1551347457000,y:19.8}
-        ,{x:1551347457000,y:19.78515},{x:1551347408000,y:19.78515},{x:1551347348000,y:19.61028125}    
-      ]
-    }
-    ,{
-      hilight_color: "yellow",
-      color: "yellow",
-      points: [
-        {x:1551347457000,y:19.452675000000003},{x:1551347619000,y:19.452675000000003},{x:1551347940000,y:19.452675000000003}
-        ,{x:1551347940000,y:19.62},{x:1551347619000,y:19.8},{x:1551347457000,y:19.38}    
-      ]
-    }
-    ,{
-      // lightblue
-      hilight_color: "#5c88c5", 
-      color: "#5c88c5",
-      points: [
-        {x:1551347940000,y:19.605285000000002},{x:1551348063000,y:19.605285000000002},
-        {x:1551348063000,y:19.634715},{x:1551347940000,y:19.634715}
-      ]
-    }
-    ];
-
-    // Orig test data
-    const worldWidth = worldMaxX - worldMinX;
-    const worldCenterX = (worldMinX + worldMaxX) / 2;
-    const worldHeight = worldMaxY - worldMinY;
-    const worldCenterY = (worldMinY + worldMaxY) / 2;
-    var point = { x: worldCenterX, y: worldCenterY };
-    /*
-    var polydata = [
-      {
-        // Colors are from wheels, see:
-        // /spiceflow/bitpost/softraid/projects/artwork/web/
-        // red
-        hilight_color: "#f7796b",
-        color: "#f8d2cf",
-        points: [
-          { x: worldMinX + (worldWidth * 40) / 1500, y: 200 /10},
-          { x: worldMinX + (worldWidth * 60) / 1500, y: 205 /10},
-          { x: worldMinX + (worldWidth * 90) / 1500, y: 210 /10},
-          { x: worldMinX + (worldWidth * 250) / 1500, y: 220/10},
-          { x: worldMinX + (worldWidth * 370) / 1500, y: 250/10},
-          { x: worldMinX + (worldWidth * 450) / 1500, y: 210/10},
-          { x: worldMinX + (worldWidth * 450) / 1500, y: 200/10},
-          { x: worldMinX + (worldWidth * 420) / 1500, y: 180/10},
-          { x: worldMinX + (worldWidth * 350) / 1500, y: 170/10},
-          { x: worldMinX + (worldWidth * 250) / 1500, y: 130/10},
-          { x: worldMinX + (worldWidth * 170) / 1500, y: 80 /10},
-          { x: worldMinX + (worldWidth * 150) / 1500, y: 100/10},
-          { x: worldMinX + (worldWidth * 90) / 1500, y: 110 /10},
-          { x: worldMinX + (worldWidth * 30) / 1500, y: 190 /10}
-        ]
-      },
-      {
-        // blue
-        hilight_color: "#5c88c5",
-        color: "#aec5e5",
-        points: [
-          { x: worldMinX + (worldWidth * 840)  / 1500, y: 200/10 },
-          { x: worldMinX + (worldWidth * 860)  / 1500, y: 205/10 },
-          { x: worldMinX + (worldWidth * 890)  / 1500, y: 210/10 },
-          { x: worldMinX + (worldWidth * 1250) / 1500, y: 220/10 },
-          { x: worldMinX + (worldWidth * 1370) / 1500, y: 250/10 },
-          { x: worldMinX + (worldWidth * 1450) / 1500, y: 210/10 },
-          { x: worldMinX + (worldWidth * 1450) / 1500, y: 200/10 },
-          { x: worldMinX + (worldWidth * 1420) / 1500, y: 180/10 },
-          { x: worldMinX + (worldWidth * 1350) / 1500, y: 170/10 },
-          { x: worldMinX + (worldWidth * 1250) / 1500, y: 130/10 },
-          { x: worldMinX + (worldWidth * 1170) / 1500, y: 80 /10 },
-          { x: worldMinX + (worldWidth * 1150) / 1500, y: 100/10 },
-          { x: worldMinX + (worldWidth * 890)  / 1500, y: 110/10 },
-          { x: worldMinX + (worldWidth * 830)  / 1500, y: 190/10 }
-        ]
-      },
-      {
-        // green
-        hilight_color: "#61c295",
-        color: "#bfdfd2",
-        points: [
-          { x: worldMinX + (worldWidth * 450) / 1500, y: 300 },
-          { x: worldMinX + (worldWidth * 600) / 1500, y: 250 },
-          { x: worldMinX + (worldWidth * 800) / 1500, y: 200 },
-          { x: worldMinX + (worldWidth * 800) / 1500, y: 30 },
-          { x: worldMinX + (worldWidth * 400) / 1500, y: 90 },
-          { x: worldMinX + (worldWidth * 600) / 1500, y: 175 }
-        ]
-      }
-    ];
-    var lineData = [
-      [
-        worldMinX + (worldWidth * 100) / 1500,
-        worldMinY + (worldHeight * 1500) / 1500
       ],
-      [
-        worldMinX + (worldWidth * 600) / 1500,
-        worldMinY + (worldHeight * 1200) / 1500
+      pointData: [
+        { x: 1551347348000, y: 20.9 },
+        { x: 1551347984000, y: 18.9 }
       ],
-      [
-        worldMinX + (worldWidth * 900) / 1500,
-        worldMinY + (worldHeight * 600) / 1500
-      ],
-      [
-        worldMinX + (worldWidth * 1300) / 1500,
-        worldMinY + (worldHeight * 300) / 1500
+      polydata: [
+        {
+          hilight_color: "yellow",
+          color: "yellow",
+          points: [
+            {x:1551346201000,y:19.071250000000003},{x:1551347116000,y:19.071250000000003},{x:1551347233000,y:19.071250000000003},
+            {x:1551347233000,y:19.0},{x:1551347116000,y:19.0},{x:1551346201000,y:19.0}
+          ]
+        }
+        ,{
+          // lightblue
+          hilight_color: "#5c88c5", 
+          color: "#5c88c5",
+          points: [
+            {x:1551347233000,y:20.5745575},{x:1551347348000,y:20.5745575},
+            ,{x:1551347348000,y:20.6054425},{x:1551347233000,y:20.6054425}
+          ]
+        }
+        ,{
+          hilight_color: "orange",
+          color: "orange",
+          points: [
+            {x:1551347348000,y:19.625},{x:1551347408000,y:19.8},{x:1551347457000,y:19.8}
+            ,{x:1551347457000,y:19.78515},{x:1551347408000,y:19.78515},{x:1551347348000,y:19.61028125}    
+          ]
+        }
+        ,{
+          hilight_color: "yellow",
+          color: "yellow",
+          points: [
+            {x:1551347457000,y:19.452675000000003},{x:1551347619000,y:19.452675000000003},{x:1551347940000,y:19.452675000000003}
+            ,{x:1551347940000,y:19.62},{x:1551347619000,y:19.8},{x:1551347457000,y:19.38}    
+          ]
+        }
+        ,{
+          // lightblue
+          hilight_color: "#5c88c5", 
+          color: "#5c88c5",
+          points: [
+            {x:1551347940000,y:19.605285000000002},{x:1551348063000,y:19.605285000000002},
+            {x:1551348063000,y:19.634715},{x:1551347940000,y:19.634715}
+          ]
+        }
       ]
-    ];
-    */
+    };
     // ======================================
 
     const x = d3
       .scaleTime()
-      .domain([worldMinX, worldMaxX])
+      .domain([chartData.worldMinX, chartData.worldMaxX])
       .range([0, clientWidth]);
 
     const y = d3
       .scaleLinear()
-      .domain([worldMinY, worldMaxY])
+      .domain([chartData.worldMinY, chartData.worldMaxY])
       .range([clientHeight, 0]);
 
     var gTop = d3
@@ -240,9 +164,10 @@
     // Add polygons
     var polygons = gWorld
       .selectAll("polygon")
-      .data(polydata)
+      .data(chartData.polydata)
       .enter()
       .append("polygon")
+      .attr("class", "polygon")
       .attr("points", function(d) {
         return d.points
           .map(function(d) {
@@ -254,16 +179,15 @@
         return d.color;
       });
 
-    // GOD DAMN why doesn't ANYTHIGN just fucking WORK
-    // .attr("stroke-linejoin","round")
-    // .attr("stroke-width",60)
-
+    // If we use points, we need to do better than one hand-crafted circle at a time...
     // Add a point!
+    /*
     gWorld
       .append("circle")
       .attr("r", 4)
       .attr("cx", x(point.x))
       .attr("cy", y(point.y));
+    */
 
     // Add a line!
     var lineGenerator = d3
@@ -276,7 +200,7 @@
       });
     var ourLine = gWorld
       .append("path")
-      .attr("d", lineGenerator(lineData))
+      .attr("d", lineGenerator(chartData.lineData))
       .attr("fill", "none")
       .attr("stroke", "blue")
       // .attr("stroke-width", 1); // How do we make it fatter in CLIENT PIXELS not f'in zoomed thickness
