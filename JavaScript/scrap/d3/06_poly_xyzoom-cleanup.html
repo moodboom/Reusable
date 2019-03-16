@@ -34,10 +34,6 @@
       shape-rendering: crispEdges;
     }
 
-    .axis .axis-label {
-      font-size: .2em; /* was 14px but we need to fiddle with axis label widths to fit better  - NO EFFECT rrrr*/
-    }
-
     .line {
       fill: none;
       stroke-width: 1.5px; /* desired stroke width (line height) */
@@ -45,7 +41,7 @@
     }
 
     .y {
-      font: .4em sans-serif; /* axis font below has no effect, rrrr */
+      /* font: .4em sans-serif; no need now that we have a left margin */
     }
 
     .polygon {
@@ -68,16 +64,11 @@
     //     clientHeight = svgHeight - margin.top - margin.bottom;
 
     // var margin = 20;
-    var margin = {top: 75, right: 60, bottom: 60, left: 10};
+    var margin = {top: 5, right: 60, bottom: 60, left: 50};
     var clientWidth = svgWidth - margin.left - margin.right,
         clientHeight = svgHeight - margin.top - margin.bottom;
 
-
-    // Fucking shit dont work
-    // I had to jack this down and crank down .y font to see values
-    // Gonna have to dig in to add label autosizing - research, don't reinvent
-    const tickPadding = 5;
-
+    const tickPadding = 10;
 
     // ======================================
     // === WORLD-COORDINATE DATA ===
