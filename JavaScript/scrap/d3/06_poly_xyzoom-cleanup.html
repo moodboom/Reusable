@@ -67,9 +67,10 @@
     //     clientWidth = svgWidth - margin.left - margin.right,
     //     clientHeight = svgHeight - margin.top - margin.bottom;
 
-    var margin = 20,
-      clientWidth = svgWidth - margin * 2,
-      clientHeight = svgHeight - margin * 2;
+    // var margin = 20;
+    var margin = {top: 75, right: 60, bottom: 60, left: 10};
+    var clientWidth = svgWidth - margin.left - margin.right,
+        clientHeight = svgHeight - margin.top - margin.bottom;
 
 
     // Fucking shit dont work
@@ -94,8 +95,8 @@
           hilight_color: "yellow",
           color: "yellow",
           points: [
-            {x:1551346201000,y:19.071250000000003},{x:1551347116000,y:19.071250000000003},{x:1551347233000,y:19.071250000000003},
-            {x:1551347233000,y:19.0},{x:1551347116000,y:19.0},{x:1551346201000,y:19.0}
+            {x:1551346201000,y:19.071250000000003},{x:1551347116000,y:19.071250000000003},{x:1551347233000,y:19.071250000000003}
+            ,{x:1551347233000,y:19.0},{x:1551347116000,y:19.0},{x:1551346201000,y:19.0}
           ]
         }
         ,{
@@ -103,7 +104,7 @@
           hilight_color: "#5c88c5", 
           color: "#5c88c5",
           points: [
-            {x:1551347233000,y:20.5745575},{x:1551347348000,y:20.5745575},
+            {x:1551347233000,y:20.5745575},{x:1551347348000,y:20.5745575}
             ,{x:1551347348000,y:20.6054425},{x:1551347233000,y:20.6054425}
           ]
         }
@@ -152,7 +153,7 @@
       .attr("width", svgWidth)
       .attr("height", svgHeight)
       .append("g")
-      .attr("transform", "translate(" + margin + "," + margin + ")");
+      .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
     // add encompassing World group for the zoom
     var gWorld = gTop.append("g").attr("class", "everything");
@@ -236,9 +237,9 @@
         .attr("opacity", "0")
         .call(zoom);
 
-    const xrect = newRect(0, clientHeight, clientWidth, margin, xzoom);
+    const xrect = newRect(0, clientHeight, clientWidth, margin.top, xzoom);
     // .attr("fill", 'red')
-    const yrect = newRect(-margin, 0, margin, clientHeight, yzoom);
+    const yrect = newRect(-margin.left, 0, margin.left, clientHeight, yzoom);
     // .attr("fill", 'green')
     const xyrect = newRect(0, 0, clientWidth, clientHeight, xyzoom);
     // .attr("fill", 'orange')
