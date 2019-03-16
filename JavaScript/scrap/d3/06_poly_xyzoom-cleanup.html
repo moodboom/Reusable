@@ -136,12 +136,12 @@
     };
     // ======================================
 
-    const x = d3
+    const x_scale = d3
       .scaleTime()
       .domain([chartData.worldMinX, chartData.worldMaxX])
       .range([0, clientWidth]);
 
-    const y = d3
+    const y_scale = d3
       .scaleLinear()
       .domain([chartData.worldMinY, chartData.worldMaxY])
       .range([clientHeight, 0]);
@@ -167,7 +167,7 @@
       .attr("points", function(d) {
         return d.points
           .map(function(d) {
-            return [x(d.x), y(d.y)].join(",");
+            return [x_scale(d.x), y_scale(d.y)].join(",");
           })
           .join(" ");
       })
@@ -181,18 +181,18 @@
     gWorld
       .append("circle")
       .attr("r", 4)
-      .attr("cx", x(point.x))
-      .attr("cy", y(point.y));
+      .attr("cx", x_scale(point.x))
+      .attr("cy", y_scale(point.y));
     */
 
     // Add a line!
     var lineGenerator = d3
       .line()
       .x(function(d) {
-        return x(d[0]);
+        return x_scale(d[0]);
       })
       .y(function(d) {
-        return y(d[1]);
+        return y_scale(d[1]);
       });
     var ourLine = gWorld
       .append("path")
@@ -201,12 +201,12 @@
       .attr("stroke", "blue")
       // .attr("stroke-width", 1); // How do we make it fatter in CLIENT PIXELS not f'in zoomed thickness
     const xAxis = d3
-      .axisBottom(x)
+      .axisBottom(x_scale)
       .tickSize(-clientHeight)
       .tickPadding(tickPadding);
 
     const yAxis = d3
-      .axisLeft(y)
+      .axisLeft(y_scale)
       .tickPadding(tickPadding)
       .tickSize(-clientWidth);
 
@@ -268,7 +268,7 @@
       const xOld = d3.xyzoomTransform(xrect.node());
       const xyOld = d3.xyzoomTransform(xyrect.node());
       const xyNew = newTransform(t.x, xyOld.y, t.kx, xyOld.ky);
-      // gX.transition().duration(0).call(xAxis.scale(t.rescaleX(x)))
+      // gX.transition().duration(0).call(xAxis.scale(t.rescaleX(x_scale)))
       if (xyNew.x != xyOld.x || xyNew.kx != xyOld.kx) {
         xyrect.call(xyzoom.transform, xyNew);
       }
@@ -283,7 +283,7 @@
       const xyNew = d3.xyzoomIdentity
         .translate(xyOld.x, t.y)
         .scale(xyOld.kx, t.ky);
-      // gY.transition().duration(0).call(yAxis.scale(t.rescaleY(y)))
+      // gY.transition().duration(0).call(yAxis.scale(t.rescaleY(y_scale)))
       if (xyNew.y != xyOld.y || xyNew.ky != xyOld.ky) {
         xyrect.call(xyzoom.transform, xyNew);
       }
@@ -295,10 +295,10 @@
       const yOld = d3.xyzoomTransform(yrect.node());
       gX.transition()
         .duration(0)
-        .call(xAxis.scale(t.rescaleX(x)));
+        .call(xAxis.scale(t.rescaleX(x_scale)));
       gY.transition()
         .duration(0)
-        .call(yAxis.scale(t.rescaleY(y)));
+        .call(yAxis.scale(t.rescaleY(y_scale)));
       if (xOld.x != t.x || xOld.kx != t.kx) {
         xrect.call(xzoom.transform, newTransform(t.x, 0, t.kx, 1));
       }
