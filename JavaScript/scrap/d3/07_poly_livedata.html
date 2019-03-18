@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<head>
+  <meta charset="utf-8" />
+  <script src="https://d3js.org/d3.v5.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/d3-xyzoom@1.5.0/build/d3-xyzoom.min.js"></script>
+  <style>
+    body {
+      font: 1em sans-serif;
+      margin: 50px;
+    }
+
+    .grid .tick {
+      stroke: lightgrey;
+      opacity: 0.7;
+      shape-rendering: crispEdges;
+    }
+
+    .grid path {
+      stroke-width: 0;
+    }
+
+    .axis path {
+      fill: none;
+      stroke: #bbb;
+      shape-rendering: crispEdges;
+    }
+
+    .axis text {
+      fill: #555;
+    }
+
+    .axis line {
+      stroke: #e7e7e7;
+      shape-rendering: crispEdges;
+    }
+
+    .line {
+      fill: none;
+      stroke-width: 1.5px; /* desired stroke width (line height) */
+      vector-effect: non-scaling-stroke; /* line height won't scale - NOPE, fails */
+    }
+
+    .y {
+      /* font: .4em sans-serif; no need now that we have a left margin */
+    }
+
+    .polygon {
+      stroke-linejoin: round;
+      stroke: gray;
+      stroke-width: 1px;
+    }
+
+  </style>
+</head>
+
+<body>
+  <script>
+    const svgWidth = 600;
+    const svgHeight = 400;
+
+    // TODO support t/r/b/l margins
+    // var margin = {top: 20, right: 20, bottom: 30, left: 50},
+    //     clientWidth = svgWidth - margin.left - margin.right,
+    //     clientHeight = svgHeight - margin.top - margin.bottom;
+
+    // var margin = 20;
+    var margin = {top: 5, right: 60, bottom: 60, left: 50};
+    var clientWidth = svgWidth - margin.left - margin.right,
+        clientHeight = svgHeight - margin.top - margin.bottom;
+
+    const tickPadding = 10;
+
+    // ======================================
+    // === WORLD-COORDINATE DATA ===
+    // ======================================
+    const chartData =             {
+        "lineData": [
+            [
+            1552555799000,
+            15.65
+            ],
+            [
+            1552555800000,
+            15.58
+            ],
+            [
+            1552555800000,
+            15.58
+            ],
+            [
+            1552555800000,
+            15.58
+            ],
+            [
+            1552557682000,
+            15.5101
+            ],
+            [
+            1552557959000,
+            15.65
+            ],
+            [
+            1552558356000,
+            15.6
+            ],
+            [
+            1552558639000,
+            15.6388
+            ],
+            [
+            1552559709000,
+            15.635
+            ],
+            [
+            1552560349000,
+            15.51
+            ],
+            [
+            1552560874000,
+            15.7132
+            ],
+            [
+            1552561150000,
+            15.7
+            ],
+            [
+            1552561150000,
+            15.7
+            ],
+            [
+            1552561881000,
+            15.67
+            ],
+            [
+            1552563868000,
+            15.79
+            ],
+            [
+            1552564455000,
+            15.8114
+            ],
+            [
+            1552564455000,
+            15.8114
+            ],
+            [
+            1552566243000,
+            15.69
+            ],
+            [
+            1552567848000,
+            15.87
+            ],
+            [
+            1552568456000,
+            15.92
+            ],
+            [
+            1552570355000,
+            15.87
+            ],
+            [
+            1552570844000,
+            15.914
+            ],
+            [
+            1552570844000,
+            15.914
+            ],
+            [
+            1552572892000,
+            15.73
+            ],
+            [
+            1552573014000,
+            15.87
+            ],
+            [
+            1552573533000,
+            15.81
+            ],
+            [
+            1552575139000,
+            15.93
+            ],
+            [
+            1552575508000,
+            16
+            ],
+            [
+            1552575508000,
+            16
+            ],
+            [
+            1552576267000,
+            15.975
+            ],
+            [
+            1552576708000,
+            15.995
+            ],
+            [
+            1552576708000,
+            15.995
+            ],
+            [
+            1552577925000,
+            16.1
+            ],
+            [
+            1552578153000,
+            16.01
+            ],
+            [
+            1552578313000,
+            16.11
+            ],
+            [
+            1552578635000,
+            16.165
+            ],
+            [
+            1552578635000,
+            16.165
+            ],
+            [
+            1552579075000,
+            16.03
+            ],
+            [
+            1552579116000,
+            16.01
+            ],
+            [
+            1552579200000,
+            16.09
+            ]
+        ],
+        "percent-change": "[+8.11%]",
+        "polydata": [],
+        "worldMaxX": 1552579200000,
+        "worldMaxY": 16.165,
+        "worldMinX": 1552555799000,
+        "worldMinY": 15.51
+        };
+    // ======================================
+
+    const x_scale = d3
+      .scaleTime()
+      .domain([chartData.worldMinX, chartData.worldMaxX])
+      .range([0, clientWidth]);
+
+    const y_scale = d3
+      .scaleLinear()
+      .domain([chartData.worldMinY, chartData.worldMaxY])
+      .range([clientHeight, 0]);
+
+    var gTop = d3
+      .select("body")
+      .append("svg")
+      .attr("width", svgWidth)
+      .attr("height", svgHeight)
+      .append("g")
+      .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+    // add encompassing World group for the zoom
+    var gWorld = gTop.append("g").attr("class", "everything");
+
+    // Add polygons
+    var polygons = gWorld
+      .selectAll("polygon")
+      .data(chartData.polydata)
+      .enter()
+      .append("polygon")
+      .attr("class", "polygon")
+      .attr("points", function(d) {
+        return d.points
+          .map(function(d) {
+            return [x_scale(d.x), y_scale(d.y)].join(",");
+          })
+          .join(" ");
+      })
+      .attr("fill", function(d) {
+        return d.color;
+      });
+
+    // If we use points, we need to do better than one hand-crafted circle at a time...
+    // Add a point!
+    /*
+    gWorld
+      .append("circle")
+      .attr("r", 4)
+      .attr("cx", x_scale(point.x))
+      .attr("cy", y_scale(point.y));
+    */
+
+    // Add a line!
+    var lineGenerator = d3
+      .line()
+      .x(function(d) {
+        return x_scale(d[0]);
+      })
+      .y(function(d) {
+        return y_scale(d[1]);
+      });
+    var ourLine = gWorld
+      .append("path")
+      .attr("d", lineGenerator(chartData.lineData))
+      .attr("fill", "none")
+      .attr("stroke", "blue")
+      // .attr("stroke-width", 1); // How do we make it fatter in CLIENT PIXELS not f'in zoomed thickness
+    const xAxis = d3
+      .axisBottom(x_scale)
+      .tickSize(-clientHeight)
+      .tickPadding(tickPadding);
+
+    const yAxis = d3
+      .axisLeft(y_scale)
+      .tickPadding(tickPadding)
+      .tickSize(-clientWidth);
+
+    const extent = [[0, 0], [clientWidth, clientHeight]];
+    const translateExtent = [[0, 0], [clientWidth, clientHeight]];
+    const scaleExtent = [[1, 1000], [1, 100]];
+
+    const newZoom = handler =>
+      d3
+        .xyzoom()
+        .extent(extent)
+        .scaleExtent(scaleExtent)
+        .translateExtent(translateExtent)
+        .on("zoom", handler);
+
+    const xzoom = newZoom(xzoomed);
+    const yzoom = newZoom(yzoomed);
+    const xyzoom = newZoom(xyzoomed);
+
+    const newRect = (x, y, w, h, zoom) =>
+      gTop
+        .append("svg:rect")
+        .attr("width", w)
+        .attr("height", h)
+        .attr("transform", "translate(" + x + "," + y + ")")
+        .attr("pointer-events", "all")
+        .attr("opacity", "0")
+        .call(zoom);
+
+    const xrect = newRect(0, clientHeight, clientWidth, margin.top, xzoom);
+    // .attr("fill", 'red')
+    const yrect = newRect(-margin.left, 0, margin.left, clientHeight, yzoom);
+    // .attr("fill", 'green')
+    const xyrect = newRect(0, 0, clientWidth, clientHeight, xyzoom);
+    // .attr("fill", 'orange')
+
+    function newTransform(x, y, kx, ky) {
+      return d3.xyzoomIdentity.translate(x, y).scale(kx, ky);
+    }
+
+    const gX = gTop
+      .append("g")
+      .attr("class", "x axis")
+      .attr("transform", "translate(0," + clientHeight + ")")
+      .attr("pointer-events", "none")
+      .call(xAxis);
+
+    const gY = gTop
+      .append("g")
+      .attr("class", "y axis")
+      .attr("pointer-events", "none")
+      .call(yAxis);
+
+    function xzoomed() {
+      const t = d3.event.transform;
+      if (t.y != 0 || t.ky != 1) {
+        return xrect.call(xzoom.transform, newTransform(t.x, 0, t.kx, 1));
+      }
+      const xOld = d3.xyzoomTransform(xrect.node());
+      const xyOld = d3.xyzoomTransform(xyrect.node());
+      const xyNew = newTransform(t.x, xyOld.y, t.kx, xyOld.ky);
+      // gX.transition().duration(0).call(xAxis.scale(t.rescaleX(x_scale)))
+      if (xyNew.x != xyOld.x || xyNew.kx != xyOld.kx) {
+        xyrect.call(xyzoom.transform, xyNew);
+      }
+    }
+
+    function yzoomed() {
+      const t = d3.event.transform;
+      if (t.x != 0 || t.kx != 1) {
+        return yrect.call(yzoom.transform, newTransform(0, t.y, 1, t.ky));
+      }
+      const xyOld = d3.xyzoomTransform(xyrect.node());
+      const xyNew = d3.xyzoomIdentity
+        .translate(xyOld.x, t.y)
+        .scale(xyOld.kx, t.ky);
+      // gY.transition().duration(0).call(yAxis.scale(t.rescaleY(y_scale)))
+      if (xyNew.y != xyOld.y || xyNew.ky != xyOld.ky) {
+        xyrect.call(xyzoom.transform, xyNew);
+      }
+    }
+
+    function xyzoomed() {
+      const t = d3.event.transform;
+      const xOld = d3.xyzoomTransform(xrect.node());
+      const yOld = d3.xyzoomTransform(yrect.node());
+      gX.transition()
+        .duration(0)
+        .call(xAxis.scale(t.rescaleX(x_scale)));
+      gY.transition()
+        .duration(0)
+        .call(yAxis.scale(t.rescaleY(y_scale)));
+      if (xOld.x != t.x || xOld.kx != t.kx) {
+        xrect.call(xzoom.transform, newTransform(t.x, 0, t.kx, 1));
+      }
+      if (yOld.y != t.y || yOld.ky != t.ky) {
+        yrect.call(yzoom.transform, newTransform(0, t.y, 1, t.ky));
+      }
+      gWorld.attr("transform", d3.event.transform);
+    }
+
+    // MDM MOUSEOVER FILL
+    // TODO Event is not being captured
+    /*
+  polygons
+  .on("mouseover", function(d) {
+      d3.select(this)
+        .attr("fill", d.hilight_color);
+    })
+    .on("mouseout", function(d) {
+      d3.select(this)
+        .attr("fill", d.color);
+    });
+  ;
+  */
+  </script>
+</body>
