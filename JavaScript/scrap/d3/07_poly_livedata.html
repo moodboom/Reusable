@@ -40,6 +40,10 @@
       vector-effect: non-scaling-stroke; /* line height won't scale - NOPE, fails */
     }
 
+    .axis .axis-label {
+      font-size: 14px;
+    }
+
     .y {
       /* font: .4em sans-serif; no need now that we have a left margin */
     }
@@ -252,7 +256,7 @@
 
     const y_scale = d3
       .scaleLinear()
-      .domain([chartData.worldMinY, chartData.worldMaxY])
+      .domain([0, chartData.worldMaxY*1.2])
       .range([clientHeight, 0]);
 
     var gTop = d3
@@ -374,7 +378,7 @@
       if (t.y != 0 || t.ky != 1) {
         return xrect.call(xzoom.transform, newTransform(t.x, 0, t.kx, 1));
       }
-      const xOld = d3.xyzoomTransform(xrect.node());
+      const xOld = d3.xyzoomTransform(xrect.node())  
       const xyOld = d3.xyzoomTransform(xyrect.node());
       const xyNew = newTransform(t.x, xyOld.y, t.kx, xyOld.ky);
       // gX.transition().duration(0).call(xAxis.scale(t.rescaleX(x_scale)))

@@ -228,7 +228,7 @@
         .attr("opacity", "0")
         .call(zoom);
 
-    const xrect = newRect(0, clientHeight, clientWidth, margin.top, xzoom);
+    const xrect = newRect(0, clientHeight, clientWidth, margin.bottom, xzoom);
     // .attr("fill", 'red')
     const yrect = newRect(-margin.left, 0, margin.left, clientHeight, yzoom);
     // .attr("fill", 'green')
