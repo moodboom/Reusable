@@ -6,6 +6,10 @@
 #include <oauth/urlencode.h>    // For urlen/decode
 #include <json.hpp>             // 2018 JSON handling using external single-header lib from https://github.com/nlohmann/json
 
+using namespace date;
+using namespace std::chrono;
+#include "date.h"               // WTF c++ sucking at ISO 8601 until c++20?  fml... 'til then we have this
+
 // 2017/01/05 tired of typing
 using namespace std;
 using json = nlohmann::json;
@@ -21,7 +25,8 @@ using json = nlohmann::json;
 //    static void trim(string &s)      (and starttrim and endtrim)
 //    static bool find_substring(const string& body, const string& regex, string& result)
 //    static bool b_string_ends_in(const string& source, const string& search)
-//    static vector<int64_t> parse_csv_ints(const std::string& csvdata)
+//    static bool parse_csv_ints(const std::string& csvdata, vector<int64_t>& vi)
+//    static bool parse_csv_strings(const std::string& csvdata, vector<string>& vs)
 //    static string escape_doublequotes(string& string_to_change)
 //    static bool escape_doublequotes(string& string_to_change)
 //    static bool escape_backslash(string& string_to_change)
@@ -46,9 +51,11 @@ using json = nlohmann::json;
 //    class JWT;
 //    string url_encode_JWT(const JWT& j_input);
 //    void url_decode_JWT(string input, JWT& jwt);
-// TIME
-//    static time_t ptime_to_time_t(const ptime& pt)
-//    static ptime  get_utc_current_time()              // Always prefer UTC
+// TIME Always prefer UTC
+//    static string getISOCurrentTime<chrono::seconds>();
+//    static string getISOCurrentTime<chrono::milliseconds>();
+//    static string getISOCurrentTime<chrono::microseconds>();
+//    static ptime  get_utc_current_time()              
 //    static time_t get_utc_current_time_t()
 //    static time_t get_utc_today_midnight()
 //    static ptime  get_local_current_time()
@@ -57,6 +64,7 @@ using json = nlohmann::json;
 //    static ptime string_to_ptime(const string& str_time, const string& str_format)
 //    static ptime iso_string_to_ptime(const string& str_time)
 //    static string ptime_to_string(const ptime& pt, const string& str_format)
+//    static time_t ptime_to_time_t(const ptime& pt)
 //    static ptime time_t_to_ptime(const time_t& tt)
 //    static string time_t_to_string(const time_t& tt, const string& str_format)
 //    static string americanFormat(date d)
@@ -211,20 +219,18 @@ static bool b_string_ends_in(const string& source, const string& search)
 }
 // NOTE that you should wrap with try/catch if you are unsure of data quality.
 // NOTE that the vector will return unsorted but will sort as expected when accessed.
-static sorted_vector<int64_t> parse_csv_ints(const std::string& csvdata)
+static bool parse_csv_strings(const std::string& csvdata, std::vector<string>& vs)
 {
-    sorted_vector<int64_t> ints;
+    boost::split(vs,csvdata,boost::is_any_of(",\t"));
+    return true;
+}
+static bool parse_csv_ints(const std::string& csvdata, std::vector<int64_t>& vi)
+{
     vector<string> strs; 
-    boost::split(strs,csvdata,boost::is_any_of(",\t"));
+    parse_csv_strings(csvdata,strs);
     for (auto& str:strs)
-    {
-        ints.push_unsorted(boost::lexical_cast<int64_t>(str));
-    }
-
-    // NOTE no need to use C++11 move() to return by value.  
-    // Modern compilers know to move if needed.
-    // http://stackoverflow.com/questions/17473753/c11-return-value-optimization-or-move
-    return ints;
+        vi.push_back(boost::lexical_cast<int64_t>(str));
+    return true;
 }
 
 // These can only be done once at the precise right moment, be careful.
@@ -539,6 +545,19 @@ protected:
 //=========================================================
 // TIME
 //=========================================================
+// ALWAYS PREFER UTC TIME, especially when persisting.
+
+// Example usage:
+// cout << getISOCurrentTime<chrono::seconds>();
+// cout << getISOCurrentTime<chrono::milliseconds>();
+// cout << getISOCurrentTime<chrono::microseconds>();
+template <class Precision>
+string getISOCurrentTime()
+{
+    auto now = std::chrono::system_clock::now();
+    return date::format("%FT%TZ", date::floor<Precision>(now));
+}
+
 static time_t ptime_to_time_t(const ptime& pt)
 {
     // Wow this is a lot of work.
@@ -546,9 +565,6 @@ static time_t ptime_to_time_t(const ptime& pt)
     time_duration::sec_type x = (pt - epoch).total_seconds();
     return time_t(x);
 }
-
-// ALWAYS PREFER UTC TIME, especially when persisting.
-
 static ptime  get_utc_current_time()        { return second_clock::universal_time();            }
 static time_t get_utc_current_time_t()      { return ptime_to_time_t(get_utc_current_time());   }
 
@@ -598,21 +614,22 @@ static string time_t_to_string(const time_t& tt, const string& str_format)
 {
     return ptime_to_string(time_t_to_ptime(tt), str_format);
 }
+
 static string stdFormat(const date& d)
 {
     stringstream ss;
     ss << boost::format("%4d-%02d-%02d") % d.year() % d.month() % d.day();
     return ss.str();
 }
+static string stdFormat(const ptime& pt)
+{
+    return ptime_to_string(pt,"%Y-%m-%dT%H:%M:%S");
+}
 static string americanFormat(const date& d)
 {
     stringstream ss;
     ss << boost::format("%02d-%02d-%4d") % d.month() % d.day() % d.year();
     return ss.str();
-}
-static string stdFormat(const ptime& pt)
-{
-    return ptime_to_string(pt,"%Y-%m-%dT%H:%M:%S");
 }
 
 
