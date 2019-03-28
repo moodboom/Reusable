@@ -670,6 +670,12 @@ public:
         return inherited::end();
     }
     template<class _Pr> inline
+    bool bContains( const T& key, _Pr pr )
+    {
+        sort(pr);
+        return std::binary_search( inherited::begin(), inherited::end(), key );
+    }
+    template<class _Pr> inline
     T* find_ptr_or_fail( const T& key, _Pr pr )
     {
         typename std::vector<T>::iterator it = find_it_or_fail( key, pr );

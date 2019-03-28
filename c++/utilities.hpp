@@ -6,9 +6,9 @@
 #include <oauth/urlencode.h>    // For urlen/decode
 #include <json.hpp>             // 2018 JSON handling using external single-header lib from https://github.com/nlohmann/json
 
-using namespace date;
-using namespace std::chrono;
-#include "date.h"               // WTF c++ sucking at ISO 8601 until c++20?  fml... 'til then we have this
+// using namespace date;
+// using namespace std::chrono;
+// #include "date.h"               // WTF c++ sucking at ISO 8601 until c++20?  fml... 'til then we have this
 
 // 2017/01/05 tired of typing
 using namespace std;
@@ -547,6 +547,7 @@ protected:
 //=========================================================
 // ALWAYS PREFER UTC TIME, especially when persisting.
 
+/*
 // Example usage:
 // cout << getISOCurrentTime<chrono::seconds>();
 // cout << getISOCurrentTime<chrono::milliseconds>();
@@ -557,6 +558,7 @@ string getISOCurrentTime()
     auto now = std::chrono::system_clock::now();
     return date::format("%FT%TZ", date::floor<Precision>(now));
 }
+*/
 
 static time_t ptime_to_time_t(const ptime& pt)
 {
