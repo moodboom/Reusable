@@ -575,7 +575,7 @@ static time_t get_local_current_time_t()    { return ptime_to_time_t(get_local_c
 
 static time_t one_day()                     { return 86400; }
 static time_t get_midnight(const time_t t)  { return t / one_day() * one_day(); }
-static time_t get_utc_today_midnight()      { time_t now = get_utc_current_time_t(); get_midnight(now); }
+static time_t get_utc_today_midnight()      { time_t now = get_utc_current_time_t(); return get_midnight(now); }
 static time_t get_local_today_midnight()    { time_t now = get_local_current_time_t(); return get_midnight(now); }
 
 static ptime string_to_ptime(const string& str_time, const string& str_format)
