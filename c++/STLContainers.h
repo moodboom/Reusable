@@ -673,7 +673,7 @@ public:
     bool bContains( const T& key, _Pr pr )
     {
         sort(pr);
-        return std::binary_search( inherited::begin(), inherited::end(), key );
+        return std::binary_search( inherited::begin(), inherited::end(), key, pr );
     }
     template<class _Pr> inline
     T* find_ptr_or_fail( const T& key, _Pr pr )
