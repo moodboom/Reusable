@@ -12,7 +12,8 @@ yarn start # and then you can start live-editing changes
 # eventually you'll get to...
 
 # https://facebook.github.io/create-react-app/docs/adding-bootstrap
-npm install --save bootstrap
+# npm install --save bootstrap
+yarn add boostrap
 
 # https://react-jsonschema-form.readthedocs.io/en/latest/
 npm install react-jsonschema-form --save
