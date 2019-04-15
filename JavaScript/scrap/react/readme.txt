@@ -15,5 +15,9 @@ yarn start # and then you can start live-editing changes
 # npm install --save bootstrap
 yarn add boostrap
 
+# reactstrap turns bootstrap into usable with react
+# ok... so react better be super-helpful, if you have to do this kind of crap to use other javascript libraries...
+npm install --save reactstrap@next
+
 # https://react-jsonschema-form.readthedocs.io/en/latest/
 npm install react-jsonschema-form --save
