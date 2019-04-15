@@ -16,8 +16,11 @@ yarn start # and then you can start live-editing changes
 yarn add boostrap
 
 # reactstrap turns bootstrap into usable with react
-# ok... so react better be super-helpful, if you have to do this kind of crap to use other javascript libraries...
+# ok... so is react goign to behave with other javascript libraries...?
 npm install --save reactstrap@next
+
+# import Bootstrap CSS in the src/index.js file:
+import 'bootstrap/dist/css/bootstrap.css';
 
 # https://react-jsonschema-form.readthedocs.io/en/latest/
 npm install react-jsonschema-form --save
