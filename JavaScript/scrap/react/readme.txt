@@ -22,13 +22,16 @@ npm start # and then you can start live-editing changes
 npm install bootstrap --save
 npm install --save reactstrap react react-dom
 
-# import Bootstrap CSS in the src/index.js file:
+# import Bootstrap CSS in the src/index.js file by adding this AT THE TOP:
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 # https://react-jsonschema-form.readthedocs.io/en/latest/
 npm install react-jsonschema-form --save
 
-# atttempt to patch in security fixes
+# to directly read JSON
+npm i json-loader --save
+
+# attempt to patch in security fixes
 npm audit fix
 
 ----------

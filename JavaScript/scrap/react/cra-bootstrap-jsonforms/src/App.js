@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+
+/* for reactstrap */
 import {
     Collapse,
     Navbar,
@@ -13,6 +15,24 @@ import {
     Jumbotron,
     Button
 } from 'reactstrap';
+
+/* for react-jsonschema-form, json-loader */
+import { render } from "react-dom";
+import Form from "react-jsonschema-form";
+/*
+var schema = require('./data/example-form.json.schema');
+import schema from './data/simple-form.json.schema';
+*/
+const schema = {
+  title: "Todo",
+  type: "object",
+  required: ["title"],
+  properties: {
+    title: {type: "string", title: "Title", default: "A new task"},
+    done: {type: "boolean", title: "Done?", default: false}
+  }
+};
+const log = (type) => console.log.bind(console, type);
 
 class App extends Component {
     constructor(props) {
@@ -49,7 +69,7 @@ class App extends Component {
                     <Container>
                         <Row>
                             <Col>
-                                <h1>Welcome to React</h1>
+                                {/* <h1>Welcome to React</h1> */}
                                 <p>
                                   <Button color="danger">Danger!</Button>
                                     <Button
@@ -66,6 +86,13 @@ class App extends Component {
                         </Row>
                     </Container>
                 </Jumbotron>
+
+                {/* for react-jsonschema-form */}
+                <Form schema={schema}
+                  onChange={log("changed")}
+                  onSubmit={log("submitted")}
+                  onError={log("errors")} />                
+
             </div>
         );
     }
