@@ -55,6 +55,9 @@ using json = nlohmann::json;
 //    static string getISOCurrentTime<chrono::seconds>();
 //    static string getISOCurrentTime<chrono::milliseconds>();
 //    static string getISOCurrentTime<chrono::microseconds>();
+//    static string ISOFormat(const date& d)
+//    static string ISOFormat(const ptime& pt)
+//    static string ISOFormat(const time_t& t)
 //    static ptime  get_utc_current_time()              
 //    static time_t get_utc_current_time_t()
 //    static time_t get_utc_today_midnight()
@@ -622,15 +625,19 @@ static string time_t_to_string(const time_t& tt, const string& str_format)
     return ptime_to_string(time_t_to_ptime(tt), str_format);
 }
 
-static string stdFormat(const date& d)
+static string ISOFormat(const date& d)
 {
     stringstream ss;
     ss << boost::format("%4d-%02d-%02d") % d.year() % d.month() % d.day();
     return ss.str();
 }
-static string stdFormat(const ptime& pt)
+static string ISOFormat(const ptime& pt)
 {
     return ptime_to_string(pt,"%Y-%m-%dT%H:%M:%S");
+}
+static string ISOFormat(const time_t& t)
+{
+    return ptime_to_string(time_t_to_ptime(t),"%Y-%m-%dT%H:%M:%S");
 }
 static string americanFormat(const date& d)
 {
