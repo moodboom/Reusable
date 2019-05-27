@@ -717,18 +717,6 @@ extern LOG_TO_FILE_VERBOSITY g_current_log_verbosity;
 // Then define a logging function in the singleton that mirrors the ones below
 // but provides the lv_current value on every log call.
 // That allows more complex scenarios rather than one ugly global to rule them all.
-//
-// Example singleton member var and functions:
-//
-//  LOG_TO_FILE_VERBOSITY current_log_verbosity_;
-//  void log(LOG_TO_FILE_VERBOSITY v, string str, bool b_suppress_console = false, bool b_suppress_newline = false, bool b_suppress_file = false, int indent = 0) const
-//  {
-//      ::log(v,str,b_suppress_console,b_suppress_newline,b_suppress_file,indent,current_log_verbosity_);
-//  }
-//  void log(LOG_TO_FILE_VERBOSITY v, int n, bool b_suppress_console = false, bool b_suppress_newline = false, bool b_suppress_file = false, int indent = 0) const
-//  {
-//      ::log(v,n,b_suppress_console,b_suppress_newline,b_suppress_file,indent,current_log_verbosity_);
-//  }
 // ----------------------------------------------------------
 
 extern string g_base_log_filename;
@@ -806,29 +794,16 @@ static void archive_any_old_log_file()
 {
     archive_any_old_file(g_base_log_filename+".log","backup/",string("__old__") + generate_uuid() + ".log");
 }
-// Discouraged, see above
-static bool set_global_log_verbosity(string str_v)
+static string logVerbosityName(const LOG_TO_FILE_VERBOSITY lv)
 {
-    bool b_return = false;
-
     assert(LOG_TO_FILE_VERBOSITY_COUNT == 6);
-    if (strings_are_equal(str_v,"DEBUG"     )) { g_current_log_verbosity = LV_DEBUG     ; b_return = true; }
-    if (strings_are_equal(str_v,"DETAIL"    )) { g_current_log_verbosity = LV_DETAIL    ; b_return = true; }
-    if (strings_are_equal(str_v,"INFO"      )) { g_current_log_verbosity = LV_INFO      ; b_return = true; }
-    if (strings_are_equal(str_v,"WARNING"   )) { g_current_log_verbosity = LV_WARNING   ; b_return = true; }
-    if (strings_are_equal(str_v,"ERROR"     )) { g_current_log_verbosity = LV_ERROR     ; b_return = true; }
-    if (strings_are_equal(str_v,"OFF"       )) { g_current_log_verbosity = LV_ALWAYS    ; b_return = true; }
-
-    if (b_return)
-    {
-        stringstream ss;
-        ss << "Log level: " << str_v;
-        log(LV_ALWAYS, ss.str());
-
-    } else
-        log(LV_WARNING,string("Log verbosity change request to ") + str_v + " failed...");
-
-    return b_return;
+    if (lv == LV_DEBUG  ) return "DEBUG"  ;
+    if (lv == LV_DETAIL ) return "DETAIL" ;
+    if (lv == LV_INFO   ) return "INFO"   ;
+    if (lv == LV_WARNING) return "WARNING";
+    if (lv == LV_ERROR  ) return "ERROR"  ;
+    if (lv == LV_ALWAYS ) return "OFF"    ;
+    return "UNKNOWN";
 }
 //=========================================================
 
