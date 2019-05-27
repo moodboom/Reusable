@@ -733,7 +733,7 @@ extern LOG_TO_FILE_VERBOSITY g_current_log_verbosity;
 
 extern string g_base_log_filename;
 
-static void log(LOG_TO_FILE_VERBOSITY v, string str, bool b_suppress_console = false, bool b_suppress_newline = false, bool b_suppress_file = false, int indent = 0, LOG_TO_FILE_VERBOSITY lv_current = g_current_log_verbosity, const string& base_log_filename = g_base_log_filename)
+static void log(LOG_TO_FILE_VERBOSITY v, string str, bool b_suppress_console = false, bool b_suppress_newline = false, bool b_suppress_file = false, bool b_suppress_timestamp = false, int indent = 0, LOG_TO_FILE_VERBOSITY lv_current = g_current_log_verbosity, const string& base_log_filename = g_base_log_filename)
 {
     static boost::mutex log_guard_;
     
@@ -751,11 +751,19 @@ static void log(LOG_TO_FILE_VERBOSITY v, string str, bool b_suppress_console = f
                 cout << " ";
         }
 
-        string now = time_t_to_string(get_local_current_time_t(), "%H:%M:%S ");
+        if (!b_suppress_timestamp)
+        {
+            string now = time_t_to_string(get_local_current_time_t(), "%H:%M:%S ");
+            if (!b_suppress_file)
+                ofs_log << now;
+            if (!b_suppress_console)
+                cout << now;
+        }
+
         if (!b_suppress_file)
-            ofs_log << now << str;
+            ofs_log << str;
         if (!b_suppress_console)
-            cout << now << str;
+            cout << str;
 
         // NOTE that [<< endl] will do a flush.
         // If we don't do a newline, we should add in a [<< std::flush] instead.
@@ -771,9 +779,9 @@ static void log(LOG_TO_FILE_VERBOSITY v, string str, bool b_suppress_console = f
             cout << std::flush;
     }
 }
-static void log(LOG_TO_FILE_VERBOSITY v, int n, bool b_suppress_console = false, bool b_suppress_newline = false, bool b_suppress_file = false, int indent = 0, LOG_TO_FILE_VERBOSITY lv_current = g_current_log_verbosity)
+static void log(LOG_TO_FILE_VERBOSITY v, int n, bool b_suppress_console = false, bool b_suppress_newline = false, bool b_suppress_file = false, bool b_suppress_timestamp = false, int indent = 0, LOG_TO_FILE_VERBOSITY lv_current = g_current_log_verbosity)
 {
-    log(v,lexical_cast<string>(n),b_suppress_console,b_suppress_newline,b_suppress_file,indent,lv_current);
+    log(v,lexical_cast<string>(n),b_suppress_console,b_suppress_newline,b_suppress_file,b_suppress_timestamp,indent,lv_current);
 }
 
 // This helper logs test results with sane defaults, and will BLOW YOUR SHIT UP if one fails.  You're welcome!  :-)
@@ -785,10 +793,10 @@ static void log_test(const string &desc, bool bTestPassed, bool bStopOnFailure =
     if (bStopOnFailure)
         assert(bTestPassed);
 }
-static void log_line_start(LOG_TO_FILE_VERBOSITY v, string str) { log(v,str,false,true); }
-static void log_line_ping (LOG_TO_FILE_VERBOSITY v            ) { log_line_start(v,"."); }
-static void log_line_break(LOG_TO_FILE_VERBOSITY v, string str) { log(v,""); log(v,str); }
-static void log_line_end  (LOG_TO_FILE_VERBOSITY v, string str) { log(v,str);            }
+static void log_line_start(LOG_TO_FILE_VERBOSITY v, string str) { log(v,str,false,true);             }
+static void log_line_ping (LOG_TO_FILE_VERBOSITY v            ) { log(v,".",false,true,false,true);  }
+static void log_line_break(LOG_TO_FILE_VERBOSITY v, string str) { log(v,""); log(v,str);             }
+static void log_line_end  (LOG_TO_FILE_VERBOSITY v, string str) { log(v,str,false,false,false,true); }
 
 // Declarations with default params.
 static bool backup_any_old_file(const string& filename, const string& prefix = "", const string& suffix = "");
