@@ -777,7 +777,7 @@ static void log_test(const string &desc, bool bTestPassed, bool bStopOnFailure =
 {
     stringstream ss;
     ss << (bTestPassed ? "[OK] " : "[*ERROR*] ") << desc;
-    log(LV_ALWAYS,ss.str(),false,false,false,0,LV_ALWAYS);
+    log(LV_ALWAYS,ss.str(),false,false,false,false,0,LV_ALWAYS);
     if (bStopOnFailure)
         assert(bTestPassed);
 }
