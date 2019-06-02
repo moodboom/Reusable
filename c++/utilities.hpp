@@ -97,6 +97,7 @@ using json = nlohmann::json;
 //    static bool bZero(const double& a)
 //    static bool bLessThanOrEqual(const double& a, const double& b)
 //    static double roundToHundredths(const double& value)
+//    static bool isPrime(int n) 
 // MISC
 //    static void sleep(int n_secs)
 //    static bool unzip_first_file(string& str_zip, string& str_unzipped)
@@ -1007,6 +1008,25 @@ static bool bZero(const double& a)
 static bool bLessThanOrEqual(const double& a, const double& b) { return (a < b) || bEqual(a,b); }
 static bool bLessThan(const double& a, const double& b) { return (a + std::numeric_limits<double>::epsilon()) < b; }
 static double roundToHundredths(const double& value) { return (int) (value * 100.0 + 0.5) / 100.0; }
+static bool isPrime(int n) 
+{ 
+    // Corner cases 
+    if (n <= 1) 
+        return false; 
+    if (n <= 3) 
+        return true; 
+  
+    // This is checked so that we can skip 
+    // middle five numbers in below loop 
+    if (n % 2 == 0 || n % 3 == 0) 
+        return false; 
+  
+    for (int i = 5; i * i <= n; i = i + 6) 
+        if (n % i == 0 || n % (i + 2) == 0) 
+            return false; 
+  
+    return true; 
+} 
 //=========================================================
 
 

@@ -787,6 +787,44 @@ int main(int argc, char *argv[])
     cout << "outer scope = " << sloppy << endl;
 
 
+    // 18 ==================================================================================
+    cout << endl << "== 18 === Broker quiz =======" << endl;
+    // 18 ==================================================================================
+
+    string dia = read_file("data/DIA_2018.json");
+    string spy = read_file("data/SPY_2018.json");
+    auto dia_json = json::parse(dia);
+    auto spy_json = json::parse(spy);
+    for (auto& oneday:dia_json)
+    {
+        ptime t = iso_string_to_ptime(oneday["Date"].get<string>());
+        if (t.date().day_of_week() == boost::date_time::Thursday)
+        {
+            double close = oneday["Close"].get<double>();
+            {
+            if (isPrime((int)(close*1000)))
+                cout << close << " on " << ISOFormat(t) << endl;
+                /*
+                stringstream ss;
+                ss << close << " on " << ISOFormat(t);
+                log(LV_ALWAYS,ss.str());
+                */
+            }
+        }
+    }
+    for (auto& oneday:spy_json)
+    {
+        ptime t = iso_string_to_ptime(oneday["Date"].get<string>());
+        if (t.date().day_of_week() == boost::date_time::Thursday)
+        {
+            double close = oneday["Close"].get<double>();
+            if (isPrime((int)(close*1000)))
+            {
+                cout << close << " on " << ISOFormat(t) << endl;
+            }
+        }
+    }
+
     // ========= end ========
     // We can keep it running if needed to better see the output.
     // while (true)

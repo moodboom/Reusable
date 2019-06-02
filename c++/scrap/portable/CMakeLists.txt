@@ -12,18 +12,25 @@ project(portable)
 # -------------------------------
 set(Reusable "../../")
 set(ThirdParty "../../../../Libraries/c++/")
-set(BOOST_ROOT "../../../../$ENV{boost_version}/")   # NOTE: boost_version is set in .bashrc
+set(ThirdPartyC "../../../../Libraries/c/")
+set(BOOST_ROOT "${ThirdParty}$ENV{boost_version}/")   # NOTE: boost_version is set in .bashrc
 
-# MDM We want c++11 (or later)
-# MDM MOVING TO C++14 to get chrono literals!  why not, stay ahead of it
-set(CMAKE_CXX_STANDARD 14)
-# This is the old way for CMake <3.1
-#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+# MDM pqxx uses c++17 so here we go - why tf was this currently commented out above?
+set (CMAKE_CXX_STANDARD 17)
+
+# We want -g to always sideload enough debug info for stacktraces
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g")
+
+# MDM Strangely, it seems Clion needs this or it will not index include files...?
+INCLUDE_DIRECTORIES(".")
 
 # MDM external include dirs
 INCLUDE_DIRECTORIES(${Reusable})
-INCLUDE_DIRECTORIES(${Reusable}sqlite/)
 INCLUDE_DIRECTORIES(${ThirdParty})
+INCLUDE_DIRECTORIES(${ThirdPartyC})
+INCLUDE_DIRECTORIES(${ThirdPartyC}sqlite/)
+INCLUDE_DIRECTORIES(${ThirdParty}json/single_include/nlohmann/)
+INCLUDE_DIRECTORIES(${ThirdParty}SQLiteCpp/include/)
 
 # MDM CMake handles boost like this...
 set(BOOST_INCLUDE_DIR ${BOOST_ROOT})
@@ -57,11 +64,13 @@ add_executable(
     ${Reusable}oauth/oauthlib.cpp
     ${Reusable}oauth/SHA1.cpp
     ${Reusable}oauth/urlencode.cpp
-    ${Reusable}sqlite/sqlite3.c
-    ${Reusable}sqlite/SQLiteCpp/Column.cpp
-    ${Reusable}sqlite/SQLiteCpp/Database.cpp
-    ${Reusable}sqlite/SQLiteCpp/Statement.cpp
-    ${Reusable}sqlite/SQLiteCpp/Transaction.cpp
+    ${ThirdPartyC}sqlite/sqlite3.c
+    ${ThirdParty}SQLiteCpp/src/Backup.cpp
+    ${ThirdParty}SQLiteCpp/src/Column.cpp
+    ${ThirdParty}SQLiteCpp/src/Database.cpp
+    ${ThirdParty}SQLiteCpp/src/Exception.cpp
+    ${ThirdParty}SQLiteCpp/src/Statement.cpp
+    ${ThirdParty}SQLiteCpp/src/Transaction.cpp
 )
 
 # dl is needed by sqlite
