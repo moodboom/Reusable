@@ -626,6 +626,10 @@ bool oAuth::getEtradeHeader(const eOAuthHttpRequestType eType, /* in */
     const bool includeOAuthVerifierPin, /* in */
     const bool includeOAuthTokenPin /* in */
 ) {
+
+    return getOAuthHeader( eType, rawUrl, rawData, oAuthHttpHeader, includeOAuthVerifierPin );
+
+    /*
     bool b_return = getOAuthHeader( eType, rawUrl, rawData, oAuthHttpHeader, includeOAuthVerifierPin, false );
 
     // Build the header in the only field order that I know that works with E*Trade's API.  Id10ts.
@@ -677,6 +681,7 @@ bool oAuth::getEtradeHeader(const eOAuthHttpRequestType eType, /* in */
     }
 
     return b_return;
+     */
 }
 
 
