@@ -578,6 +578,7 @@ static time_t get_utc_current_time_t()      { return ptime_to_time_t(get_utc_cur
 static ptime  get_local_current_time()      { return second_clock::local_time();                }
 static time_t get_local_current_time_t()    { return ptime_to_time_t(get_local_current_time()); }
 
+static time_t getUTCLocalDifference()       { return get_local_current_time_t() - get_utc_current_time_t(); }
 static time_t one_day()                     { return 86400; }
 static time_t get_midnight(const time_t t)  { return t / one_day() * one_day(); }
 static time_t get_utc_today_midnight()      { time_t now = get_utc_current_time_t(); return get_midnight(now); }
