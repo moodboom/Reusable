@@ -516,36 +516,21 @@ inline bool HttpAPIServer::tokenize_API_querystring(const std::string& querystri
         }
     }
 
-    // DEBUG
-    log(LV_ALWAYS,ac.b_url_params_are_mandatory_?"mand":"nomand");
-    log(LV_ALWAYS,ac.url_params_.empty()?"params empty":"params not empty");
+    // YOU CAN'T USE ac values here, they are uninitialized.
+    // Besides this returns false-negative for calls that don't have any params.
+    // We just need to do this check elsewhere.
+    // return !ac.b_url_params_are_mandatory_ || !ac.url_params_.empty();
 
-    return !ac.b_url_params_are_mandatory_ || !ac.url_params_.empty();
+    return true;
 }
 
 
 inline bool HttpAPIServer::tokenize_API_url(HReq &request, std::string& protocol, std::string& host, API_call& ac)
 {
-    string& url = request->path;
-    string& param = request->query_string;
-
-    // DEBUG
-    log(LV_ALWAYS,url);
-    log(LV_ALWAYS,param);
-    // If the browser added any " ? " bullshit, strip it.
-    while (url.size() && (url[url.length()-1] == ' ' || url[url.length()-1] == '?' || url[url.length()-1] == 0x0A))
-        url.pop_back();
-    while (param.size() && (param[param.length()-1] == ' ' || param[param.length()-1] == '?' || param[param.length()-1] == 0x0A))
-        param.pop_back();
-
-    //DEBUG
-    log(LV_ALWAYS,"step 1a");
+    const string& url = request->path;
 
     if (!tokenize_API_querystring(request->query_string,ac))
         return false;
-
-    //DEBUG
-    log(LV_ALWAYS,"step 1b");
 
     // This is not the ultimate URL parser (there are libraries for that when you need it - google-url, StrTk, etc.).
     // It only handles the formats we expect for our RESTful API.
@@ -562,9 +547,6 @@ inline bool HttpAPIServer::tokenize_API_url(HReq &request, std::string& protocol
     // One special case: /
     // Valid, but nothing to do but return true.
     if (url == "/") return true;
-
-    //DEBUG
-    log(LV_ALWAYS,"step 2");
 
     // We must at least have /version/action.  No buffer overflow attempts please.
     if (url.length() < 4 || url.length() > 700)
@@ -593,13 +575,6 @@ inline bool HttpAPIServer::tokenize_API_url(HReq &request, std::string& protocol
         return false;
     // ===================================
 
-
-
-    // DEBUG
-    log(LV_ALWAYS,protocol);
-
-
-
     // ===================================
     // host
     if (url[walk1] != '/')
@@ -616,12 +591,6 @@ inline bool HttpAPIServer::tokenize_API_url(HReq &request, std::string& protocol
         walk1 = walk2;
     }
     // ===================================
-
-
-
-    // DEBUG
-    log(LV_ALWAYS,host);
-
 
     // ===================================
     // paths
@@ -717,12 +686,6 @@ inline bool HttpAPIServer::tokenize_API_url(HReq &request, std::string& protocol
     }
     */
     // ===================================
-
-
-
-    // DEBUG
-    log(LV_ALWAYS,"oops");
-
 
     // We actually shouldn't hit this.
     return false;
