@@ -580,6 +580,13 @@ inline bool HttpAPIServer::tokenize_API_url(HReq &request, std::string& protocol
         return false;
     // ===================================
 
+
+
+    // DEBUG
+    log(LV_ALWAYS,protocol);
+
+
+
     // ===================================
     // host
     if (url[walk1] != '/')
@@ -596,6 +603,12 @@ inline bool HttpAPIServer::tokenize_API_url(HReq &request, std::string& protocol
         walk1 = walk2;
     }
     // ===================================
+
+
+
+    // DEBUG
+    log(LV_ALWAYS,host);
+
 
     // ===================================
     // paths
@@ -691,6 +704,12 @@ inline bool HttpAPIServer::tokenize_API_url(HReq &request, std::string& protocol
     }
     */
     // ===================================
+
+
+
+    // DEBUG
+    log(LV_ALWAYS,"oops");
+
 
     // We actually shouldn't hit this.
     return false;
