@@ -524,11 +524,15 @@ inline bool HttpAPIServer::tokenize_API_url(HReq &request, std::string& protocol
     string& url = request->path;
     string& param = request->query_string;
 
+    // DEBUG
+    log(LV_ALWAYS,url);
+    log(LV_ALWAYS,param);
     // If the browser added any " ? " bullshit, strip it.
     while (url.size() && (url[url.length()-1] == ' ' || url[url.length()-1] == '?' || url[url.length()-1] == 0x0A))
         url.pop_back();
     while (param.size() && (param[param.length()-1] == ' ' || param[param.length()-1] == '?' || param[param.length()-1] == 0x0A))
         param.pop_back();
+
 
     if (!tokenize_API_querystring(request->query_string,ac))
         return false;
