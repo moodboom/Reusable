@@ -521,7 +521,7 @@ inline bool HttpAPIServer::tokenize_API_querystring(const std::string& querystri
 
 inline bool HttpAPIServer::tokenize_API_url(HReq &request, std::string& protocol, std::string& host, API_call& ac)
 {
-    const string& url = request->path;
+    string url = request->path;
 
     if (!tokenize_API_querystring(request->query_string,ac))
         return false;
@@ -545,6 +545,10 @@ inline bool HttpAPIServer::tokenize_API_url(HReq &request, std::string& protocol
     // We must at least have /version/action.  No buffer overflow attempts please.
     if (url.length() < 4 || url.length() > 700)
         return false;
+
+    // If the browser added a " ?", strip it.
+    if (url.substr(url.size()-2) == " ?")
+        url = url.substr(0,url.size() - 2);
 
     protocol.clear();
     host.clear();
