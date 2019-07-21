@@ -558,6 +558,9 @@ inline bool HttpAPIServer::tokenize_API_url(HReq &request, std::string& protocol
     // Valid, but nothing to do but return true.
     if (url == "/") return true;
 
+    //DEBUG
+    log(LV_ALWAYS,"step 2");
+
     // We must at least have /version/action.  No buffer overflow attempts please.
     if (url.length() < 4 || url.length() > 700)
         return false;
