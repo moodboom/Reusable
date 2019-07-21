@@ -515,6 +515,11 @@ inline bool HttpAPIServer::tokenize_API_querystring(const std::string& querystri
             }
         }
     }
+
+    // DEBUG
+    log(LV_ALWAYS,ac.b_url_params_are_mandatory_?"mand":"nomand");
+    log(LV_ALWAYS,ac.url_params_.empty()?"params empty":"params not empty");
+
     return !ac.b_url_params_are_mandatory_ || !ac.url_params_.empty();
 }
 
