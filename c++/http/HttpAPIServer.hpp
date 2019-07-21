@@ -538,9 +538,14 @@ inline bool HttpAPIServer::tokenize_API_url(HReq &request, std::string& protocol
     while (param.size() && (param[param.length()-1] == ' ' || param[param.length()-1] == '?' || param[param.length()-1] == 0x0A))
         param.pop_back();
 
+    //DEBUG
+    log(LV_ALWAYS,"step 1a");
 
     if (!tokenize_API_querystring(request->query_string,ac))
         return false;
+
+    //DEBUG
+    log(LV_ALWAYS,"step 1b");
 
     // This is not the ultimate URL parser (there are libraries for that when you need it - google-url, StrTk, etc.).
     // It only handles the formats we expect for our RESTful API.
