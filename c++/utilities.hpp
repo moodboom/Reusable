@@ -784,6 +784,7 @@ static void log_test(const string &desc, bool bTestPassed, bool bStopOnFailure =
         assert(bTestPassed);
 }
 static void log_line_start(LOG_TO_FILE_VERBOSITY v, string str) { log(v,str,false,true);             }
+static void log_line_mid  (LOG_TO_FILE_VERBOSITY v, string str) { log(v,str,false,true,false,true);  }
 static void log_line_ping (LOG_TO_FILE_VERBOSITY v            ) { log(v,".",false,true,false,true);  }
 static void log_line_break(LOG_TO_FILE_VERBOSITY v, string str) { log(v,""); log(v,str);             }
 static void log_line_end  (LOG_TO_FILE_VERBOSITY v, string str) { log(v,str,false,false,false,true); }
