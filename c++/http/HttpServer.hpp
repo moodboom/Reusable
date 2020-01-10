@@ -86,7 +86,8 @@ public:
         if(config.thread_pool_size > 0)
             io_service->run();
 
-        // Wait for the rest of the threads, if any, to finish as well
+    }
+    virtual void waitForServerToFinish() {
         for(auto &t : threads)
             t.join();
     }
