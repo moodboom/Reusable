@@ -769,9 +769,9 @@ static void log(LOG_TO_FILE_VERBOSITY v, string str, bool b_suppress_console = f
             cout << std::flush;
     }
 }
-static void log(LOG_TO_FILE_VERBOSITY v, int n, bool b_suppress_console = false, bool b_suppress_newline = false, bool b_suppress_file = false, bool b_suppress_timestamp = false, int indent = 0, LOG_TO_FILE_VERBOSITY lv_current = g_current_log_verbosity)
+static void log(LOG_TO_FILE_VERBOSITY v, int n, bool b_suppress_console = false, bool b_suppress_newline = false, bool b_suppress_file = false, bool b_suppress_timestamp = false, int indent = 0, LOG_TO_FILE_VERBOSITY lv_current = g_current_log_verbosity, const string& base_log_filename = g_base_log_filename)
 {
-    log(v,lexical_cast<string>(n),b_suppress_console,b_suppress_newline,b_suppress_file,b_suppress_timestamp,indent,lv_current);
+    log(v,lexical_cast<string>(n),b_suppress_console,b_suppress_newline,b_suppress_file,b_suppress_timestamp,indent,lv_current,base_log_filename);
 }
 
 // This helper logs test results with sane defaults, and will BLOW YOUR SHIT UP if one fails.  You're welcome!  :-)
