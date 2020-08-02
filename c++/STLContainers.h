@@ -220,15 +220,18 @@ protected:
 //=========================================================
 // This object expects that an AUTOINCREMENTED INTEGER PRIMARY KEY is used for persistence.
 // We provide functions to handle -1 as a request to get a new db id.
-// We use a static counter to do so, allowing delayed-write of new objects.
+// We use an in-memory max_db_id_ counter to manage the "next" db id.
+// This allows delayed-write of new objects, a huge deal.  The counter
+// is typically stored in the parent container.
 //=========================================================
 // History
 // -------
-// v1.00 2015/08/06     First added.  In heavy use by AbetterTrader server app.
-// v1.01 2015/08/11     Updated documentation to move work to derived classes,
+// v0.0.1 2015/08/06    First added.  In heavy use by AbetterTrader server app.
+// v0.0.2 2015/08/11    Updated documentation to move work to derived classes,
 //                      since we have no virtual inheritance in constructor.
-// v1.02 2016/03/23     Rolled some functionality back into base, by using an int reference constructor param
+// v0.0.3 2016/03/23    Rolled some functionality back into base, by using an int reference constructor param
 //                      of a static member in derived class
+// v0.0.125 2020/07/27  No more lame static max_db_id.  We support multiple memory models with diff max ranges now.
 //=========================================================
 class PersistentIDObject : public PersistentObject
 {
@@ -241,17 +244,14 @@ public:
         DBID_DO_NOT_SAVE = -2
     } DB_ID_CONSTANTS;
 
-    PersistentIDObject(int64_t& static_max_db_id, const int64_t& db_id = -1)
+    PersistentIDObject(const int64_t& db_id = DBID_DO_NOT_SAVE)
     :
         // Call base class
         inherited(),
 
         // init vars
-        static_max_db_id_(static_max_db_id),
         db_id_(db_id)
-    {
-        assignNewDbIdAsNeeded();
-    }
+    {}
 
     // IN-MEMORY ID HANDLING
     // We track our own "max db_id" per persisted class,
@@ -262,53 +262,34 @@ public:
     //
     //      Value               Meaning
     //      -----               -------
-    //      DBID_UNSAVED        Used for newly created objects; in initialize(), a new "largest-yet" unique db_id
-    //                          will be generated and the -1 value will be replaced
+    //      DBID_UNSAVED        Identifies newly created objects; deprecated now that mm always provides valid db_id in constructor
     //      DBID_DO_NOT_SAVE    Used for a temporary object; we will NEVER save it or change the value
     //
-    // In derived classes:
+    //      1) In the container of derived classes, set up a max db_id tracker, 
+    //         and use it to provide a unique db_id for the persistent object.
+    //      -------------------------------------------------------------------
     //
-    //     1) In each derived class header, set up a static max db_id tracker, and provide it to the base class.
-    //     -----------------------------------------------------------------------------
-    //
-    //          class Widget : public PersistentIDObject
+    //          class MemoryModel
     //          {
-    //          typedef PersistentIDObject inherited;
-    //          public:
-    //              Widget(const int64_t& db_id = -1)
-    //              :
-    //                  // Call base class
-    //                  inherited(widget_max_db_id_,db_id)
-    //              {}
+    //              int64_t generateNextWidgetId() { return ++widget_max_db_id_; }
+
+    //          protected:
+    //              int64_t widget_max_db_id_;
+    //          }
     //
-    //             static int64_t widget_max_db_id_;
-    //         }
+    //          Widget* pw = new Widget(mm.generateNextWidgetId());
     //
     //     2) On startup, capture the starting max_db_id for each persistent class
     //     -----------------------------------------------------------------------
     //
-    //         { SQLite::Statement query(db, string("SELECT MAX(id) FROM ") + c_str_Tablename_Widgets ); query.executeStep(); Widget::widget_max_db_id_ = query.getColumn(0).getInt64(); }
+    //          // Read and save the current maximum id value in the database.
+    //          // Implementation depends on persistence engine, obviously...
+    //          mm.load() {
+    //              widget_max_db_id_ = read_max_db_value("WidgetTable",db_id);
     //
-    void assignNewDbIdAsNeeded()
-    {
-        if (db_id_ == DBID_UNSAVED)
-        {
-            assignNewDbId();
-            setDirty();
-        }
-    }
+    //      3) On save, skip saving of temporary objects with DBID_DO_NOT_SAVE ids.
 
-    // Call this to force a new ID when appropriate.
-    // This works great for our newer more-agile default-constructor pattern.
-    // We default db_id_ to DB_DO_NOT_SAVE, then call this when we want to persist a new object.
-    void assignNewDbId()
-    {
-        ++static_max_db_id_;
-        db_id_ = static_max_db_id_;
-    }
-
-    // These will persist, and require room for growth.  Use an exact and generous bit size.
-    int64_t& static_max_db_id_;
+    // This will persist, and require room for growth.  Use an exact and generous bit size.
     int64_t db_id_;
 };
 
