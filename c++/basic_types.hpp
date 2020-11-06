@@ -17,6 +17,7 @@
 #include <sstream>
 #include <unordered_map>		// for C++11 unordered_map and unordered_multimap
 #include <unordered_set>
+// #include <format>				// C++20, not implemented by any compiler as of 2020-11
 // ===========================================
 
 
