@@ -629,9 +629,11 @@ static string time_t_to_string(const time_t& tt, const string& str_format)
 
 static string ISOFormat(const date& d)
 {
-    stringstream ss;
-    ss << boost::format("%4d-%02d-%02d") % d.year() % d.month() % d.day();
-    return ss.str();
+    return date_to_string(d, "%Y-%m-%d" );
+
+    // stringstream ss;
+    // ss << boost::format("%4d-%02d-%02d") % d.year() % d.month() % d.day();
+    // return ss.str();
 }
 static string ISOFormat(const ptime& pt)
 {
