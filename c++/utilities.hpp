@@ -637,6 +637,10 @@ static string ISOFormat(const ptime& pt)
 {
     return ptime_to_string(pt,"%Y-%m-%dT%H:%M:%S");
 }
+static string RFC3339Format(const ptime& pt)
+{
+    return ptime_to_string(pt,"%Y-%m-%dT%H:%M:%SZ");
+}
 static string ISOFormat(const time_t& t)
 {
     return ptime_to_string(time_t_to_ptime(t),"%Y-%m-%dT%H:%M:%S");
