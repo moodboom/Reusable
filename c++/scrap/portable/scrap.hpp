@@ -12,9 +12,6 @@
 
 #include <utilities.hpp>  // For logging globals
 
-using namespace std;
-using namespace boost;
-
 
 // ----------------------------------------------------------
 // 1
@@ -159,6 +156,83 @@ typedef boost::unordered_set<blah*,blah_pointer_alt_hash,blah_pointers_alt_equal
 // ----------------------------------------------------------
 // 12
 #include <boost/asio.hpp>
+// ----------------------------------------------------------
+// 19
+
+// Validate that a set of top-level properties of a boost JSON object exist in the expected format.
+// Input:
+//    // A tuple of < fieldName, jsonType, bOptional >
+//    vector< std::tuple< string, boost::json::kind, bool > > check = 
+//    {
+//        { "myFirstField", boost::json::string, true },
+//        { "anotherField", boost::json::int_64, false },
+//    }
+// Output:
+//    { true if all mandatory fields were found, true if all optional fields were found }
+pair< bool, bool> validateObject( boost::json::object obj, vector< std::tuple< string, boost::json::kind, bool > > check )
+{
+    pair< bool, bool > result = { true, true };
+    for ( auto& c: check )
+        if ( obj[get<0>(c)].kind() != get<1>(c) )
+            if ( get<2>(c) )
+                result.second = false;
+            else
+                result.first = false;
+
+    return result;
+}
+// Boost JSON <-> struct conversion
+// THIS IS WHAT YOU WANT TO DO whenever there is a specific set of known fields to extract.
+// However, it will fail if any are null or missing!
+namespace my_order {
+
+    using namespace boost::json;
+    using string = std::string;
+    using string_view = boost::json::string_view;
+
+    class OrderConfirmation {
+    public:
+        // int64_t qty;
+        // int64_t filled_qty;
+        string qty;
+        string filled_qty;
+        string side;
+        string client_order_id;
+    };
+
+    // FILL JSON FROM CLASS
+    // --------------------
+    void tag_invoke( value_from_tag, value& jv, OrderConfirmation const& o )
+    {
+        jv = {
+            { "qty" , o.qty },
+            { "filled_qty" , o.filled_qty },
+            { "side", o.side },
+            { "client_order_id", o.client_order_id }
+        };        
+    }
+
+    // FILL CLASS FROM JSON
+    // --------------------
+    // This helper function deduces the type and assigns the value with the matching key
+    template<class T>
+    void extract( object const& obj, T& t, string_view key )
+    {
+        t = value_to<T>( obj.at( key ) );
+    }
+
+    OrderConfirmation tag_invoke( value_to_tag< OrderConfirmation >, value const& jv )
+    {
+        OrderConfirmation o;
+        object const& obj = jv.as_object();
+        extract( obj, o.qty, "qty" );
+        extract( obj, o.filled_qty, "filled_qty" );
+        extract( obj, o.side, "side" );
+        extract( obj, o.client_order_id, "client_order_id" );
+        return o;
+    }
+}
+
 // ----------------------------------------------------------
 
 

@@ -5,18 +5,21 @@ cmake_minimum_required(VERSION 3.7)
 cmake_policy(SET CMP0015 NEW)   
 
 # MDM Set the executable name!
-project(portable)
+project(scrap)
 
 # -------------------------------
 # MDM Set up relative paths to external folders
+# sync with .vscode/c_cpp_properties.json
 # -------------------------------
-set(Reusable "../../")
+set(Reusable "../../") # just step back to Reusable/c++
 set(ThirdParty "../../../../Libraries/c++/")
 set(ThirdPartyC "../../../../Libraries/c/")
-set(BOOST_ROOT "${ThirdParty}$ENV{boost_version}/")   # NOTE: boost_version is set in .bashrc
+set(BOOST_ROOT "${ThirdParty}boost/")
 
 # MDM pqxx uses c++17 so here we go - why tf was this currently commented out above?
-set (CMAKE_CXX_STANDARD 17)
+# push to c++20
+# sync with .vscode/c_cpp_properties.json
+set (CMAKE_CXX_STANDARD 20)
 
 # We want -g to always sideload enough debug info for stacktraces
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g")
@@ -29,7 +32,8 @@ INCLUDE_DIRECTORIES(${Reusable})
 INCLUDE_DIRECTORIES(${ThirdParty})
 INCLUDE_DIRECTORIES(${ThirdPartyC})
 INCLUDE_DIRECTORIES(${ThirdPartyC}sqlite/)
-INCLUDE_DIRECTORIES(${ThirdParty}json/single_include/nlohmann/)
+# Switch to boost/json.hpp (incompatible)
+# INCLUDE_DIRECTORIES(${ThirdParty}json/single_include/nlohmann/)
 INCLUDE_DIRECTORIES(${ThirdParty}SQLiteCpp/include/)
 
 # MDM CMake handles boost like this...
@@ -40,13 +44,16 @@ IF(CMAKE_BUILD_TYPE MATCHES DEBUG)
 ELSE()
     set(BOOST_LIBRARYDIR ${BoostRoot}lib)
 ENDIF()
-find_package(Boost COMPONENTS system thread date_time filesystem regex REQUIRED)
+find_package(Boost COMPONENTS system thread date_time filesystem regex stacktrace_addr2line REQUIRED)
 include_directories(${BOOST_INCLUDE_DIR})
 link_directories(${BOOST_LIBRARYDIR})
 
-set(SOURCE_FILES
-        scrap.cpp
-        scrap.hpp)
+# -------------------------------
+# MDM Build *everything* in .
+# -------------------------------
+# WARNING: [make] won't pick up new files until you rerun [cmake].  
+# Change this to be explicit if that becomes a problem.
+aux_source_directory(. SRC_LIST)
 
 # -------------------------------
 # MDM Now add external modules
@@ -54,7 +61,7 @@ set(SOURCE_FILES
 # orig added by clion: add_executable(portable ${SOURCE_FILES})
 add_executable(
     ${PROJECT_NAME}
-    ${SOURCE_FILES}
+    ${SRC_LIST}
     ${Reusable}utilities.cpp
     ${Reusable}RandomHelpers.cpp
     ${Reusable}base64.cpp
@@ -72,6 +79,9 @@ add_executable(
     ${ThirdParty}SQLiteCpp/src/Statement.cpp
     ${ThirdParty}SQLiteCpp/src/Transaction.cpp
 )
+
+# MDM This creates compile_commands.json, which can be imported by vscode to set include paths from here, w00t DRY
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 # dl is needed by sqlite
 TARGET_LINK_LIBRARIES(${PROJECT_NAME} pthread ssl crypto dl ${Boost_LIBRARIES})

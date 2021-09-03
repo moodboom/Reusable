@@ -5,7 +5,7 @@
 #include <thread>
 #include <chrono>
 
-
+// 19 boost json
 int main(int argc, char *argv[])
 {
     // We have a VERY SMALL number of globals defined for us in utilities.cpp.
@@ -86,7 +86,7 @@ int main(int argc, char *argv[])
     // 3 ===================================================================================
 
     // regex test.  requires fully-built boost.
-    std::string line;
+    string line;
     boost::regex pat("^Subject: (Re: |Aw: )*(.*)");
 
     // test with user input
@@ -555,7 +555,7 @@ int main(int argc, char *argv[])
     cout << "ostream g length: " << req_length;
 
     request_stream.seekp(0, std::ios::beg);
-    std::stringstream ss_request;
+    stringstream ss_request;
     ss_request << request_stream.rdbuf();
     string str_request = ss_request.str();
     request_stream.seekp(req_length);
@@ -787,6 +787,8 @@ int main(int argc, char *argv[])
     cout << "outer scope = " << sloppy << endl;
 
 
+    // nlohmann JSON, incompatible with boost/json.hpp
+    /*
     // 18 ==================================================================================
     cout << endl << "== 18 === Broker quiz =======" << endl;
     // 18 ==================================================================================
@@ -804,11 +806,9 @@ int main(int argc, char *argv[])
             {
             if (isPrime((int)(close*1000)))
                 cout << close << " on " << ISOFormat(t) << endl;
-                /*
-                stringstream ss;
-                ss << close << " on " << ISOFormat(t);
-                log(LV_ALWAYS,ss.str());
-                */
+                // stringstream ss;
+                // ss << close << " on " << ISOFormat(t);
+                // log(LV_ALWAYS,ss.str());
             }
         }
     }
@@ -824,6 +824,353 @@ int main(int argc, char *argv[])
             }
         }
     }
+    */
+
+
+    // 19 ==================================================================================
+    cout << endl << "== 19 === Parse order confirmation =======" << endl;
+    // 19 ==================================================================================
+
+    // nlohmann JSON
+    // very nice to code with.. but either it or boost::lexical_cast was crashing the app...
+    // also, it's incompatible with boost/json.hpp :-(
+    /*
+    // Real-world example
+    json jMsg = json::parse(
+        "{\"data\":{\"event\":\"new\",\"execution_id\":\"bce038d1-eed2-4a7e-8d2e-a405b483302c\",\"order\":{\"asset_class\":\"us_equity\",\"asset_id\":\"69b15845-7c63-4586-b274-1cfdfe9df3d8\",\"canceled_at\":null,\"client_order_id\":\"09c047be-0302-4696-bd27-e0884b9f3e12\",\"created_at\":\"2021-08-27T19:50:00.537731Z\",\"expired_at\":null,\"extended_hours\":false,\"failed_at\":null,\"filled_at\":null,\"filled_avg_price\":null,\"filled_qty\":\"0\",\"hwm\":null,\"id\":\"18bdb31f-25d2-4d3e-9369-d9d7f270c9d2\",\"legs\":null,\"limit_price\":null,\"notional\":null,\"order_class\":\"\",\"order_type\":\"market\",\"qty\":\"3\",\"replaced_at\":null,\"replaced_by\":null,\"replaces\":null,\"side\":\"buy\",\"status\":\"new\",\"stop_price\":null,\"submitted_at\":\"2021-08-27T19:50:00.519205Z\",\"symbol\":\"GOOGL\",\"time_in_force\":\"day\",\"trail_percent\":null,\"trail_price\":null,\"type\":\"market\",\"updated_at\":\"2021-08-27T19:50:01.011148Z\"},\"position_qty\":null,\"price\":null},\"stream\":\"trade_updates\"}"
+    );
+
+    // Log it!
+    if (jMsg.count("stream"))
+    {
+        if (jMsg["stream"].get<string>() == "trade_updates")
+        {
+            stringstream ss;
+            try
+            {
+                json& jData = jMsg["data"];
+                json& jOrder = jData["order"];
+
+                string event = ( jData.count("event") ? jData["event"] : "not-found" );
+                int64_t qty = (
+                        jOrder.count("qty")
+                    ? (
+                            jOrder["qty"].is_string()
+                        ?   boost::lexical_cast<int64_t>(jOrder["qty"].get<string>()) 
+                        :   jOrder["qty"].get<int64_t>()
+                    ) 
+                    : -1
+                );
+                int64_t filled_qty = (
+                        jOrder.count("filled_qty")
+                    ? (
+                            jOrder["filled_qty"].is_string()
+                        ?   boost::lexical_cast<int64_t>(jOrder["filled_qty"].get<string>()) 
+                        :   jOrder["filled_qty"].get<int64_t>()
+                    ) 
+                    : -1
+                );
+
+                ss.str(string());
+                ss  << "Trade confirmation msg: " 
+                    << " event " << event
+                    << " qty " << ( jOrder.count("qty") ? jOrder["qty"] : "not-found" )
+                    << " filled qty " << jOrder["filled_qty"]
+                    // FIXED:
+                    << " position qty " << jData["position_qty"];
+                cout << ss.str() << endl;
+
+
+                // DEBUG
+                // CRASHING soon after ^this...
+                // Check everything manually, even tho try/catch should FUCKING CATCH it.
+                // NOTE: when we cleanup, we want to add price to the above logging, so we can check partial fill pricing.
+                ss.str(string());
+                ss  << "Trade confirmation msg checked: " << jData["event"]
+                    << " qty " << ( jOrder["qty"].is_string() ? boost::lexical_cast<int64_t>(jOrder["qty"].get<string>()) : -1 )
+                    << " filled qty " << jOrder["filled_qty"]
+                    << " position qty " << jData["position_qty"]
+                    << " price " << ( jData["price"].is_string() ? boost::lexical_cast<double>(jData["price"].get<string>()) : -1.0 )
+                    << " order_id " << jOrder["client_order_id"].get<string>()
+                    << " side " << jOrder["side"].get<string>();
+                cout << ss.str() << endl;
+
+
+                // if (jData["event"] == "fill" || jData["event"] == "partial_fill")
+                if (jData["event"] == "fill")
+                {
+                    // conf.price_ = boost::lexical_cast<double>(jData["price"].get<string>());
+                    // if (jOrder["qty"].is_string())
+                    //     conf.quantity_ = boost::lexical_cast<int64_t>(jOrder["qty"].get<string>());
+                    // else
+                    //     conf.quantity_ = jOrder["qty"].get<int64_t>();
+
+                    // conf.order_id_ = jOrder["client_order_id"].get<string>();
+                    // conf.b_buy_ = jOrder["side"].get<string>() == "buy";
+                    // conf.commission_ = 0.0; // :-)
+                }
+            } catch (std::exception& e)
+            {
+                ss.str(string());
+                ss << "ERROR parsing trade confirmation: " << e.what() << endl << jMsg.dump();
+                cout << ss.str() << endl;
+            }
+        }
+    }
+    */
+
+    // NOTE that auto skirts need for boost::json::value
+    // but WHY doesn't value work by itself like object does??!
+    // or for array? It's madness.
+    //
+    // I *guess* some are provided and some are not?
+    //
+    // Workaround is to just always provide array and value, seems to do the job.
+
+    // boost/json.hpp
+    using boost::json::value;
+    using boost::json::array;
+    using boost::json::object;
+    using boost::json::value_from;
+    using boost::json::parse;
+    using boost::json::serialize;
+
+    cout << "===================== Boost JSON notes =======================" << endl << endl;
+
+    cout << "Boost JSON isn't THAT bad... but the string part is the WORST..." << endl;
+    cout << "It uses its own string class, and doesn't provide complete bidirectional compatibility." << endl;
+    cout << "Yes, everyone but the author would agree that that is batshit.  Rrr..." << endl << endl;
+
+    cout << "The main takeaway is that to parse a string, you should include an extra string() wrapper:" << endl << endl;
+
+    cout << "   string strQty( jOrder[\"qty\"].as_string() );" << endl << endl;
+
+    cout << "Worst case is with Alpaca numbers, which are provided as either strings or null (idiots)." << endl;
+    cout << "To parse the data to an int64_t (similar for double):" << endl << endl;
+
+    cout << "   int64_t qty = jOrder[\"qty\"].kind() == json::kind::string" << endl;
+    cout << "       ? boost::lexical_cast<int64_t>( string( jOrder[\"qty\"].as_string() ))" << endl << endl;
+    cout << "       : 0" << endl << endl;
+
+    cout << "===================== Boost JSON notes =======================" << endl << endl;
+
+    // Silly sample
+    object jv = {
+        { "pi", 3.141 },
+        { "happy", true },
+        { "name", "Boost" },
+        { "nothing", nullptr },
+        { "answer", {
+            { "everything", 42 } } },
+        {"list", {1, 0, 2}},
+        {"object", {
+            { "currency", "USD" },
+            { "value", 42.99 }
+                } }
+        };
+    cout << "boost json sample data" << endl << jv << endl << endl;
+
+    // Real-world example
+    // NOTE This is a pile of hand-coded work.
+    // A better way will be found below...
+    object jMsg = parse(
+        "{\"data\":{\"event\":\"new\",\"execution_id\":\"bce038d1-eed2-4a7e-8d2e-a405b483302c\",\"order\":{\"asset_class\":\"us_equity\",\"asset_id\":\"69b15845-7c63-4586-b274-1cfdfe9df3d8\",\"canceled_at\":null,\"client_order_id\":\"09c047be-0302-4696-bd27-e0884b9f3e12\",\"created_at\":\"2021-08-27T19:50:00.537731Z\",\"expired_at\":null,\"extended_hours\":false,\"failed_at\":null,\"filled_at\":null,\"filled_avg_price\":null,\"filled_qty\":\"0\",\"hwm\":null,\"id\":\"18bdb31f-25d2-4d3e-9369-d9d7f270c9d2\",\"legs\":null,\"limit_price\":null,\"notional\":null,\"order_class\":\"\",\"order_type\":\"market\",\"qty\":\"3\",\"replaced_at\":null,\"replaced_by\":null,\"replaces\":null,\"side\":\"buy\",\"status\":\"new\",\"stop_price\":null,\"submitted_at\":\"2021-08-27T19:50:00.519205Z\",\"symbol\":\"GOOGL\",\"time_in_force\":\"day\",\"trail_percent\":null,\"trail_price\":null,\"type\":\"market\",\"updated_at\":\"2021-08-27T19:50:01.011148Z\"},\"position_qty\":null,\"price\":null},\"stream\":\"trade_updates\"}"
+    ).as_object();
+
+    // Log it!
+    if (jMsg.count("stream"))
+    {
+        if (jMsg["stream"].as_string() == "trade_updates")
+        {
+            stringstream ss;
+            try
+            {
+                object jData = jMsg["data"].as_object();
+                object jOrder = jData["order"].as_object();
+
+                ss.str(string());
+                ss
+                    << "Trade confirmation count-checked: " 
+                    << " qty-with-check " << ( jOrder.count("qty") ? jOrder["qty"] : "not-found" )
+                    << " price-with-check " << ( jData.count("price") ? jData["price"] : "not-found" )
+                ;
+                cout << ss.str() << endl << endl;
+
+                cout << "Trade confirm bits... " << endl;
+                cout << jData.count("price") << endl;
+                cout << jData["price"].kind() << endl;
+                cout << jData["badfield"].kind() << endl;
+                // THROW: cout << boost::lexical_cast<double>( jData["price"].as_string() );
+                cout << jOrder.count("qty") << endl;
+                cout << jOrder["qty"].kind() << endl;
+                // THROW: cout << boost::lexical_cast<int64_t>( jOrder["qty"].as_string() ) << endl;
+                string strQty( jOrder["qty"].as_string() );
+                cout << boost::lexical_cast<int64_t>( strQty ) << endl;
+                cout << endl;
+
+                ss.str(string());
+                ss
+                    << "Trade confirmation null-checked: " 
+                    << " qty " << (
+                        jOrder["qty"].kind() == json::kind::string
+                        ? boost::lexical_cast<int64_t>( string( jOrder["qty"].as_string() ))
+                        : 0 )
+                    << " price " << (
+                        jData["price"].kind() == json::kind::string
+                        ? boost::lexical_cast<double>( string( jData["price"].as_string() ))
+                        : 0.0 )
+                ;
+                cout << ss.str() << endl << endl;
+
+                string event( jData["event"].as_string() );
+                int64_t qty = jOrder["qty"].kind() == json::kind::string
+                    ? boost::lexical_cast<int64_t>( string( jOrder["qty"].as_string() ))
+                    : 0;
+                int64_t filled_qty = jOrder["filled_qty"].kind() == json::kind::string
+                    ? boost::lexical_cast<int64_t>( string( jOrder["filled_qty"].as_string()))
+                    : 0;
+                int64_t position_qty = jData["position_qty"].kind() == json::kind::string
+                    ? boost::lexical_cast<int64_t>( string( jData["position_qty"].as_string()))
+                    : 0;
+
+                ss.str(string());
+                ss
+                    << "Trade confirmation msg: " 
+                    << " event " << event
+                    << " qty " << qty
+                    << " filled qty " << filled_qty
+                    << " position qty " << position_qty
+                ;
+                cout << ss.str() << endl << endl;
+
+                double price = jData["price"].kind() == json::kind::string
+                    ? boost::lexical_cast<double>( string( jData["price"].as_string() ))
+                    : 0.0;
+                ss.str(string());
+                ss
+                    << "Trade confirmation msg: " 
+                    << " price " << price
+                ;
+                cout << ss.str() << endl << endl;
+
+                // DEBUG
+                // CRASHING soon after ^this...
+                // Check everything manually, even tho try/catch should FUCKING CATCH it.
+                // ---
+                // It was the stupid Alpaca null values, eg:
+                //    data.price: null
+                // So we have to check for that.  Lame.
+
+                // NOTE: when we cleanup, we want to add price to the above logging, so we can check partial fill pricing.
+                ss.str(string());
+                ss
+                    << "Trade confirmation msg extended: "
+                    << " event " << jData["event"]
+                    << " qty " << jOrder["qty"]
+                    << " filled qty " << jOrder["filled_qty"]
+                    << " position qty " << jData["position_qty"]
+                    << " price " << jData["price"]
+                    << " order_id " << jOrder["client_order_id"]
+                    << " side " << jOrder["side"]
+                ;
+                cout << ss.str() << endl << endl;
+
+            } catch (std::exception& e)
+            {
+                ss.str(string());
+                ss << "ERROR parsing trade confirmation: " << e.what() << endl << jMsg;
+                cout << ss.str() << endl << endl;
+            }
+        }
+    }
+
+    // Another bit of alpaca JSON to parse.
+    // Example JSON
+    // {
+    //   "bars":[
+    //   {
+    //     "t":"2021-04-06T04:00:00Z",
+    //     "o":126.5,
+    //     "h":127.13,
+    //     "l":125.65,
+    //     "c":126.21,
+    //     "v":824655675640
+    //   }
+    //   ],
+    //   "symbol":"AAPL",
+    //   "next_page_token":null
+    // }
+    stringstream ss;
+    try
+    {
+        object jResponse = parse(
+R"(
+{
+  "bars":[
+  {
+    "t":"2021-04-06T04:00:00Z",
+    "o":126.5,
+    "h":127.13,
+    "l":125.65,
+    "c":126.21,
+    "v":824655675640
+  }
+  ],
+  "symbol":"AAPL",
+  "next_page_token":null
+}
+)"
+        ).as_object();
+        double high, low;
+
+        array jBars = jResponse["bars"].as_array();
+        object jBar = jBars[0].as_object();
+        high = jBar["h"].as_double();
+        low = jBar["l"].as_double();
+        cout << "low, high " << low << " " << high << endl << endl;
+
+    } catch (std::exception& e)
+    {
+        ss.str(string());
+        ss << "ERROR parsing bars: " << e.what() << endl << jMsg;
+        cout << ss.str() << endl << endl;
+    }
+
+    // vvv THIS IS WHAT YOU WANT TO DO vvv
+    // whenever there is a specific set of known fields to extract.
+    // However, it will fail if any are null or missing!
+
+    // Boost JSON <-> class conversion
+    // See scrap.hpp for the mapper helper functions.
+    // Make sure you use a boost::json::value (not object).
+
+    // PARSE JSON TO CLASS
+    try {
+        object jData = jMsg["data"].as_object();
+        boost::json::value jOrder = jData["order"];
+        my_order::OrderConfirmation o( value_to<my_order::OrderConfirmation>( jOrder ));
+
+    } catch (std::exception& e)
+    {
+        stringstream ss;
+        ss << "ERROR parsing my_order::OrderConfirmation: " << e.what() << endl;
+        cout << ss.str() << endl << endl;
+    }
+    cout << "Successful parse" << endl << endl;
+
+    // PARSE CLASS TO JSON
+    try {
+        my_order::OrderConfirmation o{ "1001", "30", "buy", "yaba-daba-order" };
+        std::cout << serialize( value_from( o ) ) << endl;
+
+    } catch (std::exception& e)
+    {
+        stringstream ss;
+        ss << "ERROR serializing my_order::OrderConfirmation: " << e.what() << endl;
+        cout << ss.str() << endl << endl;
+    }
+    cout << "Successful serialize" << endl << endl;
+
 
     // ========= end ========
     // We can keep it running if needed to better see the output.

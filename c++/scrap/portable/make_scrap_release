@@ -1,0 +1,4 @@
+mkdir -p cmake-release
+
+cd cmake-release && cmake -static .. && make
+cd ..

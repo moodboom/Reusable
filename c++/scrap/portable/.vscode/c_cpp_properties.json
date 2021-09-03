@@ -1,0 +1,24 @@
+{
+    "configurations": [
+        {
+            "name": "Linux",
+            "includePath": [
+                ".",
+                "${workspaceFolder}",
+                "${workspaceFolder}/../../../../Reusable/c++",
+                "${workspaceFolder}/../../../../Libraries/c++",
+                "${workspaceFolder}/../../../../Libraries/c++/json/single_include/nlohmann",
+                "${workspaceFolder}/../../../../Libraries/c",
+                // CRUSHING ME
+                "${workspaceFolder}/../../../../Libraries/c++/boost"
+            ],
+            "defines": [],
+            "compilerPath": "/usr/bin/clang",
+            "cStandard": "c11",
+            "cppStandard": "c++20",
+            "intelliSenseMode": "linux-clang-x64",
+            "configurationProvider": "ms-vscode.cmake-tools"
+        }
+    ],
+    "version": 4
+}

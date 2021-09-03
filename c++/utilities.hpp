@@ -1,18 +1,16 @@
+#pragma once
+
 #ifndef utilities_hpp
 #define utilities_hpp
 
 #include "basic_types.hpp"
 #include "miniz.h"
 #include <oauth/urlencode.h>    // For urlen/decode
-#include <json.hpp>             // 2018 JSON handling using external single-header lib from https://github.com/nlohmann/json
+#include <boost/json.hpp>
 
-// using namespace date;
-// using namespace std::chrono;
-// #include "date.h"               // WTF c++ sucking at ISO 8601 until c++20?  fml... 'til then we have this
-
-// 2017/01/05 tired of typing
+// DEFAULT NAMESPACING
+// This saves a ton of useless namespace specifications downstream.
 using namespace std;
-using json = nlohmann::json;
 
 //  INDEX
 // ~~~~~~~
@@ -43,8 +41,7 @@ using json = nlohmann::json;
 //    static std::map<const std::string,std::string> parse_html(...)
 //    For more powerful curl-like helpers, see: http/HttpsClientUtilities.hpp
 //   JSON
-//    //      #include <json/json.hpp>                                // 2016 JSON handling
-//    //      using json = nlohmann::json;
+//    // see https://www.boost.org/libs/json/
 //   VERSIONING
 //    // class SemVer
 //   JWT
@@ -355,94 +352,6 @@ static std::map<const std::string,std::string> parse_html(
 static std::map<const std::string,std::string> parse_cookies(const std::string& cookiedata)     { return parse_html(cookiedata,"; "); }
 static std::map<const std::string,std::string> parse_url_params(const std::string& urldata)     { return parse_html(urldata   ,"?&"); }
 static std::map<const std::string,std::string> parse_form(const std::string& formdata)          { return parse_html(formdata  ,"&" ); }
-
-
-// ===========================================
-// JSON
-// ===========================================
-
-// -----------------------------------------------------
-// https://gist.github.com/moodboom/0ad810280635ead63d0f
-// rapidjson.org
-// https://github.com/miloyip/rapidjson/
-// it's FAST: https://github.com/mloskot/json_benchmark
-// but it obsesses over allocation (read: F'IN INCONVENIENT for std::string's)
-// More useable: 
-//      
-//      #include <json/json.hpp>                                // 2016 JSON handling
-//      using json = nlohmann::json;
-//      json jsonOrder =
-//      {
-//          { "PlaceEquityOrder", {
-//              { "-xmlns", "http://order.etws.etrade.com" },
-//              { "EquityOrderRequest", {
-//                  { "marketSession","REGULAR"       },
-//                  { "orderTerm"    ,"GOOD_FOR_DAY"  }
-//              }}
-//          }}
-//      };
-//
-// Here we attempt to make rapidjson practical:
-//
-//   1) throw proper exceptions during runtime
-//   2) directly handle std::string
-
-// We override the default behavior of asserting on parse errors
-// with throwing of this exception.  Then we can gracefully handle errors.
-class rapidjson_exception : public std::runtime_error
-{
-public:
-    rapidjson_exception() : std::runtime_error("json schema invalid") {}
-};
-#define RAPIDJSON_ASSERT(x)  if(x); else throw rapidjson_exception();
-
-#include <rapidjson/include/rapidjson/document.h>
-#include <rapidjson/include/rapidjson/stringbuffer.h>       // These two includes allow you to get an object as a string
-#include <rapidjson/include/rapidjson/writer.h>             // That allows an array of objects to use an object parser function
-
-static string json_get_string(rapidjson::Document& d)
-{
-    rapidjson::StringBuffer sb;
-    rapidjson::Writer<rapidjson::StringBuffer> writer( sb );
-    d.Accept( writer );
-    return sb.GetString();
-}
-
-// 2016/03/12 Sure rapidjson is fast but it sucks ass at handling std::string.  No excuse.
-// See docs here:
-//
-//      https://github.com/miloyip/rapidjson/blob/master/example/tutorial/tutorial.cpp
-//
-static void json_add_string(rapidjson::Document& d, rapidjson::Value& parent, const string& name, const string& value)
-{
-    rapidjson::Value n;
-    n.SetString(name.c_str(),name.size(),d.GetAllocator());
-    rapidjson::Value v;
-    v.SetString(value.c_str(),value.size(),d.GetAllocator());
-    parent.AddMember(n,v,d.GetAllocator());
-}
-// -----------------------------------------------------
-
-
-// ===========================================
-//   boost XML parsing via property_tree
-// ===========================================
-// - Does not do SAX-style parsing
-// - Messy
-// - Uses RapidXML underneath (good i think)
-//
-// I'll keep the headers here since we only plan
-// to use it here to extract customer xml.
-//
-// NOTE that ptree JSON handling does not preserve
-// int/bool/etc type - rendering it totally useless.
-// ===========================================
-#define BOOST_SPIRIT_THREADSAFE
-#include <boost/property_tree/ptree.hpp>
-// #include <boost/property_tree/json_parser.hpp>
-#include <boost/property_tree/xml_parser.hpp>
-using boost::property_tree::ptree;
-// ===========================================
 
 
 //=========================================================

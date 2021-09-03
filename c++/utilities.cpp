@@ -4,6 +4,7 @@
 
 #include "utilities.hpp"
 
+#include <boost/json/src.hpp> // import the header-only version ONCE so that library is not required
 
 // LOGGING GLOBAL SETTINGS
 // These are the default values.
@@ -51,12 +52,11 @@ string JWT::url_encode()
   // For the payload, we should use the official method so the JSON is properly escaped!
   string payload;
   try {
-    using json = nlohmann::json;
-    json j;
+    boost::json::object j;
     j["sub"] = sub_;
     j["role"] = role_;
     j["iat"] = iat_;
-    payload = j.dump();
+    payload = serialize( j );
   }
   catch(const std::exception& se)
   {
@@ -145,14 +145,12 @@ void JWT::url_decode(string input)
       // They should at least conform to: /\S+@[-0-9A-Za-z]+\.[-0-9A-Za-z]+/
       // BUT it's impossible to get perfect.  So don't bother at all (say most people).
 
-      using json = nlohmann::json;
-      json jBody = json::parse(payload);
-
-      if (jBody.count("sub" )== 0) return;
-      if (jBody.count("role")== 0) return;
-      
-      sub_  = jBody["sub" ].get<string>();
-      role_ = jBody["role"].get<int>()   ;
+      using namespace boost::json;
+      object jBody = parse(payload).as_object();
+      if ( !jBody.if_contains( "sub" ) || !jBody.if_contains( "role" ))
+          return;
+      sub_  = jBody["sub"].as_string();
+      role_ = jBody["role"].as_int64();
   }
   catch(const std::exception& se)
   {
