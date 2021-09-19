@@ -1176,9 +1176,19 @@ R"(
     cout << endl << "== 20 === Day of week =======" << endl;
     // 20 ==================================================================================
 
-    ptime now;
-    cout << now;
+    ptime now = second_clock::universal_time();
+    cout << now << endl;
+    auto day = now.date().day_of_week();
+    cout << day << endl;
+    auto day06 = now.date().day_of_week().as_number();
+    cout << day06 << endl;
+    int64_t mondayDay = 1;
+    int64_t subtract = day06 - mondayDay;
+    if ( subtract < 0 ) subtract += 7;
+    auto most_recent_monday = ptime( now.date() - days(subtract));
+    cout << "Last Monday: " << most_recent_monday << endl;
 
+    cout << endl;
 
     // ========= end ========
     // We can keep it running if needed to better see the output.
