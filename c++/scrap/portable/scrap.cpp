@@ -1172,6 +1172,14 @@ R"(
     cout << "Successful serialize" << endl << endl;
 
 
+    // 20 ==================================================================================
+    cout << endl << "== 20 === Day of week =======" << endl;
+    // 20 ==================================================================================
+
+    ptime now;
+    cout << now;
+
+
     // ========= end ========
     // We can keep it running if needed to better see the output.
     // while (true)
