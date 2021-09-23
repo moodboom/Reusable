@@ -9,7 +9,7 @@
     "react-dom": "^16.8.6",
     "react-jsonschema-form": "^1.5.0",
     "react-scripts": "2.1.8",
-    "reactstrap": "^8.0.0"
+    "reactstrap": "^8.9.0"
   },
   "scripts": {
     "start": "react-scripts start",
