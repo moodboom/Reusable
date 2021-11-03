@@ -1190,6 +1190,38 @@ R"(
 
     cout << endl;
 
+    // 21 ==================================================================================
+    cout << endl << "== 21 === Boost JSON double extraction: USE to_number<>() =======" << endl;
+    // 21 ==================================================================================
+
+    // boost/json.hpp
+    using boost::json::value;
+    using boost::json::array;
+    using boost::json::object;
+    using boost::json::value_from;
+    using boost::json::parse;
+    using boost::json::serialize;
+
+    // Silly sample
+    object jn = {
+        { "pi0", 3.141 },
+        { "pi1", 3. },
+        { "pi2", 3 },
+        { "pi3", .141 },
+        { "pi4", 3.00 },
+        { "pi5", "3.1416" },
+    };
+    cout << "boost json numeric samples" << endl << jn << endl;
+
+    cout << "pi0: " << jn["pi0"] << " - " << jn["pi0"].to_number<double>() << endl;
+    cout << "pi1: " << jn["pi1"] << " - " << jn["pi1"].to_number<double>() << endl;
+    cout << "pi2: " << jn["pi2"] << " - " << jn["pi2"].to_number<double>() << endl;
+    cout << "pi3: " << jn["pi3"] << " - " << jn["pi3"].to_number<double>() << endl;
+    cout << "pi4: " << jn["pi4"] << " - " << jn["pi4"].to_number<double>() << endl;
+    cout << "pi5: " << jn["pi5"] << " - " << boost::lexical_cast<double>( jn["pi5"].as_string().c_str() ) << endl;
+    cout << endl;
+
+
     // ========= end ========
     // We can keep it running if needed to better see the output.
     // while (true)
