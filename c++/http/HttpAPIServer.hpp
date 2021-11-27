@@ -219,6 +219,7 @@ inline void HttpAPIServer::add_static_file_handlers(const vector<string>& static
             // Clean up any static data.
             // Important so during development, js (etc) can be made directly observable in browser.
             replace_with_regex(body,"<!-- DISCARDED BY SERVER BEGIN[\\s\\S]*?DISCARDED BY SERVER END -->","");
+            replace_with_regex(body,"// DISCARDED BY SERVER BEGIN[\\s\\S]*?// DISCARDED BY SERVER END","");
         
         }
         catch(...)
