@@ -1,21 +1,225 @@
 #!/usr/bin/env node
 
 
-// Here we have several examples of using Promises to chain a sequence of events.
-// The console output will likely be a mixture of logs from each of the big tasks,
-// depending on the internal times and delays.
-// But note that the subtasks of each of the major tasks are completed sequentially.
-// Cool.
+// MAJOR ASYNC GOALS
+// 1) CHAIN perform a sequence of long-running async tasks in synchronous order (main thread won't know when it finishes - aka "fire and forget")
+// 2) PARALLEL perform parallel tasks, each with their own interwoven output.
+// 3) BATCH perform a group of long-running async tasks simultaneously, then run another task only after they all complete.  (you want to do something when it's "done")
 
+// Just use these patterns and save yourself time.
+
+// REMEMBER node alays rips right past all the promise functions immediately!
+// You can't run anything in the main node process (there is only 1!) AFTER promises resolve.
+// Might as well ponder that 'til you get it.
+
+
+const runChain = true;
+const runBatch = true;
+const runParallel = true;
 
 
 // -----------------------
+// Worker functions
+const localeTime = () => new Date().toLocaleTimeString();
+function getPrimes(max) {
+    var sieve = [], i, j, primes = [];
+    for (i = 2; i <= max; ++i) {
+        if (!sieve[i]) {
+            // i has not been marked -- it is prime
+            primes.push(i);
+            for (j = i << 1; j <= max; j += i) {
+                sieve[j] = true;
+            }
+        }
+    }
+    return primes;
+}
+// -----------------------
+
+
+// -----------------------
+// Simple Promise functions
+// These examples take no params and return results directly in resolve(...).
+// -----------------------
+async function fast() {
+    return new Promise(resolve => {
+        resolve( `${localeTime()} fast` );
+    });
+}
+async function waitASec() {
+    return new Promise(resolve => {
+        const timeout = Math.random() * 1000;
+        setTimeout(() => {
+            resolve( `${localeTime()} waited ${(timeout/1000.0).toFixed(2)} secs`);
+        }, timeout );
+    });
+}
+async function waitFiveSecs() {
+    return new Promise(resolve => {
+        const timeout = Math.random() * 5000;
+        setTimeout(() => {
+            resolve( `${localeTime()} waited ${(timeout/1000.0).toFixed(2)} secs`);
+        }, timeout );
+    });
+}
+// Even though these are called "slow", they are way faster than waits.  :-)
+async function getSlowData() {
+    return new Promise(resolve => {
+        const oneHundredPrimeNumbers = getPrimes( 100 );
+        resolve( `${localeTime()} ${oneHundredPrimeNumbers}` );
+    });
+}
+async function getSlowerData() {
+    return new Promise(resolve => {
+        const twoHundredPrimeNumbers = getPrimes( 200 );
+        resolve( `${localeTime()} ${twoHundredPrimeNumbers}` );
+    });
+}
+// -----------------------
+
+
+console.log(`${localeTime()} Script routine started...`);
+
+
+// 1) CHAIN
+const chainParent = async () => {
+    try {
+        console.log(`${localeTime()} Chain running...`);
+
+        const c1 = await getSlowData();
+        console.log( `${localeTime()} Chain first batch: ${c1}` );
+
+        const w1 = await waitASec();
+        console.log( `${localeTime()} Chain first wait: ${w1}` );
+
+        const c2 = await getSlowerData();
+        console.log( `${localeTime()} Chain second batch: ${c2}` );
+
+        const w2 = await waitASec();
+        console.log( `${localeTime()} Chain second wait: ${w2}` );
+
+        const c3 = await getSlowData();
+        console.log( `${localeTime()} Chain third batch: ${c3}` );
+
+    } catch(e) {
+        console.log( `${localeTime()} Chain error!` );
+    }
+}
+if ( runChain )
+    chainParent().then( () => {
+        console.log(`${localeTime()} Chain done.`);
+
+        // IMPORTANT NOTE regarding exiting this script without killing promises:
+        // If you do not forcably exit, node scripts will wait for all promises to resolve, then exit.
+        // That is best practice.
+        //
+        // If you really want to exit the script after a promise resolves:
+        //      myp.then( process.exit );
+        //      DO NOT USE myp.then(process.exit(0)); as that will be called immediately!
+        //      then() needs a function!
+        //
+        // You can sleep for a while but not very useful unless you wrap some code inside...
+        // const sleepSec = 5; setTimeout(() => {}, sleepSec * 1000);
+        // const sleepMin = 1; setTimeout(() => {}, sleepMin * 60 * 1000);
+
+        // WARNING: This will KILL any other unresolved promises that happen to be unfinished.
+        // So Don't do it, it's pointless.  Instead, comment out the promises you don't want to run.
+        // process.exit(0);
+    });
+
+
+// 2) PARALLEL
+// You can fire a bunch of stuff off independently to get results as they resolve, eg:
+// WaitFiveSecs is the slowest so it will return results last, even though it started first.
+if ( runParallel ) {
+    waitFiveSecs().then(response => console.log(`${localeTime()} Parallel task 1 complete ${response}`));
+    getSlowData().then(response => console.log(`${localeTime()} Parallel task 2 complete ${response}`));
+    getSlowerData().then(response => console.log(`${localeTime()} Parallel task 3 complete ${response}`));
+    getSlowData().then(response => console.log(`${localeTime()} Parallel task 4 complete ${response}`));
+    waitASec().then(response => console.log(`${localeTime()} Parallel task 5 complete ${response}`));
+    fast().then(response => console.log(`${localeTime()} Parallel task 6 complete ${response}`));
+}
+
+
+// 3) BATCH
+// But when you batch with Promise.all(), you won't get any CONSOLE results until they all resolve.
+// But they are actually running and resolving in parallel.  The details of this stuff are SO annoying.
+const myBatch = async () => {
+
+    // We are firing off all our jobs at once here!
+    // Promise.all() takes a set of promises and makes a container Promise for them
+    // that resolves when the sets all resolve, or rejects as soon as any in the set rejects.
+    const batch = await Promise.all([ waitFiveSecs(), getSlowData(), getSlowerData(), getSlowData(), waitASec(), fast() ]);
+    console.log('-----------------------------');
+    console.log('vvvvvvvvvvvvvvvvvvvvvvvvvvvvv');
+    console.log('Batch all jobs done.');
+    console.log('NOTE: Results are returned in array order, not completion order.');
+    console.log('See timestamps for completion times.');
+    console.dir( batch );
+    // or loop them if you want... same result...
+    // for(const response of batch) {
+    //     console.log(`  ${response}`);
+    // }
+    // for (let i = 0; i<batch.length; i++){
+    //     console.log(batch[i]);
+    // }
+    console.log('^^^^^^^^^^^^^^^^^^^^^^^^^^^^^');
+    console.log('-----------------------------');
+};
+if ( runBatch )
+    myBatch();
+
+console.log(`${localeTime()} Script routine finished (Promises are now running).`);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// MORE NOTES if you want
+
+// async/await keywords are the cleanest way as of 2022.
+// ALL THE REST IS SEMANTIC BULLSHIT AND HISTORICAL CRUFT.
+
+// -----------------------
 // ASYNC/AWAIT (ES2017 aka ES8)
+// async/await keywords are the cleanest 
+// Define a function as async, then put one await keyword in it.
+// When you call the async function, it returns a Promise.
+// The async function runs until it hits the await function.
+// The await function takes a Promise, and will only continue after the Promise resolves.
+
 // Try to always do promises this way,
 // until they fix await to be available "top-level".
-// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Using_promises
 // https://medium.com/@_bengarrison/javascript-es8-introducing-async-await-functions-7a471ec7de8a
+// https://www.pluralsight.com/guides/handling-nested-promises-using-asyncawait-in-react
 // https://stackoverflow.com/questions/14220321/how-to-return-the-response-from-an-asynchronous-call
+// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Using_promises
 //
 // THE BASICS
 // async functions return a promise
@@ -65,45 +269,12 @@
 // 
 // -----------------------
 
-function getPrimes(max) {
-    var sieve = [], i, j, primes = [];
-    for (i = 2; i <= max; ++i) {
-        if (!sieve[i]) {
-            // i has not been marked -- it is prime
-            primes.push(i);
-            for (j = i << 1; j <= max; j += i) {
-                sieve[j] = true;
-            }
-        }
-    }
-    return primes;
-}
+// Here we have several examples of using Promises to chain a sequence of events.
+// The console output will likely be a mixture of logs from each of the big tasks,
+// depending on the internal times and delays.
+// But note that the subtasks of each of the major tasks are completed sequentially.
+// Cool.
 
-
-// -----------------------
-// Simple Promise functions
-// These examples take no params and return results directly in resolve(...).
-// -----------------------
-async function waitASec() {
-    return new Promise(resolve => {
-        setTimeout(() => {
-            resolve( 'Waited' );
-        }, Math.random() * 1000)
-    });
-}
-async function getSlowData() {
-    return new Promise(resolve => {
-        const oneHundredPrimeNumbers = getPrimes( 100 );
-        resolve( oneHundredPrimeNumbers );
-    });
-}
-async function getSlowerData() {
-    return new Promise(resolve => {
-        const twoHundredPrimeNumbers = getPrimes( 200 );
-        resolve( twoHundredPrimeNumbers );
-    });
-}
-// -----------------------
 
 
 // -----------------------
@@ -129,7 +300,7 @@ const requestData_ManualCompose = async () => {
         console.log( 'Error' );
     }
 }
-requestData_ManualCompose();
+// requestData_ManualCompose();
 // -----------------------
 
 
@@ -180,7 +351,8 @@ const requestData_SequentialComposition = async () => {
     console.log( 'Sequential build of a buncha primes...');
     console.dir( result );
 }
-requestData_SequentialComposition();
+// Comment in to run.
+// requestData_SequentialComposition();
 // -----------------------
 
 
@@ -203,6 +375,8 @@ function MyPromiseFunction(param1,param2) {
     })
 }
  
+// Comment in to run.
+/*
 // then and catch are async functions, but will only fire once promise is complete.
 var myGoodCall = MyPromiseFunction(1,2)
 .then(function(result) {
@@ -220,6 +394,7 @@ var myBadCall = MyPromiseFunction(2,2)
 .catch(result => {
     console.log("Our defensive coding caught an error: "+result)
 })
+*/
 
 // -----------------------
 
@@ -256,3 +431,5 @@ Promise.all(urls.map(url => { fetch(url) }))
 // -----------------------
 // TODO
 // -----------------------
+
+
