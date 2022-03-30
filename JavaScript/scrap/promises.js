@@ -56,7 +56,7 @@ async function waitASec() {
 }
 async function waitFiveSecs() {
     return new Promise(resolve => {
-        const timeout = Math.random() * 5000;
+        const timeout = 2000 + Math.random() * 3000;
         setTimeout(() => {
             resolve( `${localeTime()} waited ${(timeout/1000.0).toFixed(2)} secs`);
         }, timeout );
@@ -131,8 +131,9 @@ if ( runChain )
 // 2) PARALLEL
 // You can fire a bunch of stuff off independently to get results as they resolve, eg:
 // WaitFiveSecs is the slowest so it will return results last, even though it started first.
+// I chained two of them together as well, just for fun.  Use the others as simpler guides.
 if ( runParallel ) {
-    waitFiveSecs().then(response => console.log(`${localeTime()} Parallel task 1 complete ${response}`));
+    waitFiveSecs().then( response1 => waitFiveSecs().then(response2 => console.log(`${localeTime()} Parallel task 1 complete ${response1} ${response2}`)));
     getSlowData().then(response => console.log(`${localeTime()} Parallel task 2 complete ${response}`));
     getSlowerData().then(response => console.log(`${localeTime()} Parallel task 3 complete ${response}`));
     getSlowData().then(response => console.log(`${localeTime()} Parallel task 4 complete ${response}`));
