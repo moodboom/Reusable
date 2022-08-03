@@ -401,13 +401,23 @@ public:
         {
             if (idx > 0) parser.get(); // Skip ANY single character.
             parser >> semver_[idx];
-            if (parser.eof()) { for (int idxz = idx; idxz < 4; idxz++) semver_[idxz] = 0; return false; }  // Quit if we hit the end.
+
+            // Quit if we hit the end.
+            if (parser.eof()) {
+                for (int idxz = idx + 1; idxz < 4; idxz++)
+                    semver_[idxz] = 0;
+                return false;
+            }  
         }
         return true;
     }
     bool bLessThan(const SemVer& right)
     {
         return std::lexicographical_compare(semver_, semver_ + 4, right.semver_, right.semver_ + 4);
+    }
+    bool bMinorLessThan(const SemVer& right)
+    {
+        return std::lexicographical_compare(semver_, semver_ + 2, right.semver_, right.semver_ + 2);
     }
     bool bCompatible(const SemVer& right)
     {
