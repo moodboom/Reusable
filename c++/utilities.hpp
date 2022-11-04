@@ -22,6 +22,7 @@ using namespace std;
 //    static bool replace_once_with_regex(string& str, const string& from, const string& to)
 //    static void trim(string &s)      (and starttrim and endtrim)
 //    static bool find_substring(const string& body, const string& regex, string& result)
+//    static bool find_substring(const string& body, const string& regex)
 //    static bool b_string_ends_in(const string& source, const string& search)
 //    static bool parse_csv_ints(const std::string& csvdata, vector<int64_t>& vi)
 //    static bool parse_csv_strings(const std::string& csvdata, vector<string>& vs)
@@ -210,6 +211,16 @@ static bool find_substring(const string& body, const string& regex, string& resu
         result = string(mresults[1].first,mresults[1].second);
 
     return bSuccess;
+}
+// Same as above, but don't capture result.
+static bool find_substring(const string& body, const string& regex)
+{
+    boost::match_results<std::string::const_iterator> mresults;
+    boost::regex reg;
+    reg.assign(regex);
+
+    // We want regex_search, not regex_match (which must match the entire input).
+    return boost::regex_search(body,mresults,reg,boost::match_default);
 }
 static bool b_string_ends_in(const string& source, const string& search)
 {
