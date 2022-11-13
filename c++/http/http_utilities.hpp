@@ -1,9 +1,12 @@
 #pragma once
 
-#include <Simple-Web-Server/client_https.hpp>
+#include <boost/lexical_cast.hpp>
 #include <boost/regex.hpp>
+#include "../utilities.hpp"
+#include <Simple-Web-Server/client_https.hpp>
 
 using namespace std;
+using namespace SimpleWeb;
 
 
 // ------------------------------------------------------------------------------
