@@ -711,11 +711,13 @@ static void log(LOG_TO_FILE_VERBOSITY v, int n, bool b_suppress_console = false,
 }
 
 // This helper logs test results with sane defaults, and will BLOW YOUR SHIT UP if one fails.  You're welcome!  :-)
-static void log_test(const string &desc, bool bTestPassed, bool bStopOnFailure = true)
+static void log_test(const string &desc, bool bTestPassed, bool bStopOnFailure = true, bool bLog = true)
 {
-    stringstream ss;
-    ss << (bTestPassed ? "[OK] " : "[*ERROR*] ") << desc;
-    log(LV_ALWAYS,ss.str(),false,false,false,false,0,LV_ALWAYS);
+    if ( bLog ) {
+        stringstream ss;
+        ss << (bTestPassed ? "[OK] " : "[*ERROR*] ") << desc;
+        log(LV_ALWAYS,ss.str(),false,false,false,false,0,LV_ALWAYS);
+    }
     if (bStopOnFailure)
         assert(bTestPassed);
 }
