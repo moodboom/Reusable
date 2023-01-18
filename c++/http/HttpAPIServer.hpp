@@ -216,11 +216,12 @@ inline void HttpAPIServer::add_static_file_handlers(const vector<string>& static
         {
             body = read_file(string("htdocs")+file);
             
-            // Clean up any static data.
-            // Important so during development, js (etc) can be made directly observable in browser.
-            replace_with_regex(body,"<!-- DISCARDED BY SERVER BEGIN[\\s\\S]*?DISCARDED BY SERVER END -->","");
-            replace_with_regex(body,"[/][/] DISCARDED BY SERVER BEGIN[\\s\\S]*?[/][/] DISCARDED BY SERVER END","");
-        
+            if ( b_string_ends_in( file, "js" ) || b_string_ends_in( file, "html" )) {
+                // Clean up any static data from html and js files.
+                // Important so during development, js (etc) can be made directly observable in browser.
+                replace_with_regex(body,"<!-- DISCARDED BY SERVER BEGIN[\\s\\S]*?DISCARDED BY SERVER END -->","");
+                replace_with_regex(body,"[/][/] DISCARDED BY SERVER BEGIN[\\s\\S]*?[/][/] DISCARDED BY SERVER END","");
+            }        
         }
         catch(...)
         {
@@ -250,17 +251,17 @@ inline void HttpAPIServer::add_static_file_handlers(const vector<string>& static
             // a CRLF at the START of the header.
             
             string content_type = "\r\nContent-Type: ";
-                 if (strings_are_equal(request->path.substr(request->path.length()-4),".css"))
+            if ( b_string_ends_in( request->path, ".css" ))
               content_type += "text/css";
-            else if (strings_are_equal(request->path.substr(request->path.length()-3),".js"))
+            else if ( b_string_ends_in( request->path, ".js" ))
               content_type += "text/javascript";
-            else if (strings_are_equal(request->path.substr(request->path.length()-4),".png"))
+            else if ( b_string_ends_in( request->path, ".png" ))
               content_type += "image/png";
-            else if (strings_are_equal(request->path.substr(request->path.length()-4),".jpg"))
+            else if ( b_string_ends_in( request->path, ".jpg" ))
               content_type += "image/jpeg";
-            else if (strings_are_equal(request->path.substr(request->path.length()-4),".svg"))
+            else if ( b_string_ends_in( request->path, ".svg" ))
               content_type += "image/svg+xml";
-            else if (strings_are_equal(request->path.substr(request->path.length()-4),".ico"))
+            else if ( b_string_ends_in( request->path, ".ico" ))
               content_type += "image/x-icon";
             else
               content_type += "text/plain";
@@ -388,6 +389,7 @@ inline void HttpAPIServer::inject_includes(API_call& ac)
     // We provide a generic way to add data to the html that
     // will automatically be removed on load (often important for live editing).
     replace_with_regex(ac.static_html_,"<!-- DISCARDED BY SERVER BEGIN[\\s\\S]*?DISCARDED BY SERVER END -->","");
+    replace_with_regex(ac.static_html_,"[/][/] DISCARDED BY SERVER BEGIN[\\s\\S]*?[/][/] DISCARDED BY SERVER END","");
 
     // We may need to build the relative path back to the root, based on the depth of the ac path.
     string relative_path;
