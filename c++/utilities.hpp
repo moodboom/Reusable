@@ -554,6 +554,7 @@ static ptime time_t_to_ptime(const time_t& tt)
 }
 static string time_t_to_string(const time_t& tt, const string& str_format)
 {
+    if ( tt > 5000000000 ) return "100+ years in the future";
     return ptime_to_string(time_t_to_ptime(tt), str_format);
 }
 
