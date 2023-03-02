@@ -1,0 +1,598 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" >
+<head id="ctl00_Head1"><title>
+	Sanctions List Search
+</title><link href="css/print.css" rel="stylesheet" type="text/css" media="print" /><link href="css/global.css" rel="stylesheet" type="text/css" media="screen" />
+    <script type="text/javascript" src="scripts/resizeResults.js"></script>
+    <script type="text/javascript">
+        ibtn = false;
+
+        document.addEventListener('click', function (event) {
+            if (event.target.type == "image") {
+                ibtn = true;
+            }
+        });
+
+        function DisableButtons() {
+
+            if (!ibtn) {
+                var inputs = document.getElementsByTagName("INPUT");
+                for (var i in inputs) {
+                    if (inputs[i].type == "button" || inputs[i].type == "submit" || inputs[i].type == "image") {
+                        inputs[i].disabled = true;
+                    }
+                }
+            }
+        }
+        window.onbeforeunload = DisableButtons;
+    </script>
+<link href="/WebResource.axd?d=iYXJJpU9my9xzhYp_OtAutrOkLPdguC-zMsLLBgxNdyJFKYEfeu4j-lm2zWq_LQPrz5Pd7C0AyOo0YqPeqA0n7EyTg5oPbzMwN7_yNEsfX0ticwfmtYaQelHMfpxan7vuW1JUA2&amp;t=637418578420000000" type="text/css" rel="stylesheet" /></head>
+<body>
+    <form method="post" action="./" id="aspnetForm">
+<input type="hidden" name="ctl00_ctl03_HiddenField" id="ctl00_ctl03_HiddenField" value="" />
+<input type="hidden" name="__VIEWSTATE" id="__VIEWSTATE" value="/wEPDwUKLTc1MTM2NTYzOQ8WGB4HY291bnRyeWUeBHNvcnQFCnNjb3JlIERFU0MeB2FkZHJlc3NlHgRjaXR5ZR4Fc3RhdGVlHghsYXN0TmFtZQUKVGF0eWFuYSBMaR4HcHJvZ3JhbWUeAmlkZR4FbGlzdHNlHglmaXJzdE5hbWVlHgVzY29yZQUDMTAwHgR0eXBlBQpJbmRpdmlkdWFsFgJmD2QWAgIDD2QWEgIFDw8WAh4EVGV4dAWeDlNwZWNpYWxseSBEZXNpZ25hdGVkIE5hdGlvbmFscyBhbmQgQmxvY2tlZCBQZXJzb25zIGxpc3QgKCJTRE4gTGlzdCIpIGFuZCBhbGwgb3RoZXIgc2FuY3Rpb25zIGxpc3RzIGFkbWluaXN0ZXJlZCBieSBPRkFDLCBpbmNsdWRpbmcgdGhlIEZvcmVpZ24gU2FuY3Rpb25zIEV2YWRlcnMgTGlzdCwgdGhlIE5vbi1TRE4gSXJhbiBTYW5jdGlvbnMgQWN0IExpc3QsIHRoZSBTZWN0b3JhbCBTYW5jdGlvbnMgSWRlbnRpZmljYXRpb25zIExpc3QsIHRoZSBMaXN0IG9mIEZvcmVpZ24gRmluYW5jaWFsIEluc3RpdHV0aW9ucyBTdWJqZWN0IHRvIENvcnJlc3BvbmRlbnQgQWNjb3VudCBvciBQYXlhYmxlLVRocm91Z2ggQWNjb3VudCBTYW5jdGlvbnMgYW5kIHRoZSBOb24tU0ROIFBhbGVzdGluaWFuIExlZ2lzbGF0aXZlIENvdW5jaWwgTGlzdC4gR2l2ZW4gdGhlIG51bWJlciBvZiBsaXN0cyB0aGF0IG5vdyByZXNpZGUgaW4gdGhlIFNhbmN0aW9ucyBMaXN0IFNlYXJjaCB0b29sLCBpdCBpcyBzdHJvbmdseSByZWNvbW1lbmRlZCB0aGF0IHVzZXJzIHBheSBjbG9zZSBhdHRlbnRpb24gdG8gdGhlIHByb2dyYW0gY29kZXMgYXNzb2NpYXRlZCB3aXRoIGVhY2ggcmV0dXJuZWQgcmVjb3JkLiBUaGVzZSBwcm9ncmFtIGNvZGVzIGluZGljYXRlIGhvdyBhIHRydWUgaGl0IG9uIGEgcmV0dXJuZWQgdmFsdWUgc2hvdWxkIGJlIHRyZWF0ZWQuIFRoZSBTYW5jdGlvbnMgTGlzdCBTZWFyY2ggdG9vbCB1c2VzIGFwcHJveGltYXRlIHN0cmluZyBtYXRjaGluZyB0byBpZGVudGlmeSBwb3NzaWJsZSBtYXRjaGVzIGJldHdlZW4gd29yZCBvciBjaGFyYWN0ZXIgc3RyaW5ncyBhcyBlbnRlcmVkIGludG8gU2FuY3Rpb25zIExpc3QgU2VhcmNoLCBhbmQgYW55IG5hbWUgb3IgbmFtZSBjb21wb25lbnQgYXMgaXQgYXBwZWFycyBvbiB0aGUgU0ROIExpc3QgYW5kL29yIHRoZSB2YXJpb3VzIG90aGVyIHNhbmN0aW9ucyBsaXN0cy4gU2FuY3Rpb25zIExpc3QgU2VhcmNoIGhhcyBhIHNsaWRlci1iYXIgdGhhdCBtYXkgYmUgdXNlZCB0byBzZXQgYSB0aHJlc2hvbGQgKGkuZS4sIGEgY29uZmlkZW5jZSByYXRpbmcpIGZvciB0aGUgY2xvc2VuZXNzIG9mIGFueSBwb3RlbnRpYWwgbWF0Y2ggcmV0dXJuZWQgYXMgYSByZXN1bHQgb2YgYSB1c2VyJ3Mgc2VhcmNoLiBTYW5jdGlvbnMgTGlzdCBTZWFyY2ggd2lsbCBkZXRlY3QgY2VydGFpbiBtaXNzcGVsbGluZ3Mgb3Igb3RoZXIgaW5jb3JyZWN0bHkgZW50ZXJlZCB0ZXh0LCBhbmQgd2lsbCByZXR1cm4gbmVhciwgb3IgcHJveGltYXRlLCBtYXRjaGVzLCBiYXNlZCBvbiB0aGUgY29uZmlkZW5jZSByYXRpbmcgc2V0IGJ5IHRoZSB1c2VyIHZpYSB0aGUgc2xpZGVyLWJhci4gT0ZBQyBkb2VzIG5vdCBwcm92aWRlIHJlY29tbWVuZGF0aW9ucyB3aXRoIHJlZ2FyZCB0byB0aGUgYXBwcm9wcmlhdGVuZXNzIG9mIGFueSBzcGVjaWZpYyBjb25maWRlbmNlIHJhdGluZy4gU2FuY3Rpb25zIExpc3QgU2VhcmNoIGlzIG9uZSB0b29sIG9mZmVyZWQgdG8gYXNzaXN0IHVzZXJzIGluIHV0aWxpemluZyB0aGUgU0ROIExpc3QgYW5kL29yIHRoZSB2YXJpb3VzIG90aGVyIHNhbmN0aW9ucyBsaXN0czsgdXNlIG9mIFNhbmN0aW9ucyBMaXN0IFNlYXJjaCBpcyBub3QgYSBzdWJzdGl0dXRlIGZvciB1bmRlcnRha2luZyBhcHByb3ByaWF0ZSBkdWUgZGlsaWdlbmNlLiBUaGUgdXNlIG9mIFNhbmN0aW9ucyBMaXN0IFNlYXJjaCBkb2VzIG5vdCBsaW1pdCBhbnkgY3JpbWluYWwgb3IgY2l2aWwgbGlhYmlsaXR5IGZvciBhbnkgYWN0IHVuZGVydGFrZW4gYXMgYSByZXN1bHQgb2YsIG9yIGluIHJlbGlhbmNlIG9uLCBzdWNoIHVzZS5kZAIHDw8WAh4LTmF2aWdhdGVVcmwFeWh0dHBzOi8vaG9tZS50cmVhc3VyeS5nb3YvcG9saWN5LWlzc3Vlcy9maW5hbmNpYWwtc2FuY3Rpb25zL3NwZWNpYWxseS1kZXNpZ25hdGVkLW5hdGlvbmFscy1saXN0LWRhdGEtZm9ybWF0cy1kYXRhLXNjaGVtYXNkZAIJDw8WAh8NBURodHRwczovL2hvbWUudHJlYXN1cnkuZ292L3BvbGljeS1pc3N1ZXMvZmluYW5jaWFsLXNhbmN0aW9ucy9mYXFzLzI4N2RkAgsPDxYCHw0Fa2h0dHBzOi8vaG9tZS50cmVhc3VyeS5nb3YvcG9saWN5LWlzc3Vlcy9vZmZpY2Utb2YtZm9yZWlnbi1hc3NldHMtY29udHJvbC1zYW5jdGlvbnMtcHJvZ3JhbXMtYW5kLWluZm9ybWF0aW9uZGQCDQ8PFgIfDQViaHR0cHM6Ly9ob21lLnRyZWFzdXJ5Lmdvdi9wb2xpY3ktaXNzdWVzL2ZpbmFuY2lhbC1zYW5jdGlvbnMvY29uc29saWRhdGVkLXNhbmN0aW9ucy1saXN0LWRhdGEtZmlsZXNkZAIPDw8WAh8NBZkBaHR0cHM6Ly9ob21lLnRyZWFzdXJ5Lmdvdi9wb2xpY3ktaXNzdWVzL2ZpbmFuY2lhbC1zYW5jdGlvbnMvc3BlY2lhbGx5LWRlc2lnbmF0ZWQtbmF0aW9uYWxzLWxpc3Qtc2RuLWxpc3QvcHJvZ3JhbS10YWctZGVmaW5pdGlvbnMtZm9yLW9mYWMtc2FuY3Rpb25zLWxpc3RzZGQCEQ9kFgYCBQ9kFggCAw8QDxYCHgtfIURhdGFCb3VuZGdkEBUFA0FsbAhBaXJjcmFmdAZFbnRpdHkKSW5kaXZpZHVhbAZWZXNzZWwVBQAIQWlyY3JhZnQGRW50aXR5CkluZGl2aWR1YWwGVmVzc2VsFCsDBWdnZ2dnZGQCGw8QDxYCHw5nZBAVTANBbGwLNTYxLVJlbGF0ZWQHQkFMS0FOUw9CQUxLQU5TLUVPMTQwMzMHQkVMQVJVUw9CRUxBUlVTLUVPMTQwMzgNQlVSTUEtRU8xNDAxNA1DQUFUU0EgLSBJUkFOD0NBQVRTQSAtIFJVU1NJQQNDQVIMQ01JQy1FTzEzOTU5BENVQkEGQ1lCRVIyBkRBUkZVUgREUFJLBURQUksyBURQUkszBURQUks0C0RQUkstTktTUEVBB0RSQ09OR08QRUxFQ1RJT04tRU8xMzg0OBBFVEhJT1BJQS1FTzE0MDQ2BkZTRS1JUgNGVE8GR0xPTUFHBkhJRlBBQQpISy1FTzEzOTM2B0hSSVQtSVIHSFJJVC1TWQRJRkNBBElGU1IVSUxMSUNJVC1EUlVHUy1FTzE0MDU5BElSQU4QSVJBTi1DT04tQVJNUy1FTwxJUkFOLUVPMTM4NDYMSVJBTi1FTzEzODcxDElSQU4tRU8xMzg3NgxJUkFOLUVPMTM5MDIHSVJBTi1IUghJUkFOLVRSQQVJUkFRMgVJUkFRMwRJUkdDA0lTQQdMRUJBTk9OBkxJQllBMgZMSUJZQTMGTUFHTklUDE1BTEktRU8xMzg4MglOSUNBUkFHVUEPTklDQVJBR1VBLU5IUkFBBU5QV01EBk5TLVBMQwVQRUVTQQ1QRUVTQS1FTzE0MDM5DlJVU1NJQS1FTzE0MDI0DlJVU1NJQS1FTzE0MDY1BFNER1QEU0ROVAVTRE5USwdTT01BTElBC1NPVVRIIFNVREFOBlNTSURFUwVTWVJJQQxTWVJJQS1DQUVTQVINU1lSSUEtRU8xMzg5NANUQ08PVUtSQUlORS1FTzEzNjYwD1VLUkFJTkUtRU8xMzY2MQ9VS1JBSU5FLUVPMTM2NjIPVUtSQUlORS1FTzEzNjg1CVZFTkVaVUVMQRFWRU5FWlVFTEEtRU8xMzg1MBFWRU5FWlVFTEEtRU8xMzg4NAVZRU1FTghaSU1CQUJXRRVMAAs1NjEtUmVsYXRlZAdCQUxLQU5TD0JBTEtBTlMtRU8xNDAzMwdCRUxBUlVTD0JFTEFSVVMtRU8xNDAzOA1CVVJNQS1FTzE0MDE0DUNBQVRTQSAtIElSQU4PQ0FBVFNBIC0gUlVTU0lBA0NBUgxDTUlDLUVPMTM5NTkEQ1VCQQZDWUJFUjIGREFSRlVSBERQUksFRFBSSzIFRFBSSzMFRFBSSzQLRFBSSy1OS1NQRUEHRFJDT05HTxBFTEVDVElPTi1FTzEzODQ4EEVUSElPUElBLUVPMTQwNDYGRlNFLUlSA0ZUTwZHTE9NQUcGSElGUEFBCkhLLUVPMTM5MzYHSFJJVC1JUgdIUklULVNZBElGQ0EESUZTUhVJTExJQ0lULURSVUdTLUVPMTQwNTkESVJBThBJUkFOLUNPTi1BUk1TLUVPDElSQU4tRU8xMzg0NgxJUkFOLUVPMTM4NzEMSVJBTi1FTzEzODc2DElSQU4tRU8xMzkwMgdJUkFOLUhSCElSQU4tVFJBBUlSQVEyBUlSQVEzBElSR0MDSVNBB0xFQkFOT04GTElCWUEyBkxJQllBMwZNQUdOSVQMTUFMSS1FTzEzODgyCU5JQ0FSQUdVQQ9OSUNBUkFHVUEtTkhSQUEFTlBXTUQGTlMtUExDBVBFRVNBDVBFRVNBLUVPMTQwMzkOUlVTU0lBLUVPMTQwMjQOUlVTU0lBLUVPMTQwNjUEU0RHVARTRE5UBVNETlRLB1NPTUFMSUELU09VVEggU1VEQU4GU1NJREVTBVNZUklBDFNZUklBLUNBRVNBUg1TWVJJQS1FTzEzODk0A1RDTw9VS1JBSU5FLUVPMTM2NjAPVUtSQUlORS1FTzEzNjYxD1VLUkFJTkUtRU8xMzY2Mg9VS1JBSU5FLUVPMTM2ODUJVkVORVpVRUxBEVZFTkVaVUVMQS1FTzEzODUwEVZFTkVaVUVMQS1FTzEzODg0BVlFTUVOCFpJTUJBQldFFCsDTGdnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dkZAIhDxAPFgIfDmdkEBW0AQNBbGwLQWZnaGFuaXN0YW4HQWxiYW5pYQdBbGdlcmlhBkFuZ29sYQlBcmdlbnRpbmEHQXJtZW5pYQVBcnViYQlBdXN0cmFsaWEHQXVzdHJpYQpBemVyYmFpamFuDEJhaGFtYXMsIFRoZQdCYWhyYWluCkJhbmdsYWRlc2gIQmFyYmFkb3MHQmVsYXJ1cwdCZWxnaXVtBkJlbGl6ZQVCZW5pbgdCZXJtdWRhB0JvbGl2aWEWQm9zbmlhIGFuZCBIZXJ6ZWdvdmluYQZCcmF6aWwGQnJ1bmVpCEJ1bGdhcmlhDEJ1cmtpbmEgRmFzbwVCdXJtYQhDYW1ib2RpYQZDYW5hZGEOQ2F5bWFuIElzbGFuZHMYQ2VudHJhbCBBZnJpY2FuIFJlcHVibGljBUNoaWxlBUNoaW5hCENvbG9tYmlhB0NvbW9yb3MhQ29uZ28sIERlbW9jcmF0aWMgUmVwdWJsaWMgb2YgdGhlFkNvbmdvLCBSZXB1YmxpYyBvZiB0aGUKQ29zdGEgUmljYQ1Db3RlIGQgSXZvaXJlB0Nyb2F0aWEEQ3ViYQZDeXBydXMOQ3plY2ggUmVwdWJsaWMHRGVubWFyawhEb21pbmljYRJEb21pbmljYW4gUmVwdWJsaWMHRWN1YWRvcgVFZ3lwdAtFbCBTYWx2YWRvchFFcXVhdG9yaWFsIEd1aW5lYQdFcml0cmVhB0VzdG9uaWEIRXRoaW9waWEHRmlubGFuZAZGcmFuY2UHR2VvcmdpYQdHZXJtYW55BUdoYW5hCUdpYnJhbHRhcgZHcmVlY2UJR3VhdGVtYWxhCEd1ZXJuc2V5Bkd1aW5lYQZHdXlhbmEFSGFpdGkISG9uZHVyYXMJSG9uZyBLb25nB0h1bmdhcnkFSW5kaWEJSW5kb25lc2lhBElyYW4ESXJhcQdJcmVsYW5kBklzcmFlbAVJdGFseQdKYW1haWNhBUphcGFuBkplcnNleQZKb3JkYW4KS2F6YWtoc3RhbgVLZW55YQxLb3JlYSwgTm9ydGgMS29yZWEsIFNvdXRoBktvc292bwZLdXdhaXQKS3lyZ3l6c3RhbgRMYW9zBkxhdHZpYQdMZWJhbm9uB0xpYmVyaWEFTGlieWENTGllY2h0ZW5zdGVpbgpMdXhlbWJvdXJnBU1hY2F1CE1hbGF5c2lhCE1hbGRpdmVzBE1hbGkFTWFsdGEQTWFyc2hhbGwgSXNsYW5kcwpNYXVyaXRhbmlhBk1leGljbwdNb2xkb3ZhBk1vbmFjbwhNb25nb2xpYQpNb250ZW5lZ3JvB01vcm9jY28KTW96YW1iaXF1ZQdOYW1pYmlhC05ldGhlcmxhbmRzFE5ldGhlcmxhbmRzIEFudGlsbGVzC05ldyBaZWFsYW5kCU5pY2FyYWd1YQVOaWdlcgdOaWdlcmlhIE5vcnRoIE1hY2Vkb25pYSwgVGhlIFJlcHVibGljIG9mBk5vcndheQRPbWFuCFBha2lzdGFuBVBhbGF1C1BhbGVzdGluaWFuBlBhbmFtYQhQYXJhZ3VheQRQZXJ1C1BoaWxpcHBpbmVzBlBvbGFuZAVRYXRhcipSZWdpb246IENvbW1vbndlYWx0aCBvZiBJbmRlcGVuZGVudCBTdGF0ZXMOUmVnaW9uOiBDcmltZWEMUmVnaW9uOiBHYXphE1JlZ2lvbjogS2FmaWEgS2luZ2kVUmVnaW9uOiBOb3J0aGVybiBNYWxpB1JvbWFuaWEGUnVzc2lhBlJ3YW5kYRVTYWludCBLaXR0cyBhbmQgTmV2aXMgU2FpbnQgVmluY2VudCBhbmQgdGhlIEdyZW5hZGluZXMFU2Ftb2EKU2FuIE1hcmlubwxTYXVkaSBBcmFiaWEHU2VuZWdhbAZTZXJiaWEKU2V5Y2hlbGxlcwxTaWVycmEgTGVvbmUJU2luZ2Fwb3JlCFNsb3Zha2lhCFNsb3ZlbmlhB1NvbWFsaWEMU291dGggQWZyaWNhC1NvdXRoIFN1ZGFuBVNwYWluCVNyaSBMYW5rYQVTdWRhbgZTd2VkZW4LU3dpdHplcmxhbmQFU3lyaWEGVGFpd2FuClRhamlraXN0YW4IVGFuemFuaWEIVGhhaWxhbmQKVGhlIEdhbWJpYRNUcmluaWRhZCBhbmQgVG9iYWdvB1R1bmlzaWEGVHVya2V5DFR1cmttZW5pc3RhbgZVZ2FuZGEHVWtyYWluZQx1bmRldGVybWluZWQUVW5pdGVkIEFyYWIgRW1pcmF0ZXMOVW5pdGVkIEtpbmdkb20NVW5pdGVkIFN0YXRlcwdVcnVndWF5ClV6YmVraXN0YW4HVmFudWF0dQlWZW5lenVlbGEHVmlldG5hbRdWaXJnaW4gSXNsYW5kcywgQnJpdGlzaAlXZXN0IEJhbmsFWWVtZW4GWmFtYmlhCFppbWJhYndlFbQBAAtBZmdoYW5pc3RhbgdBbGJhbmlhB0FsZ2VyaWEGQW5nb2xhCUFyZ2VudGluYQdBcm1lbmlhBUFydWJhCUF1c3RyYWxpYQdBdXN0cmlhCkF6ZXJiYWlqYW4MQmFoYW1hcywgVGhlB0JhaHJhaW4KQmFuZ2xhZGVzaAhCYXJiYWRvcwdCZWxhcnVzB0JlbGdpdW0GQmVsaXplBUJlbmluB0Jlcm11ZGEHQm9saXZpYRZCb3NuaWEgYW5kIEhlcnplZ292aW5hBkJyYXppbAZCcnVuZWkIQnVsZ2FyaWEMQnVya2luYSBGYXNvBUJ1cm1hCENhbWJvZGlhBkNhbmFkYQ5DYXltYW4gSXNsYW5kcxhDZW50cmFsIEFmcmljYW4gUmVwdWJsaWMFQ2hpbGUFQ2hpbmEIQ29sb21iaWEHQ29tb3JvcyFDb25nbywgRGVtb2NyYXRpYyBSZXB1YmxpYyBvZiB0aGUWQ29uZ28sIFJlcHVibGljIG9mIHRoZQpDb3N0YSBSaWNhDUNvdGUgZCBJdm9pcmUHQ3JvYXRpYQRDdWJhBkN5cHJ1cw5DemVjaCBSZXB1YmxpYwdEZW5tYXJrCERvbWluaWNhEkRvbWluaWNhbiBSZXB1YmxpYwdFY3VhZG9yBUVneXB0C0VsIFNhbHZhZG9yEUVxdWF0b3JpYWwgR3VpbmVhB0VyaXRyZWEHRXN0b25pYQhFdGhpb3BpYQdGaW5sYW5kBkZyYW5jZQdHZW9yZ2lhB0dlcm1hbnkFR2hhbmEJR2licmFsdGFyBkdyZWVjZQlHdWF0ZW1hbGEIR3Vlcm5zZXkGR3VpbmVhBkd1eWFuYQVIYWl0aQhIb25kdXJhcwlIb25nIEtvbmcHSHVuZ2FyeQVJbmRpYQlJbmRvbmVzaWEESXJhbgRJcmFxB0lyZWxhbmQGSXNyYWVsBUl0YWx5B0phbWFpY2EFSmFwYW4GSmVyc2V5BkpvcmRhbgpLYXpha2hzdGFuBUtlbnlhDEtvcmVhLCBOb3J0aAxLb3JlYSwgU291dGgGS29zb3ZvBkt1d2FpdApLeXJneXpzdGFuBExhb3MGTGF0dmlhB0xlYmFub24HTGliZXJpYQVMaWJ5YQ1MaWVjaHRlbnN0ZWluCkx1eGVtYm91cmcFTWFjYXUITWFsYXlzaWEITWFsZGl2ZXMETWFsaQVNYWx0YRBNYXJzaGFsbCBJc2xhbmRzCk1hdXJpdGFuaWEGTWV4aWNvB01vbGRvdmEGTW9uYWNvCE1vbmdvbGlhCk1vbnRlbmVncm8HTW9yb2NjbwpNb3phbWJpcXVlB05hbWliaWELTmV0aGVybGFuZHMUTmV0aGVybGFuZHMgQW50aWxsZXMLTmV3IFplYWxhbmQJTmljYXJhZ3VhBU5pZ2VyB05pZ2VyaWEgTm9ydGggTWFjZWRvbmlhLCBUaGUgUmVwdWJsaWMgb2YGTm9yd2F5BE9tYW4IUGFraXN0YW4FUGFsYXULUGFsZXN0aW5pYW4GUGFuYW1hCFBhcmFndWF5BFBlcnULUGhpbGlwcGluZXMGUG9sYW5kBVFhdGFyKlJlZ2lvbjogQ29tbW9ud2VhbHRoIG9mIEluZGVwZW5kZW50IFN0YXRlcw5SZWdpb246IENyaW1lYQxSZWdpb246IEdhemETUmVnaW9uOiBLYWZpYSBLaW5naRVSZWdpb246IE5vcnRoZXJuIE1hbGkHUm9tYW5pYQZSdXNzaWEGUndhbmRhFVNhaW50IEtpdHRzIGFuZCBOZXZpcyBTYWludCBWaW5jZW50IGFuZCB0aGUgR3JlbmFkaW5lcwVTYW1vYQpTYW4gTWFyaW5vDFNhdWRpIEFyYWJpYQdTZW5lZ2FsBlNlcmJpYQpTZXljaGVsbGVzDFNpZXJyYSBMZW9uZQlTaW5nYXBvcmUIU2xvdmFraWEIU2xvdmVuaWEHU29tYWxpYQxTb3V0aCBBZnJpY2ELU291dGggU3VkYW4FU3BhaW4JU3JpIExhbmthBVN1ZGFuBlN3ZWRlbgtTd2l0emVybGFuZAVTeXJpYQZUYWl3YW4KVGFqaWtpc3RhbghUYW56YW5pYQhUaGFpbGFuZApUaGUgR2FtYmlhE1RyaW5pZGFkIGFuZCBUb2JhZ28HVHVuaXNpYQZUdXJrZXkMVHVya21lbmlzdGFuBlVnYW5kYQdVa3JhaW5lDHVuZGV0ZXJtaW5lZBRVbml0ZWQgQXJhYiBFbWlyYXRlcw5Vbml0ZWQgS2luZ2RvbQ1Vbml0ZWQgU3RhdGVzB1VydWd1YXkKVXpiZWtpc3RhbgdWYW51YXR1CVZlbmV6dWVsYQdWaWV0bmFtF1ZpcmdpbiBJc2xhbmRzLCBCcml0aXNoCVdlc3QgQmFuawVZZW1lbgZaYW1iaWEIWmltYmFid2UUKwO0AWdnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dn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NDAyNGRkAgUPDxYCHwwFA1NETmRkAgYPDxYCHwwFAzEwMGRkAhMPZBYMAgEPZBYCZg8PFgQfDAUaVE9NSUxJTkEsIFRhdHlhbmEgWXVyaWV2bmEfDQUXfi9EZXRhaWxzLmFzcHg/aWQ9MzkyMTBkZAICDw8WAh8MBSZBcGFydG1lbnQgMjU7IDE2IENoZXJub21vcnNrYXlhIFN0cmVldGRkAgMPDxYCHwwFCkluZGl2aWR1YWxkZAIEDw8WAh8MBQ5SVVNTSUEtRU8xNDAyNGRkAgUPDxYCHwwFA1NETmRkAgYPDxYCHwwFAzEwMGRkAhQPDxYCHxFoZGQCEw8PFgIfDAUuU0ROIExpc3QgbGFzdCB1cGRhdGVkIG9uOiAzLzEvMjAyMyAxMDowMzoxNSBBTWRkAhUPDxYCHwwFMk5vbi1TRE4gTGlzdCBsYXN0IHVwZGF0ZWQgb246IDIvMjQvMjAyMyA5OjAyOjMxIEFNZGQYAgUeX19Db250cm9sc1JlcXVpcmVQb3N0QmFja0tleV9fFgMFHmN0bDAwJE1haW5Db250ZW50JEltYWdlQnV0dG9uMgUdY3RsMDAkTWFpbkNvbnRlbnQkbHN0UHJvZ3JhbXMFHmN0bDAwJE1haW5Db250ZW50JEltYWdlQnV0dG9uMQUhY3RsMDAkTWFpbkNvbnRlbnQkZ3ZTZWFyY2hSZXN1bHRzDzwrAAwBCAIBZL7uy040d5NrwDJfj3lIMXm7+R4H" />
+
+
+<script src="/ScriptResource.axd?d=C3SCPT7cxW9L0JZEvulI3OCKCO4zdbGH12XO_XTiLtl7pu0lP_YZOYvC2eNk1mA1sGV3o3MvWT6YDrdHa-C1iXeNf53TXKDidCvGvPPs6Mne3tJb0&amp;t=ffffffffec54f2d7" type="text/javascript"></script>
+<script src="/default.aspx?_TSM_HiddenField_=ctl00_ctl03_HiddenField&amp;_TSM_CombinedScripts_=%3b%3bAjaxControlToolkit%2c+Version%3d3.5.40412.0%2c+Culture%3dneutral%2c+PublicKeyToken%3d28f01b0e84b6d53e%3aen-US%3a1547e793-5b7e-48fe-8490-03a375b13a33%3a475a4ef5%3a5546a2b%3ad2e10b12%3a497ef277%3aeffe2a26" type="text/javascript"></script>
+<script src="/ScriptResource.axd?d=UJRd1h2Acp4o791b3R-Z8uy5XQJtiLS0AndpcvNhAnyahW595hRYXyxY7Qt-e1sgwsXFyg-vrgWz6fwwuAewCd_GnTA-KlhHQth315zywURcffThtYUojwo4qY_Qi5ozIzwsCg2&amp;t=ffffffffec54f2d7" type="text/javascript"></script>
+<input type="hidden" name="__VIEWSTATEGENERATOR" id="__VIEWSTATEGENERATOR" value="CA0B0334" />
+    
+        
+        <div align="center">
+        <div id="framePage">
+        
+            <div class="resetMargins">
+            
+                <div style="text-align:left; padding-left:15px;"><br /><br /><br />
+                <table width="100%">
+                    <tr>
+                        <td style="width:33%"><div style="float:left"><img id="ctl00_imgPageBanner" src="images/Logo.png" alt="U.S. Department of the Treasury Banner" /></div></td>
+                        <td style="text-align:center; vertical-align:middle">
+                                <p class="headerText">&nbsp;</p>
+                                <p class="headerText">Sanctions List Search</p>
+                        </td>
+                        <td style="width:33%">&nbsp;</td>
+                    </tr>
+                </table>
+                </div>
+                <div style="padding: 0 38px 0 38px; ">
+                    <table width="100%" cellpadding="0" cellspacing="0">
+                        <tr>
+                            <td colspan="3" style="text-align:left">
+                            <span id="ctl00_lblDisclaimer" class="disclaimer">Specially Designated Nationals and Blocked Persons list ("SDN List") and all other sanctions lists administered by OFAC, including the Foreign Sanctions Evaders List, the Non-SDN Iran Sanctions Act List, the Sectoral Sanctions Identifications List, the List of Foreign Financial Institutions Subject to Correspondent Account or Payable-Through Account Sanctions and the Non-SDN Palestinian Legislative Council List. Given the number of lists that now reside in the Sanctions List Search tool, it is strongly recommended that users pay close attention to the program codes associated with each returned record. These program codes indicate how a true hit on a returned value should be treated. The Sanctions List Search tool uses approximate string matching to identify possible matches between word or character strings as entered into Sanctions List Search, and any name or name component as it appears on the SDN List and/or the various other sanctions lists. Sanctions List Search has a slider-bar that may be used to set a threshold (i.e., a confidence rating) for the closeness of any potential match returned as a result of a user's search. Sanctions List Search will detect certain misspellings or other incorrectly entered text, and will return near, or proximate, matches, based on the confidence rating set by the user via the slider-bar. OFAC does not provide recommendations with regard to the appropriateness of any specific confidence rating. Sanctions List Search is one tool offered to assist users in utilizing the SDN List and/or the various other sanctions lists; use of Sanctions List Search is not a substitute for undertaking appropriate due diligence. The use of Sanctions List Search does not limit any criminal or civil liability for any act undertaken as a result of, or in reliance on, such use.</span></td>
+                        </tr>
+                        <tr>
+                            <td colspan="3">&nbsp;</td>
+                        </tr>
+                        <tr>
+                            <td style="text-align:left; width:33%;">
+                                 
+                                 <a id="ctl00_hlDownloadSDN" href="https://home.treasury.gov/policy-issues/financial-sanctions/specially-designated-nationals-list-data-formats-data-schemas" target="_blank" style="color:#2F4F4F">Download the SDN List</a>
+                            
+                            </td>
+
+                            <td style="text-align:center; width:34%;">
+                                <a id="ctl00_hlRulesForUse" href="https://home.treasury.gov/policy-issues/financial-sanctions/faqs/287" target="_blank" style="color:#2F4F4F">Sanctions List Search:  Rules for use</a>
+                            </td>
+                            
+                            <td style="text-align:right; width:33%;">
+                                        <a id="ctl00_hlOFAC" href="https://home.treasury.gov/policy-issues/office-of-foreign-assets-control-sanctions-programs-and-information" target="_blank" style="color:#2F4F4F">Visit The OFAC Website</a>
+                                        
+                            </td>                     
+                        </tr>
+                         <tr>
+                            <td colspan="3">&nbsp;</td>
+                        </tr>
+                        <tr>
+                            <td style="text-align:left; width:33%;">
+                                 
+                                 <a id="ctl00_hlDownloadFSE" href="https://home.treasury.gov/policy-issues/financial-sanctions/consolidated-sanctions-list-data-files" target="_blank" style="color:#2F4F4F">Download the Consolidated Non-SDN List</a>
+                            
+                            </td>                 
+                            <td style="width:34%;"></td>
+                            <td style="text-align:right; width:33%;">
+                                <a id="ctl00_hlProgramKey" href="https://home.treasury.gov/policy-issues/financial-sanctions/specially-designated-nationals-list-sdn-list/program-tag-definitions-for-ofac-sanctions-lists" target="_blank" style="color:#2F4F4F">Program Code Key</a>
+                            </td>   
+                        </tr>
+                    </table>
+                </div>
+                <div id="mainContentPadding" style="background-color:White; padding-bottom:1px;">
+                    <div id="mainContentBox" >
+                        
+    <div class="groupedContent">
+        <div class="content">
+            <div style="padding-bottom:5px">
+                <span id="ctl00_MainContent_lblSearch" class="fieldHeader">Lookup</span>
+                <input type="image" name="ctl00$MainContent$ImageButton2" id="ctl00_MainContent_ImageButton2" src="images/printerIcon.gif" alt="Click to print screen." align="right" onclick="window.print();" />
+            </div>
+            <div id="ctl00_MainContent_pnlSearch" class="Panel">
+	
+                <table class="MainTable">
+                    <tr>
+                        <td class="styleIndent">&nbsp;</td>
+                        <td class="Labels"><span id="ctl00_MainContent_lblType" class="fieldHeader" for="ctl00_MainContent_ddlType">Type:</span></td>
+                        <td class="styleColumnBody">
+                            <select name="ctl00$MainContent$ddlType" id="ctl00_MainContent_ddlType" tabindex="1" Title="Select an SDN Type">
+		<option value="">All</option>
+		<option value="Aircraft">Aircraft</option>
+		<option value="Entity">Entity</option>
+		<option selected="selected" value="Individual">Individual</option>
+		<option value="Vessel">Vessel</option>
+
+	</select>
+                        </td>
+                        <td><span id="ctl00_MainContent_lblAddress" class="fieldHeader" for="ctl00_MainContent_txtAddress">Address:</span></td>
+                        <td class="styleColumnBody">
+                            <input name="ctl00$MainContent$txtAddress" type="text" maxlength="1000" id="ctl00_MainContent_txtAddress" tabindex="5" Title="Enter part of an address as search criteria." />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="styleIndent">&nbsp;</td>
+                        <td class="Labels"><span id="ctl00_MainContent_lblLastName" class="fieldHeader" for="ctl00_MainContent_txtLastName">Name:</span></td>
+                        <td class="styleColumnBody">
+                            <input name="ctl00$MainContent$txtLastName" type="text" value="Tatyana Li" maxlength="250" id="ctl00_MainContent_txtLastName" tabindex="2" Title="Enter name as search criteria." />
+                        </td>
+                        <td class="Labels"><span id="ctl00_MainContent_lblCity" class="fieldHeader" for="ctl00_MainContent_txtCity">City:</span></td>
+                        <td class="styleColumnBody">
+                            <input name="ctl00$MainContent$txtCity" type="text" maxlength="250" id="ctl00_MainContent_txtCity" tabindex="6" Title="Enter city name as search criteria." />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="styleIndent">&nbsp;</td>
+                        <td class="Labels"><span id="ctl00_MainContent_lblID" class="fieldHeader">ID # / Digital Currency Address:</span></td>
+                        <td class="styleColumnBody">
+                            <input name="ctl00$MainContent$txtID" type="text" maxlength="250" id="ctl00_MainContent_txtID" tabindex="4" Title="Enter ID number or digital currency address as search criteria." />
+                        </td>
+                        
+                        <td class="Labels"><span id="ctl00_MainContent_lblState" class="fieldHeader" for="ctl00_MainContent_txtState">State/Province:*</span></td>
+                        <td class="styleColumnBody">
+                            <input name="ctl00$MainContent$txtState" type="text" maxlength="250" id="ctl00_MainContent_txtState" tabindex="7" Title="Enter state abbreviation or province name as search criteria." />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="styleIndent">&nbsp;</td>
+                        <td class="Labels"><span id="ctl00_MainContent_lblProgram" class="fieldHeader" for="ctl00_MainContent_lstPrograms">Program:</span></td>
+                        <td class="styleColumnBody">
+                            
+                                <select size="4" name="ctl00$MainContent$lstPrograms" multiple="multiple" id="ctl00_MainContent_lstPrograms" tabindex="3" class="programList" Title="Select one or more sanctions program(s) as search criteria.">
+		<option value="">All</option>
+		<option value="561-Related">561-Related</option>
+		<option value="BALKANS">BALKANS</option>
+		<option value="BALKANS-EO14033">BALKANS-EO14033</option>
+		<option value="BELARUS">BELARUS</option>
+		<option value="BELARUS-EO14038">BELARUS-EO14038</option>
+		<option value="BURMA-EO14014">BURMA-EO14014</option>
+		<option value="CAATSA - IRAN">CAATSA - IRAN</option>
+		<option value="CAATSA - RUSSIA">CAATSA - RUSSIA</option>
+		<option value="CAR">CAR</option>
+		<option value="CMIC-EO13959">CMIC-EO13959</option>
+		<option value="CUBA">CUBA</option>
+		<option value="CYBER2">CYBER2</option>
+		<option value="DARFUR">DARFUR</option>
+		<option value="DPRK">DPRK</option>
+		<option value="DPRK2">DPRK2</option>
+		<option value="DPRK3">DPRK3</option>
+		<option value="DPRK4">DPRK4</option>
+		<option value="DPRK-NKSPEA">DPRK-NKSPEA</option>
+		<option value="DRCONGO">DRCONGO</option>
+		<option value="ELECTION-EO13848">ELECTION-EO13848</option>
+		<option value="ETHIOPIA-EO14046">ETHIOPIA-EO14046</option>
+		<option value="FSE-IR">FSE-IR</option>
+		<option value="FTO">FTO</option>
+		<option value="GLOMAG">GLOMAG</option>
+		<option value="HIFPAA">HIFPAA</option>
+		<option value="HK-EO13936">HK-EO13936</option>
+		<option value="HRIT-IR">HRIT-IR</option>
+		<option value="HRIT-SY">HRIT-SY</option>
+		<option value="IFCA">IFCA</option>
+		<option value="IFSR">IFSR</option>
+		<option value="ILLICIT-DRUGS-EO14059">ILLICIT-DRUGS-EO14059</option>
+		<option value="IRAN">IRAN</option>
+		<option value="IRAN-CON-ARMS-EO">IRAN-CON-ARMS-EO</option>
+		<option value="IRAN-EO13846">IRAN-EO13846</option>
+		<option value="IRAN-EO13871">IRAN-EO13871</option>
+		<option value="IRAN-EO13876">IRAN-EO13876</option>
+		<option value="IRAN-EO13902">IRAN-EO13902</option>
+		<option value="IRAN-HR">IRAN-HR</option>
+		<option value="IRAN-TRA">IRAN-TRA</option>
+		<option value="IRAQ2">IRAQ2</option>
+		<option value="IRAQ3">IRAQ3</option>
+		<option value="IRGC">IRGC</option>
+		<option value="ISA">ISA</option>
+		<option value="LEBANON">LEBANON</option>
+		<option value="LIBYA2">LIBYA2</option>
+		<option value="LIBYA3">LIBYA3</option>
+		<option value="MAGNIT">MAGNIT</option>
+		<option value="MALI-EO13882">MALI-EO13882</option>
+		<option value="NICARAGUA">NICARAGUA</option>
+		<option value="NICARAGUA-NHRAA">NICARAGUA-NHRAA</option>
+		<option value="NPWMD">NPWMD</option>
+		<option value="NS-PLC">NS-PLC</option>
+		<option value="PEESA">PEESA</option>
+		<option value="PEESA-EO14039">PEESA-EO14039</option>
+		<option value="RUSSIA-EO14024">RUSSIA-EO14024</option>
+		<option value="RUSSIA-EO14065">RUSSIA-EO14065</option>
+		<option value="SDGT">SDGT</option>
+		<option value="SDNT">SDNT</option>
+		<option value="SDNTK">SDNTK</option>
+		<option value="SOMALIA">SOMALIA</option>
+		<option value="SOUTH SUDAN">SOUTH SUDAN</option>
+		<option value="SSIDES">SSIDES</option>
+		<option value="SYRIA">SYRIA</option>
+		<option value="SYRIA-CAESAR">SYRIA-CAESAR</option>
+		<option value="SYRIA-EO13894">SYRIA-EO13894</option>
+		<option value="TCO">TCO</option>
+		<option value="UKRAINE-EO13660">UKRAINE-EO13660</option>
+		<option value="UKRAINE-EO13661">UKRAINE-EO13661</option>
+		<option value="UKRAINE-EO13662">UKRAINE-EO13662</option>
+		<option value="UKRAINE-EO13685">UKRAINE-EO13685</option>
+		<option value="VENEZUELA">VENEZUELA</option>
+		<option value="VENEZUELA-EO13850">VENEZUELA-EO13850</option>
+		<option value="VENEZUELA-EO13884">VENEZUELA-EO13884</option>
+		<option value="YEMEN">YEMEN</option>
+		<option value="ZIMBABWE">ZIMBABWE</option>
+
+	</select>
+                        </td>
+                        <td class="Labels">
+                            <div>
+                                <span id="ctl00_MainContent_lblCountry" class="fieldHeader" for="ctl00_MainContent_ddlCountry">Country:</span>
+                            </div>
+                            <div class="stackedLabel">
+                                <label for="ctl00_MainContent_ddlList" id="ctl00_MainContent_lblList" class="fieldHeader">List:</label>
+                            </div>
+                        </td>
+                        <td class="styleColumnBody">
+                            <div>
+                                <select name="ctl00$MainContent$ddlCountry" id="ctl00_MainContent_ddlCountry" tabindex="8" Title="Select a country as search criteria.">
+		<option selected="selected" value="">All</option>
+		<option value="Afghanistan">Afghanistan</option>
+		<option value="Albania">Albania</option>
+		<option value="Algeria">Algeria</option>
+		<option value="Angola">Angola</option>
+		<option value="Argentina">Argentina</option>
+		<option value="Armenia">Armenia</option>
+		<option value="Aruba">Aruba</option>
+		<option value="Australia">Australia</option>
+		<option value="Austria">Austria</option>
+		<option value="Azerbaijan">Azerbaijan</option>
+		<option value="Bahamas, The">Bahamas, The</option>
+		<option value="Bahrain">Bahrain</option>
+		<option value="Bangladesh">Bangladesh</option>
+		<option value="Barbados">Barbados</option>
+		<option value="Belarus">Belarus</option>
+		<option value="Belgium">Belgium</option>
+		<option value="Belize">Belize</option>
+		<option value="Benin">Benin</option>
+		<option value="Bermuda">Bermuda</option>
+		<option value="Bolivia">Bolivia</option>
+		<option value="Bosnia and Herzegovina">Bosnia and Herzegovina</option>
+		<option value="Brazil">Brazil</option>
+		<option value="Brunei">Brunei</option>
+		<option value="Bulgaria">Bulgaria</option>
+		<option value="Burkina Faso">Burkina Faso</option>
+		<option value="Burma">Burma</option>
+		<option value="Cambodia">Cambodia</option>
+		<option value="Canada">Canada</option>
+		<option value="Cayman Islands">Cayman Islands</option>
+		<option value="Central African Republic">Central African Republic</option>
+		<option value="Chile">Chile</option>
+		<option value="China">China</option>
+		<option value="Colombia">Colombia</option>
+		<option value="Comoros">Comoros</option>
+		<option value="Congo, Democratic Republic of the">Congo, Democratic Republic of the</option>
+		<option value="Congo, Republic of the">Congo, Republic of the</option>
+		<option value="Costa Rica">Costa Rica</option>
+		<option value="Cote d Ivoire">Cote d Ivoire</option>
+		<option value="Croatia">Croatia</option>
+		<option value="Cuba">Cuba</option>
+		<option value="Cyprus">Cyprus</option>
+		<option value="Czech Republic">Czech Republic</option>
+		<option value="Denmark">Denmark</option>
+		<option value="Dominica">Dominica</option>
+		<option value="Dominican Republic">Dominican Republic</option>
+		<option value="Ecuador">Ecuador</option>
+		<option value="Egypt">Egypt</option>
+		<option value="El Salvador">El Salvador</option>
+		<option value="Equatorial Guinea">Equatorial Guinea</option>
+		<option value="Eritrea">Eritrea</option>
+		<option value="Estonia">Estonia</option>
+		<option value="Ethiopia">Ethiopia</option>
+		<option value="Finland">Finland</option>
+		<option value="France">France</option>
+		<option value="Georgia">Georgia</option>
+		<option value="Germany">Germany</option>
+		<option value="Ghana">Ghana</option>
+		<option value="Gibraltar">Gibraltar</option>
+		<option value="Greece">Greece</option>
+		<option value="Guatemala">Guatemala</option>
+		<option value="Guernsey">Guernsey</option>
+		<option value="Guinea">Guinea</option>
+		<option value="Guyana">Guyana</option>
+		<option value="Haiti">Haiti</option>
+		<option value="Honduras">Honduras</option>
+		<option value="Hong Kong">Hong Kong</option>
+		<option value="Hungary">Hungary</option>
+		<option value="India">India</option>
+		<option value="Indonesia">Indonesia</option>
+		<option value="Iran">Iran</option>
+		<option value="Iraq">Iraq</option>
+		<option value="Ireland">Ireland</option>
+		<option value="Israel">Israel</option>
+		<option value="Italy">Italy</option>
+		<option value="Jamaica">Jamaica</option>
+		<option value="Japan">Japan</option>
+		<option value="Jersey">Jersey</option>
+		<option value="Jordan">Jordan</option>
+		<option value="Kazakhstan">Kazakhstan</option>
+		<option value="Kenya">Kenya</option>
+		<option value="Korea, North">Korea, North</option>
+		<option value="Korea, South">Korea, South</option>
+		<option value="Kosovo">Kosovo</option>
+		<option value="Kuwait">Kuwait</option>
+		<option value="Kyrgyzstan">Kyrgyzstan</option>
+		<option value="Laos">Laos</option>
+		<option value="Latvia">Latvia</option>
+		<option value="Lebanon">Lebanon</option>
+		<option value="Liberia">Liberia</option>
+		<option value="Libya">Libya</option>
+		<option value="Liechtenstein">Liechtenstein</option>
+		<option value="Luxembourg">Luxembourg</option>
+		<option value="Macau">Macau</option>
+		<option value="Malaysia">Malaysia</option>
+		<option value="Maldives">Maldives</option>
+		<option value="Mali">Mali</option>
+		<option value="Malta">Malta</option>
+		<option value="Marshall Islands">Marshall Islands</option>
+		<option value="Mauritania">Mauritania</option>
+		<option value="Mexico">Mexico</option>
+		<option value="Moldova">Moldova</option>
+		<option value="Monaco">Monaco</option>
+		<option value="Mongolia">Mongolia</option>
+		<option value="Montenegro">Montenegro</option>
+		<option value="Morocco">Morocco</option>
+		<option value="Mozambique">Mozambique</option>
+		<option value="Namibia">Namibia</option>
+		<option value="Netherlands">Netherlands</option>
+		<option value="Netherlands Antilles">Netherlands Antilles</option>
+		<option value="New Zealand">New Zealand</option>
+		<option value="Nicaragua">Nicaragua</option>
+		<option value="Niger">Niger</option>
+		<option value="Nigeria">Nigeria</option>
+		<option value="North Macedonia, The Republic of">North Macedonia, The Republic of</option>
+		<option value="Norway">Norway</option>
+		<option value="Oman">Oman</option>
+		<option value="Pakistan">Pakistan</option>
+		<option value="Palau">Palau</option>
+		<option value="Palestinian">Palestinian</option>
+		<option value="Panama">Panama</option>
+		<option value="Paraguay">Paraguay</option>
+		<option value="Peru">Peru</option>
+		<option value="Philippines">Philippines</option>
+		<option value="Poland">Poland</option>
+		<option value="Qatar">Qatar</option>
+		<option value="Region: Commonwealth of Independent States">Region: Commonwealth of Independent States</option>
+		<option value="Region: Crimea">Region: Crimea</option>
+		<option value="Region: Gaza">Region: Gaza</option>
+		<option value="Region: Kafia Kingi">Region: Kafia Kingi</option>
+		<option value="Region: Northern Mali">Region: Northern Mali</option>
+		<option value="Romania">Romania</option>
+		<option value="Russia">Russia</option>
+		<option value="Rwanda">Rwanda</option>
+		<option value="Saint Kitts and Nevis">Saint Kitts and Nevis</option>
+		<option value="Saint Vincent and the Grenadines">Saint Vincent and the Grenadines</option>
+		<option value="Samoa">Samoa</option>
+		<option value="San Marino">San Marino</option>
+		<option value="Saudi Arabia">Saudi Arabia</option>
+		<option value="Senegal">Senegal</option>
+		<option value="Serbia">Serbia</option>
+		<option value="Seychelles">Seychelles</option>
+		<option value="Sierra Leone">Sierra Leone</option>
+		<option value="Singapore">Singapore</option>
+		<option value="Slovakia">Slovakia</option>
+		<option value="Slovenia">Slovenia</option>
+		<option value="Somalia">Somalia</option>
+		<option value="South Africa">South Africa</option>
+		<option value="South Sudan">South Sudan</option>
+		<option value="Spain">Spain</option>
+		<option value="Sri Lanka">Sri Lanka</option>
+		<option value="Sudan">Sudan</option>
+		<option value="Sweden">Sweden</option>
+		<option value="Switzerland">Switzerland</option>
+		<option value="Syria">Syria</option>
+		<option value="Taiwan">Taiwan</option>
+		<option value="Tajikistan">Tajikistan</option>
+		<option value="Tanzania">Tanzania</option>
+		<option value="Thailand">Thailand</option>
+		<option value="The Gambia">The Gambia</option>
+		<option value="Trinidad and Tobago">Trinidad and Tobago</option>
+		<option value="Tunisia">Tunisia</option>
+		<option value="Turkey">Turkey</option>
+		<option value="Turkmenistan">Turkmenistan</option>
+		<option value="Uganda">Uganda</option>
+		<option value="Ukraine">Ukraine</option>
+		<option value="undetermined">undetermined</option>
+		<option value="United Arab Emirates">United Arab Emirates</option>
+		<option value="United Kingdom">United Kingdom</option>
+		<option value="United States">United States</option>
+		<option value="Uruguay">Uruguay</option>
+		<option value="Uzbekistan">Uzbekistan</option>
+		<option value="Vanuatu">Vanuatu</option>
+		<option value="Venezuela">Venezuela</option>
+		<option value="Vietnam">Vietnam</option>
+		<option value="Virgin Islands, British">Virgin Islands, British</option>
+		<option value="West Bank">West Bank</option>
+		<option value="Yemen">Yemen</option>
+		<option value="Zambia">Zambia</option>
+		<option value="Zimbabwe">Zimbabwe</option>
+
+	</select>
+                            </div>
+                            <div class="stackedSelect">
+                                <select name="ctl00$MainContent$ddlList" id="ctl00_MainContent_ddlList" tabindex="9" Title="Select list(s) as search criteria.">
+		<option selected="selected" value="">All</option>
+		<option value="Non-SDN">Non-SDN</option>
+		<option value="SDN">SDN</option>
+
+	</select>
+                            </div>
+                        </td>
+                        
+                    </tr>
+                    <tr>
+                        <td class="styleIndent">&nbsp;</td>
+                        <td class="Labels"><span id="ctl00_MainContent_lblMinScore" class="fieldHeader">Minimum Name Score:</span></td>
+                        <td class="styleColumnBody">
+                           <table width="205px" cellpadding="0" cellspacing="0"><tr>
+                            <td><input name="ctl00$MainContent$Slider1" type="text" value="100" id="ctl00_MainContent_Slider1" /></td>
+                            <td style="text-align:right"><input name="ctl00$MainContent$Slider1_Boundcontrol" type="text" value="100" maxlength="5" id="ctl00_MainContent_Slider1_Boundcontrol" Title="Enter minimum matching score." border="1" /></td>
+                            </tr></table>
+                       
+                            
+                        </td>
+                        <td class="Labels"></td>
+                        <td style="text-align: left">
+                            <input type="submit" name="ctl00$MainContent$btnSearch" value="Search" id="ctl00_MainContent_btnSearch" tabindex="9" />&nbsp;&nbsp;
+                            <input type="submit" name="ctl00$MainContent$btnReset" value="Reset" id="ctl00_MainContent_btnReset" tabindex="10" />
+                        </td>
+                    </tr>                 
+                    
+                    
+                    
+                    
+                    
+                </table>
+                
+            
+</div>
+            <br />
+
+            
+            <div id="ctl00_MainContent_divResults" style="padding-bottom:5px">
+                <span id="ctl00_MainContent_lblResults" class="fieldHeader">Lookup Results: 19 Found</span>
+                <input type="image" name="ctl00$MainContent$ImageButton1" id="ctl00_MainContent_ImageButton1" src="images/excel.gif" alt="Click to export results to Excel." align="right" />
+            </div>
+            
+            <div id="ctl00_MainContent_pnlResults" class="Panel">
+	
+
+                <div >
+                    <table id="resultsHeaderTable" width="903px" style="margin-left:0; margin-right: 0px;">
+		<tr>
+			<td style="text-align:left; width:36%">
+                                <a id="ctl00_MainContent_btnSortLastName" class="resultHeader" href="javascript:__doPostBack(&#39;ctl00$MainContent$btnSortLastName&#39;,&#39;&#39;)" style="color:#000080">Name</a>
+                                    
+                                    </td>
+			<td style="text-align:left; width:30%">
+                                <a id="ctl00_MainContent_btnSortAddress" class="resultHeader" href="javascript:__doPostBack(&#39;ctl00$MainContent$btnSortAddress&#39;,&#39;&#39;)" style="color:#000080">Address</a>
+                                    
+                                    </td>
+			<td style="text-align:left; width:10%">
+                                <a id="ctl00_MainContent_btnSortType" class="resultHeader" href="javascript:__doPostBack(&#39;ctl00$MainContent$btnSortType&#39;,&#39;&#39;)" style="color:#000080">Type</a>
+                                    
+                                    </td>
+			<td style="text-align:left; width:10%">
+                                <a id="ctl00_MainContent_btnSortPrograms" class="resultHeader" href="javascript:__doPostBack(&#39;ctl00$MainContent$btnSortPrograms&#39;,&#39;&#39;)" style="color:#000080">Program(s)</a>
+                                    
+                                    </td>
+			<td style="text-align:left; width:7%">
+                                <a id="ctl00_MainContent_btnSortList" class="resultHeader" href="javascript:__doPostBack(&#39;ctl00$MainContent$btnSortList&#39;,&#39;&#39;)" style="color:#000080">List</a>
+                                    
+                                    </td>
+			<td style="text-align:left; width:7%">
+                                <a id="ctl00_MainContent_btnSortScore" class="resultHeader" href="javascript:__doPostBack(&#39;ctl00$MainContent$btnSortScore&#39;,&#39;&#39;)" style="color:#000080">Score</a>
+                                    <img id="ctl00_MainContent_imgScore" src="images/desc.gif" />
+                                    </td>
+		</tr>
+	</table>
+	
+                </div>
+                <div id="scrollResults" class="ResultsDiv">
+                    
+                    <div>
+		<table cellspacing="0" id="gvSearchResults" width="900">
+			<tr>
+				<td width="36%"><a href="Details.aspx?id=35614">DYAKONOVA, Tatyana Ivanovna</a></td><td width="30%">&nbsp;</td><td width="10%">Individual</td><td width="10%">RUSSIA-EO14024</td><td width="7%">SDN</td><td width="7%">100</td>
+			</tr><tr class="alternatingRowColor">
+				<td width="36%"><a href="Details.aspx?id=37845">EGEREVA, Tatyana Borisovna</a></td><td width="30%">Str. Profsoyuznaya 136-1-200</td><td width="10%">Individual</td><td width="10%">RUSSIA-EO14024</td><td width="7%">SDN</td><td width="7%">100</td>
+			</tr><tr>
+				<td width="36%"><a href="Details.aspx?id=36790">GIGEL, Tatyana Anatolyevna</a></td><td width="30%">&nbsp;</td><td width="10%">Individual</td><td width="10%">RUSSIA-EO14024</td><td width="7%">SDN</td><td width="7%">100</td>
+			</tr><tr class="alternatingRowColor">
+				<td width="36%"><a href="Details.aspx?id=41005">GOLIKOVA, Tatyana Alekseevna</a></td><td width="30%">&nbsp;</td><td width="10%">Individual</td><td width="10%">RUSSIA-EO14024</td><td width="7%">SDN</td><td width="7%">100</td>
+			</tr><tr>
+				<td width="36%"><a href="Details.aspx?id=41005">GOLIKOVA, Tatyana Alekseyevna</a></td><td width="30%">&nbsp;</td><td width="10%">Individual</td><td width="10%">RUSSIA-EO14024</td><td width="7%">SDN</td><td width="7%">100</td>
+			</tr><tr class="alternatingRowColor">
+				<td width="36%"><a href="Details.aspx?id=37845">GORLACH, Tatyana Borisovna</a></td><td width="30%">Str. Profsoyuznaya 136-1-200</td><td width="10%">Individual</td><td width="10%">RUSSIA-EO14024</td><td width="7%">SDN</td><td width="7%">100</td>
+			</tr><tr>
+				<td width="36%"><a href="Details.aspx?id=35790">KOVALCHUK, Tatyana Aleksandrovna</a></td><td width="30%">&nbsp;</td><td width="10%">Individual</td><td width="10%">RUSSIA-EO14024</td><td width="7%">SDN</td><td width="7%">100</td>
+			</tr><tr class="alternatingRowColor">
+				<td width="36%"><a href="Details.aspx?id=35790">KOVALCHUK, Tatyana Alexandrovna</a></td><td width="30%">&nbsp;</td><td width="10%">Individual</td><td width="10%">RUSSIA-EO14024</td><td width="7%">SDN</td><td width="7%">100</td>
+			</tr><tr>
+				<td width="36%"><a href="Details.aspx?id=37844">KUREPINA, Tatyana Vladimirovna</a></td><td width="30%">A 148 3 Chobotovskaya Street</td><td width="10%">Individual</td><td width="10%">RUSSIA-EO14024</td><td width="7%">SDN</td><td width="7%">100</td>
+			</tr><tr class="alternatingRowColor">
+				<td width="36%"><a href="Details.aspx?id=35659">KUSAYKO, Tatyana Alekseyevna</a></td><td width="30%">&nbsp;</td><td width="10%">Individual</td><td width="10%">RUSSIA-EO14024</td><td width="7%">SDN</td><td width="7%">100</td>
+			</tr><tr>
+				<td width="36%"><a href="Details.aspx?id=39214">KUZMICH, Tatyana Aleksandrovna</a></td><td width="30%">Apt. 20, 42 Moskovskaya St.</td><td width="10%">Individual</td><td width="10%">RUSSIA-EO14024</td><td width="7%">SDN</td><td width="7%">100</td>
+			</tr><tr class="alternatingRowColor">
+				<td width="36%"><a href="Details.aspx?id=35668">LOBACH, Tatyana Georgiyevna</a></td><td width="30%">&nbsp;</td><td width="10%">Individual</td><td width="10%">RUSSIA-EO14024</td><td width="7%">SDN</td><td width="7%">100</td>
+			</tr><tr>
+				<td width="36%"><a href="Details.aspx?id=35766">NAVKA, Tatyana</a></td><td width="30%">13-3-22 Bolshaya Yakimanka</td><td width="10%">Individual</td><td width="10%">RUSSIA-EO14024</td><td width="7%">SDN</td><td width="7%">100</td>
+			</tr><tr class="alternatingRowColor">
+				<td width="36%"><a href="Details.aspx?id=36382">NESTERENKO, Tatyana Gennadevna</a></td><td width="30%">&nbsp;</td><td width="10%">Individual</td><td width="10%">RUSSIA-EO14024</td><td width="7%">SDN</td><td width="7%">100</td>
+			</tr><tr>
+				<td width="36%"><a href="Details.aspx?id=36382">NESTERENKO, Tatyana Gennadievna</a></td><td width="30%">&nbsp;</td><td width="10%">Individual</td><td width="10%">RUSSIA-EO14024</td><td width="7%">SDN</td><td width="7%">100</td>
+			</tr><tr class="alternatingRowColor">
+				<td width="36%"><a href="Details.aspx?id=36382">NESTERENKO, Tatyana Gennadyevna</a></td><td width="30%">&nbsp;</td><td width="10%">Individual</td><td width="10%">RUSSIA-EO14024</td><td width="7%">SDN</td><td width="7%">100</td>
+			</tr><tr>
+				<td width="36%"><a href="Details.aspx?id=37783">PEREVERZEVA, Tatyana Viktorovna</a></td><td width="30%">&nbsp;</td><td width="10%">Individual</td><td width="10%">RUSSIA-EO14065</td><td width="7%">SDN</td><td width="7%">100</td>
+			</tr><tr class="alternatingRowColor">
+				<td width="36%"><a href="Details.aspx?id=36863">SAKHAROVA, Tatyana Anatolyevna</a></td><td width="30%">&nbsp;</td><td width="10%">Individual</td><td width="10%">RUSSIA-EO14024</td><td width="7%">SDN</td><td width="7%">100</td>
+			</tr><tr>
+				<td width="36%"><a href="Details.aspx?id=39210">TOMILINA, Tatyana Yurievna</a></td><td width="30%">Apartment 25; 16 Chernomorskaya Street</td><td width="10%">Individual</td><td width="10%">RUSSIA-EO14024</td><td width="7%">SDN</td><td width="7%">100</td>
+			</tr>
+		</table>
+	</div>
+                </div>
+            
+</div>
+           
+        </div>
+        <table width="100%">
+            <tr>
+                <td align="center" style="text-align: center"><span id="ctl00_MainContent_lblStateFootnote" class="disclaimer">* U.S. states are abbreviated on the SDN and Non-SDN lists.  To search for a specific U.S. state, please use the two letter U.S. Postal Service abbreviation.</span></td>
+            </tr>
+        </table>
+    </div>
+
+                    </div>
+                </div>
+                
+                <div style="padding: 0 13px 0 13px; ">
+                    <table width="100%" cellpadding="0" cellspacing="0">
+                        <tr>
+                        <td style="text-align:center; padding:0 25px 0 25px;"><span id="ctl00_lblSDNPubDate" class="postedDate">SDN List last updated on: 3/1/2023 10:03:15 AM</span></td>
+                        </tr>
+                        <tr>
+                        <td style="text-align:center; padding:0 25px 0 25px;"><span id="ctl00_lblFSEPubDate" class="postedDate">Non-SDN List last updated on: 2/24/2023 9:02:31 AM</span></td>
+                        </tr>
+                        <tr><td colspan="2" style="text-align:center"></td></tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+        &nbsp;
+        </div>
+    
+
+<script type="text/javascript">
+//<![CDATA[
+(function() {var fn = function() {$get("ctl00_ctl03_HiddenField").value = '';Sys.Application.remove_init(fn);};Sys.Application.add_init(fn);})();Sys.Application.add_init(function() {
+    $create(Sys.Extended.UI.SliderBehavior, {"BoundControlID":"ctl00_MainContent_Slider1_Boundcontrol","EnableHandleAnimation":true,"Maximum":100,"Minimum":50,"TooltipText":"Select your minimum matching score.","id":"Slider1"}, null, null, $get("ctl00_MainContent_Slider1"));
+});
+//]]>
+</script>
+</form>
+</body>
+</html>
