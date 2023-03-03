@@ -2,12 +2,12 @@
 
 // There are too many god-damned node html parsers, and they are disgustingly incestuous.
 // Some common ones are:
-//  parse5            slower but "the only fully-compliant parser"
-//  htmlparser2       pretty complete and fast, but big (multi-module)
-//  html5parser       only valid html5
-//  node-html-parser  fast good enough
-//  fast-html-parser  fast older
+//  parse5            "the only fully-compliant parser" but slower, difficult to use
 //  htmljs-parser     fastest but difficult to use
+//  htmlparser2       pretty complete and fast, but big (multi-module)
+//  html5parser       only processes valid html5
+//  node-html-parser  fast good enough
+//  fast-html-parser  fast older, seems a predecessor of node-html-parser
 //
 // POPULARITY
 // https://npmtrends.com/fast-html-parser-vs-htmlparser2-vs-node-html-parser-vs-parse5
@@ -57,6 +57,11 @@ resultsTable.childNodes.forEach( r => {
     console.log( r.childNodes.find( c => c.rawTagName === 'td' ).rawText );
   }
 });
+// ----------------
+
+// ----------------
+// fast-html-parser
+// very similar to node-html-parser, but (eg) uses tagName instead of rawTagName
 // ----------------
 
 // ----------------
