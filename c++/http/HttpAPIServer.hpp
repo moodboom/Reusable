@@ -251,7 +251,9 @@ inline void HttpAPIServer::add_static_file_handlers(const vector<string>& static
             // a CRLF at the START of the header.
             
             string content_type = "\r\nContent-Type: ";
-            if ( b_string_ends_in( request->path, ".css" ))
+            if ( b_string_ends_in( request->path, ".html" ))
+              content_type += "text/html";
+            else if ( b_string_ends_in( request->path, ".css" ))
               content_type += "text/css";
             else if ( b_string_ends_in( request->path, ".js" ))
               content_type += "text/javascript";
