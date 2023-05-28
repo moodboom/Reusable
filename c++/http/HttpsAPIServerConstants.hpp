@@ -11,13 +11,14 @@ const string semanticVersion();
 
 typedef enum
 {
-    // assert( HM_COUNT == 5 );
+    // assert( HM_COUNT == 6 );
     HM_FIRST    = 0,
     HM_GET      = HM_FIRST,
     HM_PUT      ,
     HM_POST     ,
     HM_DELETE   ,
     HM_PATCH    ,
+    HM_OPTIONS  ,
 
     HM_COUNT
 } HTML_METHOD;
@@ -151,6 +152,7 @@ public:
             case HM_POST     : return "POST"    ;
             case HM_DELETE   : return "DELETE"  ;
             case HM_PATCH    : return "PATCH"   ;
+            case HM_OPTIONS  : return "OPTIONS"  ;
             default          : return "Unsupported method";
         }
     }

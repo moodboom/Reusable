@@ -144,6 +144,14 @@ protected:
     bool tokenize_API_url(HReq &request, std::string& protocol, std::string& host, API_call& ac);
     bool tokenize_API_querystring(const std::string& querystring, API_call& ac);
     void badCall(HRes &response, const string msg, int delay_secs = 1);
+    
+    void createJSONResponse( HRes& response, const string& strSent = "", const string& header = "" ) {
+        *response << cstr_HTML_HEADER1 << strSent.length() << header << cstr_JSON_FULLHEADER2 << strSent;
+    }
+    void createHTMLResponse( HRes& response, const string& strBody = "", const string& header = "" ) {
+        *response << cstr_HTML_HEADER1 << strBody.length() << header << cstr_HTML_FULLHEADER2 << strBody;
+    }
+
     string requestError(const Request &request, const string msg);
 
 private:
