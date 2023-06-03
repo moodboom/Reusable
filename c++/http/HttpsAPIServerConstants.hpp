@@ -145,6 +145,7 @@ public:
 
     string method() const
     {
+        assert( HM_COUNT == 6 );
         switch (method_)
         {
             case HM_GET      : return "GET"     ;
@@ -158,11 +159,13 @@ public:
     }
     void set_method(string m)
     {
+        assert( HM_COUNT == 6 );
              if (m == "GET"    ) method_ = HM_GET      ;
         else if (m == "PUT"    ) method_ = HM_PUT      ;
         else if (m == "POST"   ) method_ = HM_POST     ;
         else if (m == "DELETE" ) method_ = HM_DELETE   ;
         else if (m == "PATCH"  ) method_ = HM_PATCH    ;
+        else if (m == "OPTIONS") method_ = HM_OPTIONS  ;
         else method_ = HM_COUNT ;
     }
 
