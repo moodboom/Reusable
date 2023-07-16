@@ -154,6 +154,9 @@ protected:
 
     string requestError(const Request &request, const string msg);
 
+    // Static includes are any files that are served up as-is by the webserver.
+    void add_static_file_handlers(const vector<string>& static_files, const string& prefix = "htdocs");
+    
 private:
     
     void createFaviconHandler();
@@ -168,9 +171,6 @@ private:
     // Called on startup using a constructor parameter
     void set_html_includes(const vector<string>& includes);
 
-    // Static includes are any files that are served up as-is by the webserver.
-    void add_static_file_handlers(const vector<string>& static_files);
-    
     // Called on startup for each preloaded html file.
     // Search for any include files, and replace with the full script or style.
     void inject_includes(API_call& ac);
@@ -212,9 +212,9 @@ inline void HttpAPIServer::createFaviconHandler() {
 }
 
 
-inline void HttpAPIServer::add_static_file_handlers(const vector<string>& static_files) {
+inline void HttpAPIServer::add_static_file_handlers(const vector<string>& static_files, const string& prefix) {
 
-    // NOTE that these are prefixed with [htdocs] when reading from file system,
+    // NOTE that these may be prefixed when reading from file system,
     // and expected to be requested with the exact url from clients.
     
     for (auto& file : static_files)
@@ -222,7 +222,7 @@ inline void HttpAPIServer::add_static_file_handlers(const vector<string>& static
         string body;
         try
         {
-            body = read_file(string("htdocs")+file);
+            body = read_file(prefix+file);
             
             if ( b_string_ends_in( file, "js" ) || b_string_ends_in( file, "html" )) {
                 // Clean up any static data from html and js files.
