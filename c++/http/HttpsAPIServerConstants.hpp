@@ -49,6 +49,8 @@ const vector<string> c_default_wrappers =
     " <input type=\"text\" name=\"__API_token__\" class=\"form-control\" placeholder=\"__API_token__\"/> "          // HW_PARAM
 };
 
+const string cstrLongCache = "\r\nCache-Control: public, max-age=31536000";
+
 // ------------------------------------------------------------------------------
 
 
