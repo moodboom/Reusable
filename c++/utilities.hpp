@@ -70,6 +70,7 @@ using namespace std;
 //    static ptime time_t_to_ptime(const time_t& tt)
 //    static string time_t_to_string(const time_t& tt, const string& str_format)
 //    static string americanFormat(date d)
+//    static time_t convertNewYorkToUtc(time_t& t)
 // RANDOM
 //    static std::string generate_uuid()
 //    static std::string generate_random_hex(uint_fast32_t length)
@@ -583,6 +584,19 @@ static string americanFormat(const date& d)
     stringstream ss;
     ss << boost::format("%02d-%02d-%4d") % d.month() % d.day() % d.year();
     return ss.str();
+}
+// We need to convert all our apps to use UTC unix epoch milliseconds.
+// For now, we need these hack conversions.
+// NOT CORRECT but in a rush and will fix later during refactoring
+// TODO:
+// PROPER TIME EXPORT REFACTOR
+static time_t convertNewYorkToUtc(const time_t& t)
+{
+    return t - 5 * 60 * 1000;
+}
+static time_t convertUtcToNewYork(const time_t& t)
+{
+    return t + 5 * 60 * 1000;
 }
 
 
