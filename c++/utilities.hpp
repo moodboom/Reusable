@@ -592,11 +592,11 @@ static string americanFormat(const date& d)
 // PROPER TIME EXPORT REFACTOR
 static time_t convertNewYorkToUtc(const time_t& t)
 {
-    return t - 5 * 60 * 1000;
+    return t - 5 * 60 * 60;
 }
 static time_t convertUtcToNewYork(const time_t& t)
 {
-    return t + 5 * 60 * 1000;
+    return t + 5 * 60 * 60;
 }
 
 
