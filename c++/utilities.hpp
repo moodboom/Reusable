@@ -111,6 +111,10 @@ using namespace std;
 // cout << boost::format("[%8.3f|%8.3f] bought at [%8.3f]") % d_stop_price_ % d_bump_price_ % d_price_paid_;
 #include <boost/format.hpp>
 
+// And this.
+// boost::lexical_cast<int64_t>(str)
+
+// OLD, bad mikey
 // Create a global stringstream that we can reuse (and reuse and reuse and reuse... this thing is used ALL THE TIME!)
 extern stringstream g_ss;
 
