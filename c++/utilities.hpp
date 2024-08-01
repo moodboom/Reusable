@@ -43,6 +43,7 @@ using namespace std;
 //    For more powerful curl-like helpers, see: http/HttpsClientUtilities.hpp
 //   JSON
 //    // see https://www.boost.org/libs/json/
+//    static int64_t extractJSONToInt(const object &jObject, const string &field)
 //   VERSIONING
 //    // class SemVer
 //   JWT
@@ -367,6 +368,27 @@ static std::map<const std::string, std::string> parse_html(
 static std::map<const std::string, std::string> parse_cookies(const std::string &cookiedata) { return parse_html(cookiedata, "; "); }
 static std::map<const std::string, std::string> parse_url_params(const std::string &urldata) { return parse_html(urldata, "?&"); }
 static std::map<const std::string, std::string> parse_form(const std::string &formdata) { return parse_html(formdata, "&"); }
+
+//=========================================================
+//  JSON
+//=========================================================
+using boost::json::object;
+static int64_t getJSONInt(object &jObject, const string &field)
+{
+    assert(jObject.contains(field));
+    if (jObject[field].kind() == boost::json::kind::string)
+        return boost::lexical_cast<int64_t>(jObject[field].as_string().c_str());
+    assert(jObject[field].kind() == boost::json::kind::int64 || jObject[field].kind() == boost::json::kind::uint64);
+    return jObject[field].as_int64();
+}
+static double getJSONDouble(object &jObject, const string &field)
+{
+    assert(jObject.contains(field));
+    if (jObject[field].kind() == boost::json::kind::string)
+        return boost::lexical_cast<double>(jObject[field].as_string().c_str());
+    assert(jObject[field].kind() == boost::json::kind::double_);
+    return jObject[field].to_number<double>();
+}
 
 //=========================================================
 //  VERSIONING
