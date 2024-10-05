@@ -67,7 +67,9 @@ using namespace std;
 //    static time_t get_local_today_midnight()
 //    static ptime string_to_ptime(const string& str_time, const string& str_format)
 //    static ptime iso_string_to_ptime(const string& str_time)
-//    static time_t iso_string_to_time_t(const string& str_time)
+//    static ptime utc_string_to_ptime(const string &str_time)
+//    static time_t iso_string_to_time_t(const string &str_time)
+//    static time_t utc_string_to_time_t(const string &str_time)
 //    static string ptime_to_string(const ptime& pt, const string& str_format)
 //    static time_t ptime_to_time_t(const ptime& pt)
 //    static ptime time_t_to_ptime(const time_t& tt)
@@ -577,12 +579,23 @@ static ptime string_to_ptime(const string &str_time, const string &str_format)
 }
 static ptime iso_string_to_ptime(const string &str_time)
 {
-  // Config for UTC format, eg: 2014-02-23T10:11:19Z
+  // Config for UTC format, eg: 2014-02-23T10:11:19
+  // NO Z
   return string_to_ptime(str_time, "%Y-%m-%dT%H:%M:%S");
+}
+static ptime utc_string_to_ptime(const string &str_time)
+{
+  // Config for UTC format, eg: 2014-02-23T10:11:19Z
+  // WITH Z
+  return string_to_ptime(str_time, "%Y-%m-%dT%H:%M:%SZ");
 }
 static time_t iso_string_to_time_t(const string &str_time)
 {
   return ptime_to_time_t(iso_string_to_ptime(str_time));
+}
+static time_t utc_string_to_time_t(const string &str_time)
+{
+  return ptime_to_time_t(utc_string_to_ptime(str_time));
 }
 static string ptime_to_string(const ptime &pt, const string &str_format)
 {
