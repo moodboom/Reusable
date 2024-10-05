@@ -41,7 +41,9 @@ using namespace std;
 //    static std::map<const std::string,std::string> parse_form(const std::string& formdata)          { return parse_html(formdata  ,"&" ); }
 //    static std::map<const std::string,std::string> parse_html(...)
 //    For more powerful curl-like helpers, see: http/HttpsClientUtilities.hpp
-//   JSON
+//   JSON; NOTE we use boost::json AND nlohmann::json
+//    static int64_t getJSONInt(object &jObject, const string &field); NOTE we use boost::json AND nlohmann::json
+//    static double getJSONDouble(object &jObject, const string &field)
 //    // see https://www.boost.org/libs/json/
 //    static int64_t extractJSONToInt(const object &jObject, const string &field)
 //   VERSIONING
@@ -373,6 +375,22 @@ static std::map<const std::string, std::string> parse_form(const std::string &fo
 //  JSON
 //=========================================================
 using boost::json::object;
+
+static string arrayToCSV(const boost::json::array &jArray)
+{
+    string csv;
+    for (auto &j : jArray)
+    {
+        assert(j.kind() == boost::json::kind::string);
+
+        if (!csv.empty())
+            csv += ",";
+        csv += j.as_string().c_str();
+    }
+    return csv;
+}
+
+// These helpers are to deal with unpredictable APIs that may return strings or numbers.
 static int64_t getJSONInt(object &jObject, const string &field)
 {
     assert(jObject.contains(field));

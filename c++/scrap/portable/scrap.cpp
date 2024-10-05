@@ -1243,7 +1243,7 @@ R"(
     cout << "In theory you can use tag_invoke() then value_to() for boost::json::array to vector conversions... PITA..." << endl;
     cout << "In practice, people bail and use boost ptree or nlohmann, that is JUST SAD..." << endl;
     cout << "Let's just manually loop the damned thing then." << endl;
-    boost::json::array cja = { "one", "two", "three" };
+    const boost::json::array cja = { "one", "two", "three" };
     vector<string> vcja;
     for ( auto& jv : cja )
         vcja.push_back( string( jv.as_string()));
