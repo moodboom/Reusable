@@ -19,7 +19,7 @@ set(BOOST_ROOT "${ThirdParty}boost/")
 # MDM pqxx uses c++17 so here we go - why tf was this currently commented out above?
 # push to c++20
 # sync with .vscode/c_cpp_properties.json
-set (CMAKE_CXX_STANDARD 20)
+set (CMAKE_CXX_STANDARD 23)
 
 # We want -g to always sideload enough debug info for stacktraces
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g")
@@ -32,8 +32,7 @@ INCLUDE_DIRECTORIES(${Reusable})
 INCLUDE_DIRECTORIES(${ThirdParty})
 INCLUDE_DIRECTORIES(${ThirdPartyC})
 INCLUDE_DIRECTORIES(${ThirdPartyC}sqlite/)
-# Switch to boost/json.hpp (incompatible)
-# INCLUDE_DIRECTORIES(${ThirdParty}json/single_include/nlohmann/)
+INCLUDE_DIRECTORIES(${ThirdParty}json/single_include/nlohmann/)
 INCLUDE_DIRECTORIES(${ThirdParty}SQLiteCpp/include/)
 
 # MDM CMake handles boost like this...

@@ -1,4 +1,5 @@
 mkdir -p cmake-debug
 
-cd cmake-debug && cmake -static -DCMAKE_BUILD_TYPE=DEBUG .. && make
+# cd cmake-debug && cmake -static -DCMAKE_BUILD_TYPE=DEBUG .. && make
+cd cmake-debug && cmake -DCMAKE_BUILD_TYPE=DEBUG .. && make
 cd ..
