@@ -401,8 +401,7 @@ static int64_t getJSONInt(object &jObject, const string &field)
 {
   assert(jObject.contains(field));
   if (jObject[field].kind() == boost::json::kind::int64 || jObject[field].kind() == boost::json::kind::uint64)
-    ;
-  return jObject[field].as_int64();
+    return jObject[field].as_int64();
   assert(jObject[field].kind() == boost::json::kind::string);
   return boost::lexical_cast<int64_t>(jObject[field].as_string().c_str());
 }
