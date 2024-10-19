@@ -393,21 +393,29 @@ static string arrayToCSV(const boost::json::array &jArray)
 }
 
 // These helpers are to deal with unpredictable APIs that may return strings or numbers.
+// Ints can be provided as string int64 or uint64.
+// Doubles can be provided as string double int64 or uint64.
+// (We have seen all this happen in payloads in the wild.)
+// We assert on anything else.
 static int64_t getJSONInt(object &jObject, const string &field)
 {
   assert(jObject.contains(field));
-  if (jObject[field].kind() == boost::json::kind::string)
-    return boost::lexical_cast<int64_t>(jObject[field].as_string().c_str());
-  assert(jObject[field].kind() == boost::json::kind::int64 || jObject[field].kind() == boost::json::kind::uint64);
+  if (jObject[field].kind() == boost::json::kind::int64 || jObject[field].kind() == boost::json::kind::uint64)
+    ;
   return jObject[field].as_int64();
+  assert(jObject[field].kind() == boost::json::kind::string);
+  return boost::lexical_cast<int64_t>(jObject[field].as_string().c_str());
 }
 static double getJSONDouble(object &jObject, const string &field)
 {
+  // I've seen JSON payloads with unpredictably strings, doubles and ints.
+  // Keep silly type-safe boost::json happy.
   assert(jObject.contains(field));
+  if (jObject[field].kind() == boost::json::kind::double_)
+    return jObject[field].to_number<double>();
   if (jObject[field].kind() == boost::json::kind::string)
     return boost::lexical_cast<double>(jObject[field].as_string().c_str());
-  assert(jObject[field].kind() == boost::json::kind::double_);
-  return jObject[field].to_number<double>();
+  return getJSONInt(jObject, field);
 }
 
 //=========================================================
