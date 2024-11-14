@@ -21,7 +21,7 @@ const runParallel = true;
 // -----------------------
 // Worker functions
 const localeTime = () => new Date().toLocaleTimeString();
-function getPrimes(max) {
+const getPrimes = max => {
     var sieve = [], i, j, primes = [];
     for (i = 2; i <= max; ++i) {
         if (!sieve[i]) {
@@ -41,12 +41,12 @@ function getPrimes(max) {
 // Simple Promise functions
 // These examples take no params and return results directly in resolve(...).
 // -----------------------
-async function fast() {
+const fast = async () => {
     return new Promise(resolve => {
         resolve( `${localeTime()} fast` );
     });
 }
-async function waitASec() {
+const waitASec = async () => {
     return new Promise(resolve => {
         const timeout = Math.random() * 1000;
         setTimeout(() => {
@@ -54,7 +54,7 @@ async function waitASec() {
         }, timeout );
     });
 }
-async function waitFiveSecs() {
+const waitFiveSecs = async () => {
     return new Promise(resolve => {
         const timeout = 2000 + Math.random() * 3000;
         setTimeout(() => {
@@ -63,13 +63,13 @@ async function waitFiveSecs() {
     });
 }
 // Even though these are called "slow", they are way faster than waits.  :-)
-async function getSlowData() {
+const getSlowData = async () => {
     return new Promise(resolve => {
         const oneHundredPrimeNumbers = getPrimes( 100 );
         resolve( `${localeTime()} ${oneHundredPrimeNumbers}` );
     });
 }
-async function getSlowerData() {
+const getSlowerData = async () => {
     return new Promise(resolve => {
         const twoHundredPrimeNumbers = getPrimes( 200 );
         resolve( `${localeTime()} ${twoHundredPrimeNumbers}` );
