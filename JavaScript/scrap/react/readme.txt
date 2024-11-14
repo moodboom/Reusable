@@ -1,3 +1,7 @@
+
+
+Ancient useless setup notes:
+
 Trying out React + Typescript + Bootstrap + react-jsonschema-form.
 
 Process:

@@ -1,0 +1,71 @@
+{
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Closures scrap",
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
+      "program": "${workspaceFolder}/closures.js"
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Fizzbuzz scrap",
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
+      "program": "${workspaceFolder}/fizzbuzz.js"
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "numbers scrap",
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
+      "program": "${workspaceFolder}/numbers.js"
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "promises scrap",
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
+      "program": "${workspaceFolder}/promises.js"
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "scope scrap",
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
+      "program": "${workspaceFolder}/scope.js"
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "strings scrap",
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
+      "program": "${workspaceFolder}/strings.js"
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "types scrap",
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
+      "program": "${workspaceFolder}/types.js"
+    },
+  ]
+}
