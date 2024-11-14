@@ -8,7 +8,7 @@
 
 // Just use these patterns and save yourself time.
 
-// REMEMBER node alays rips right past all the promise functions immediately!
+// REMEMBER node always rips right past all the promise functions immediately!
 // You can't run anything in the main node process (there is only 1!) AFTER promises resolve.
 // Might as well ponder that 'til you get it.
 
@@ -170,6 +170,7 @@ const myBatch = async () => {
 if ( runBatch )
     myBatch();
 
+// NOTE: YOU WILL NOT SEE THIS EARLY IN THE OUTPUT.
 console.log(`${localeTime()} Script routine finished (Promises are now running).`);
 
 
