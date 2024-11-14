@@ -1,8 +1,9 @@
 REUSABLE LOG
-this log is out of usage - see README.md instead
+this log is full of ancient junk
+please see README.md for a project summary
 
-this has been around a LONG time :-)
-search for [^ D] to jump to TODO, if you must :-)
+the log is in chronological order
+search for [^ D] to jump to TODO
 
 // MDM	5/16/01 10:33:46 AM
 
@@ -380,3 +381,7 @@ search for [^ D] to jump to TODO, if you must :-)
 v TO DO
 =======================================================================================================================
 
+- github scans this whole mess, lol
+	go ahead and fix the easy stuff here:
+	remote: remote: GitHub found 97 vulnerabilities on moodboom/Reusable's default branch (14 critical, 50 high, 27 moderate, 6 low). To find out more, visit:        
+	remote: remote:      https://github.com/moodboom/Reusable/security/dependabot 
