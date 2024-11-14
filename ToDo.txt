@@ -1,6 +1,8 @@
 REUSABLE LOG
+this log is out of usage - see README.md instead
+
 this has been around a LONG time :-)
-search for [^ D] to jump to TODO
+search for [^ D] to jump to TODO, if you must :-)
 
 // MDM	5/16/01 10:33:46 AM
 
