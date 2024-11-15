@@ -5,325 +5,325 @@ please see README.md for a project summary
 the log is in chronological order
 search for [^ D] to jump to TODO
 
-// MDM	5/16/01 10:33:46 AM
+// MDM  5/16/01 10:33:46 AM
 
-			++++++++++
-			COM NOTES
-			++++++++++
+      ++++++++++
+      COM NOTES
+      ++++++++++
 
-			
-			CREATING A NEW PROJECT THAT INCLUDES COM INTERFACES
-			---------------------------------------------------
-			
-			1) COM projects don't seem to call the MIDL compiler properly by default!
-				FUCKERS!  There should be an IDL file in your project dir.  Just run 
-			
-					MIDL <project>.idl
-			
-				from the root project dir and you should be fine.
-			
-				Can we add this to the project settings to do it right?!  There is a MIDL tab
-				under settings.  No, this is just to set options for MIDL.
+      
+      CREATING A NEW PROJECT THAT INCLUDES COM INTERFACES
+      ---------------------------------------------------
+      
+      1) COM projects don't seem to call the MIDL compiler properly by default!
+        FUCKERS!  There should be an IDL file in your project dir.  Just run 
+      
+          MIDL <project>.idl
+      
+        from the root project dir and you should be fine.
+      
+        Can we add this to the project settings to do it right?!  There is a MIDL tab
+        under settings.  No, this is just to set options for MIDL.
 
-				It appears that MIDL is not set up properly on my machine.  The *.IDL file is included,
-				but does not get compiled.  I am assuming that if things were set up properly, the 
-				file would automatically get compiled with MIDL on project builds (when needed, of course).
+        It appears that MIDL is not set up properly on my machine.  The *.IDL file is included,
+        but does not get compiled.  I am assuming that if things were set up properly, the 
+        file would automatically get compiled with MIDL on project builds (when needed, of course).
 
-			2) The NEXT problem is that App Wizard did not set up for the COM object to get
-				automatically registered properly.  DOUBLE FUCKERS!
-				Add the following to the Post-Build tab under project settings for all configurations:
+      2) The NEXT problem is that App Wizard did not set up for the COM object to get
+        automatically registered properly.  DOUBLE FUCKERS!
+        Add the following to the Post-Build tab under project settings for all configurations:
 
-					echo ------------------------------------------------
-					echo Running: "$(TargetPath)" -RegServer
-					"$(TargetPath)" -RegServer
-					echo ------------------------------------------------
-					echo Running: nmake -f "$(WkspName)ps.mk"
-					nmake -f "$(WkspName)ps.mk"
-					echo ------------------------------------------------
-					echo Running: regsvr32.exe "$(WkspName)ps.dll"
-					regsvr32.exe "$(WkspName)ps.dll"
-					echo ------------------------------------------------
+          echo ------------------------------------------------
+          echo Running: "$(TargetPath)" -RegServer
+          "$(TargetPath)" -RegServer
+          echo ------------------------------------------------
+          echo Running: nmake -f "$(WkspName)ps.mk"
+          nmake -f "$(WkspName)ps.mk"
+          echo ------------------------------------------------
+          echo Running: regsvr32.exe "$(WkspName)ps.dll"
+          regsvr32.exe "$(WkspName)ps.dll"
+          echo ------------------------------------------------
 
-				Now evthing works COOLlike man!!
+        Now evthing works COOLlike man!!
 
-			3) Trouble again, unresolved external on some _proxy_xx() function...
+      3) Trouble again, unresolved external on some _proxy_xx() function...
 
-				- MIDL creates the following files from an IDL: 
+        - MIDL creates the following files from an IDL: 
 
-					If the attribute list contains the object keyword, the MIDL compiler generates COM interface 
-					output files: 
-						an interface proxy file, 
-						an interface header file, 
-						and a globally unique identifier (GUID) file for the interface. 
-					If the IDL file contains a library statement, MIDL generates 
-						a type library file with the .tlb file name extension
-					If there are any interfaces in the IDL file that do not have the object keyword and 
-					are not enclosed in a library statement, the MIDL compiler generates interface output files 
-					appropriate for remote procedure calls (RPCs): 
-						a client stub file, 
-						a server stub file, 
-						and a header file. 
-					For more information, see the topic Interface Definitions and Type Libraries and Generating 
-					a Type Library with MIDL in the MIDL Programmer's Guide and Language Reference in the Platform SDK. 
+          If the attribute list contains the object keyword, the MIDL compiler generates COM interface 
+          output files: 
+            an interface proxy file, 
+            an interface header file, 
+            and a globally unique identifier (GUID) file for the interface. 
+          If the IDL file contains a library statement, MIDL generates 
+            a type library file with the .tlb file name extension
+          If there are any interfaces in the IDL file that do not have the object keyword and 
+          are not enclosed in a library statement, the MIDL compiler generates interface output files 
+          appropriate for remote procedure calls (RPCs): 
+            a client stub file, 
+            a server stub file, 
+            and a header file. 
+          For more information, see the topic Interface Definitions and Type Libraries and Generating 
+          a Type Library with MIDL in the MIDL Programmer's Guide and Language Reference in the Platform SDK. 
 
-				- checked out the following to make them "writable": 
-					LocalCache.tlb		
-					LocalCache.IDL		
-					LocalCacheps.mk	
+        - checked out the following to make them "writable": 
+          LocalCache.tlb    
+          LocalCache.IDL    
+          LocalCacheps.mk  
 
-				- MIDL generates dlldata.c, dlldata.obj on the fly.
-					They were out-of-date or something - I deleted them, MIDL regenerated them, and we could build again.
+        - MIDL generates dlldata.c, dlldata.obj on the fly.
+          They were out-of-date or something - I deleted them, MIDL regenerated them, and we could build again.
 
-				IF YOU EVER GET TROUBLE WITH DLLDATA FILES, it seems that just rerunning MIDL clears them up and
-				refreshes things when u recompile.
+        IF YOU EVER GET TROUBLE WITH DLLDATA FILES, it seems that just rerunning MIDL clears them up and
+        refreshes things when u recompile.
 
-			4) Fucking damned mofo'S!!!!  Editing the COM interface after it has been brittly created is a PITA!!
-				Nice of them to make sure we fucking moron monkey idiots never drool on our keyboards and accidentally
-				CHANGE a COM INTERFACE (certainly by ACCIDENT, otherwise it would certainly be a grevious blasphemy!!)
-				a) First, update <projectname>.idl with the new interface changes.
-					You can do this nicely by selecting the interface in the classes browser, and right clicking 
-					on the target interface and selecting "Add method".
-					Rerun MIDL [ MIDL <projname>.idl ].
-					Recompile.
-					IF you have trouble after running MIDL and recompiling...
-				b)	Try cleaning up the following before re-running MIDL:
-					dlldata.*				temp files generated by MIDL
-					<projectname>_i.c		contains "IIDs and CLSIDs"
-					<projectname>_p.c		"proxy code"
-					<projectname>.tlb		binary
-					<projectname>.h		always generated(!) "interface definition"
-					<projectname>ps.*		WHO THE FUCK KNOWS!?!  Rrrr.... Lack of decent COM support from MS is reaaaally pissin me off...
-				c) Also, make sure that the following are writable:
-					LocalCache.tlb
-					LocalCache.IDL
-					LocalCacheps.mk
-				d) Rerun MIDL, recompile, and PRAY REAL HARD.
+      4) Fucking damned mofo'S!!!!  Editing the COM interface after it has been brittly created is a PITA!!
+        Nice of them to make sure we fucking moron monkey idiots never drool on our keyboards and accidentally
+        CHANGE a COM INTERFACE (certainly by ACCIDENT, otherwise it would certainly be a grevious blasphemy!!)
+        a) First, update <projectname>.idl with the new interface changes.
+          You can do this nicely by selecting the interface in the classes browser, and right clicking 
+          on the target interface and selecting "Add method".
+          Rerun MIDL [ MIDL <projname>.idl ].
+          Recompile.
+          IF you have trouble after running MIDL and recompiling...
+        b)  Try cleaning up the following before re-running MIDL:
+          dlldata.*        temp files generated by MIDL
+          <projectname>_i.c    contains "IIDs and CLSIDs"
+          <projectname>_p.c    "proxy code"
+          <projectname>.tlb    binary
+          <projectname>.h    always generated(!) "interface definition"
+          <projectname>ps.*    WHO THE FUCK KNOWS!?!  Rrrr.... Lack of decent COM support from MS is reaaaally pissin me off...
+        c) Also, make sure that the following are writable:
+          LocalCache.tlb
+          LocalCache.IDL
+          LocalCacheps.mk
+        d) Rerun MIDL, recompile, and PRAY REAL HARD.
 
-			TO ACTUALLY USE THE COM OBJECT IN ANOTHER PROJECT
-			-------------------------------------------------
+      TO ACTUALLY USE THE COM OBJECT IN ANOTHER PROJECT
+      -------------------------------------------------
 
-				Obviously, you don't want to have to include the source code in the other project.
-				But you must include the entire INTERFACE DEFINITION!
-				This is accomplished via the "#import" directive!!!
-				E.g.: 
-					#import "..\LocalCache.tlb" no_namespace named_guids raw_interfaces_only
-				imports the LocalCache COM object, defining the CLSID that you will need in the
-				call to CoCreateInstanceEx(), and also completely defining the interface so you
-				can actually USE it!
+        Obviously, you don't want to have to include the source code in the other project.
+        But you must include the entire INTERFACE DEFINITION!
+        This is accomplished via the "#import" directive!!!
+        E.g.: 
+          #import "..\LocalCache.tlb" no_namespace named_guids raw_interfaces_only
+        imports the LocalCache COM object, defining the CLSID that you will need in the
+        call to CoCreateInstanceEx(), and also completely defining the interface so you
+        can actually USE it!
 
-			MOTHA FUCKA'S!!  
-			FIX: ATL Service EXE Doesn't Build in Release Build 
-			ID: Q167946 
-			---------------------------------------------------------
-			To get release builds to work (even in VC++ 6.0 despite what ID: Q167946 says), you have to
-			remove _ATL_MIN_CRT from the list the preprocessor defines, under ProjectSettings:C++:General:Preproc.Def's
+      MOTHA FUCKA'S!!  
+      FIX: ATL Service EXE Doesn't Build in Release Build 
+      ID: Q167946 
+      ---------------------------------------------------------
+      To get release builds to work (even in VC++ 6.0 despite what ID: Q167946 says), you have to
+      remove _ATL_MIN_CRT from the list the preprocessor defines, under ProjectSettings:C++:General:Preproc.Def's
 
 
-			MAINTENANCE
-			-----------
-			If you manually change a COM interface (by changing the *.IDL and matching COM *.cpp and *.h file), you
-			will need to rerun MIDL, which will update a whole mess a' files...
+      MAINTENANCE
+      -----------
+      If you manually change a COM interface (by changing the *.IDL and matching COM *.cpp and *.h file), you
+      will need to rerun MIDL, which will update a whole mess a' files...
 
-// MDM	5/17/01 9:48:08 AM
-			Here is the future of mankind:
+// MDM  5/17/01 9:48:08 AM
+      Here is the future of mankind:
 
-												Proprietary/Closed solutions (constant innovation and expansion into the unknown)
-												/													 \
-											  /	|											|	  \
-											 /		|	(constant movement of code)	|		\
-											/		v											v		 \
-										  /															  \
-							 			OpenSource/FreeSoftware/whatever	(constantly increasing in scope, depth, and QUALITY as esoteric functionality becomes common)
+                        Proprietary/Closed solutions (constant innovation and expansion into the unknown)
+                        /                           \
+                        /  |                      |    \
+                       /    |  (constant movement of code)  |    \
+                      /    v                      v     \
+                      /                                \
+                     OpenSource/FreeSoftware/whatever  (constantly increasing in scope, depth, and QUALITY as esoteric functionality becomes common)
 
-// MDM	5/22/01 9:59:52 AM
+// MDM  5/22/01 9:59:52 AM
 
-			THREAD RULES
-			============
-			1) You have to choose support for either CRT (C Runtime Library) 
-				functions, or MFC functions.
-			
-					a) CRT: always use _beginthread(), you cannot use MFC functions
-			
-					b) MFC: always use CreateThread(), you cannot use CRT functions
-			
-				MY ADVICE: ALWAYS USE (a) TO AVOID TROUBLE!  No CRT support
-				sounds crazy to me.
-			
-			2) Communication across threads can use variables local to the
-				process.  Watch out for vars that go out of scope!  You can use 
-				statics, which you know will stick around as long
-				as the process does, but then you have to make sure access
-				to them is thread-safe.
+      THREAD RULES
+      ============
+      1) You have to choose support for either CRT (C Runtime Library) 
+        functions, or MFC functions.
+      
+          a) CRT: always use _beginthread(), you cannot use MFC functions
+      
+          b) MFC: always use CreateThread(), you cannot use CRT functions
+      
+        MY ADVICE: ALWAYS USE (a) TO AVOID TROUBLE!  No CRT support
+        sounds crazy to me.
+      
+      2) Communication across threads can use variables local to the
+        process.  Watch out for vars that go out of scope!  You can use 
+        statics, which you know will stick around as long
+        as the process does, but then you have to make sure access
+        to them is thread-safe.
 
-			3) Communicate across non-distributed processes with standard
-				Windows messages passed to HWND's, or switch up to COM.
-			
-			4) For distributed processes, switch to COM (actually DCOM, which
-				is the same thing to you the programmer).
-			
-// MDM	5/25/01 11:10:09 AM
-			Reusable Code concept:
-				95% of code is production quality that can be dropped in "as-is"
-				if I have to put in a 5% effort to tie the code in, there is a 20x's return on investment!
-				I spent a LOT of my time expanding and improving the reusable code base - these changes
-					get rolled in "for free"
-				I grant ABB rights to do whatever it wants with the code, for any purpose
-				The whole goal is to complete ABB's goals as quickly and efficiently as possible
+      3) Communicate across non-distributed processes with standard
+        Windows messages passed to HWND's, or switch up to COM.
+      
+      4) For distributed processes, switch to COM (actually DCOM, which
+        is the same thing to you the programmer).
+      
+// MDM  5/25/01 11:10:09 AM
+      Reusable Code concept:
+        95% of code is production quality that can be dropped in "as-is"
+        if I have to put in a 5% effort to tie the code in, there is a 20x's return on investment!
+        I spent a LOT of my time expanding and improving the reusable code base - these changes
+          get rolled in "for free"
+        I grant ABB rights to do whatever it wants with the code, for any purpose
+        The whole goal is to complete ABB's goals as quickly and efficiently as possible
 
-// MDM	5/28/01 11:18:58 AM
-			List control external data fix:
-				
-				Use a define ( MCSLC_USE_EXTERNAL_DATA ) in MCSLC.
-				If the user of the class defines it, MCSLC should use EDLC as base, not CListCtrl.
-				Also wrap all other dependent code.
+// MDM  5/28/01 11:18:58 AM
+      List control external data fix:
+        
+        Use a define ( MCSLC_USE_EXTERNAL_DATA ) in MCSLC.
+        If the user of the class defines it, MCSLC should use EDLC as base, not CListCtrl.
+        Also wrap all other dependent code.
 
-				Derived classes can set the define on an as-needed basis.
+        Derived classes can set the define on an as-needed basis.
 
-				NOPE, this will NOT allow us to use BOTH types in the same place (*.obj names will conflict, for one).
+        NOPE, this will NOT allow us to use BOTH types in the same place (*.obj names will conflict, for one).
 
-				The best solution:
-					Remove EDLC from the list control chain, and multi-inherit as needed in derived classes?
-						No, because MCSLC needs to know, and work with, EDLC support.
+        The best solution:
+          Remove EDLC from the list control chain, and multi-inherit as needed in derived classes?
+            No, because MCSLC needs to know, and work with, EDLC support.
 
-					KEEP THE BOOL!
+          KEEP THE BOOL!
 
-// MDM	6/6/01 4:24:25 PM
+// MDM  6/6/01 4:24:25 PM
 
-			HOW DO I ADD ANOTHER LANGUAGE TO THE RESOURCE EDITOR!?!?!
-				
-				Internationalization of the OS (here, by adding SWEDISH)
-				--------------------------------------------------------
-				Install IE 5.5 (also installed NT 4 SP6a)
-				Install language packs during install or from www.microsoft.com/windowsupdate
-				IE:Tools:Internet Options:General:Languages:Swedish
-				Control Panel:Regional Settings:Input Locals: Add Swedish
+      HOW DO I ADD ANOTHER LANGUAGE TO THE RESOURCE EDITOR!?!?!
+        
+        Internationalization of the OS (here, by adding SWEDISH)
+        --------------------------------------------------------
+        Install IE 5.5 (also installed NT 4 SP6a)
+        Install language packs during install or from www.microsoft.com/windowsupdate
+        IE:Tools:Internet Options:General:Languages:Swedish
+        Control Panel:Regional Settings:Input Locals: Add Swedish
 
-				Adding language-specific resources
-				----------------------------------
-				Select resource (string table, dialog template, etc.)
-				Select "Insert copy..." from right-click or main menu.
-				Set language of new copy.
+        Adding language-specific resources
+        ----------------------------------
+        Select resource (string table, dialog template, etc.)
+        Select "Insert copy..." from right-click or main menu.
+        Set language of new copy.
 
-// MDM	6/21/01 4:41:23 PM
-			Taskbar icon fix after explorer crash:
-				http://www.microsoft.com/msj/defaultframe.asp?page=/msj/0299/c++/c++0299.htm&nav=/msj/0299/newnav.htm
-			(as requested on freenet dev list)
+// MDM  6/21/01 4:41:23 PM
+      Taskbar icon fix after explorer crash:
+        http://www.microsoft.com/msj/defaultframe.asp?page=/msj/0299/c++/c++0299.htm&nav=/msj/0299/newnav.htm
+      (as requested on freenet dev list)
 
-// MDM	9/19/01 11:18:13 PM
-			NOTE on STL and red-black trees...
-			The C++ standard template library (STL) introduces the  
-			associative containers set, multiset, map, and multimap, which are  
-			based on red-black trees. 
+// MDM  9/19/01 11:18:13 PM
+      NOTE on STL and red-black trees...
+      The C++ standard template library (STL) introduces the  
+      associative containers set, multiset, map, and multimap, which are  
+      based on red-black trees. 
 
-			Bjarne sample code (check out for_each - part of STL?):
+      Bjarne sample code (check out for_each - part of STL?):
 
-			1)	void draw_all(list& lst)
-				{
-				for_each(lst.begin(),lst.end(),mem_fun(&Shape::draw));
-				}
+      1)  void draw_all(list& lst)
+        {
+        for_each(lst.begin(),lst.end(),mem_fun(&Shape::draw));
+        }
 
-			2)	Incidentally, your example "function of T returning a bool" is often best represented as a function 
-				object. And function objects are natural templates: 
+      2)  Incidentally, your example "function of T returning a bool" is often best represented as a function 
+        object. And function objects are natural templates: 
 
-					template< class T > 
-					struct Predicate {
-					bool operator()(const T &r) { /* ... */ };
-					}; 
+          template< class T > 
+          struct Predicate {
+          bool operator()(const T &r) { /* ... */ };
+          }; 
 
-				This way, you don't need a typedef; you can simply say: 
+        This way, you don't need a typedef; you can simply say: 
 
-				Predicate* p;
+        Predicate* p;
 
-				Function objects also inline better than pointers to functions, so their use leads to faster code as well as cleaner code. 
+        Function objects also inline better than pointers to functions, so their use leads to faster code as well as cleaner code. 
 
-				In general, I recommend "The Design and Evolution of C++" for people with "why is/isn't it like that in C++?" questions. 
+        In general, I recommend "The Design and Evolution of C++" for people with "why is/isn't it like that in C++?" questions. 
 
-			3)	Learning Standard C++ as a New Language
-				http://www.research.att.com/~bs/papers.html
+      3)  Learning Standard C++ as a New Language
+        http://www.research.att.com/~bs/papers.html
 
-				The C++ Programming Language (Special Edition)
-				http://www.research.att.com/~bs/3rd.html
+        The C++ Programming Language (Special Edition)
+        http://www.research.att.com/~bs/3rd.html
 
-				The Design and Evolution of C++
-				http://www.research.att.com/~bs/dne.html
+        The Design and Evolution of C++
+        http://www.research.att.com/~bs/dne.html
 
-			4) MI examples:
-			
-					class network_file_error : public network_error,
-					public file_error {
-					// ...
-					};
+      4) MI examples:
+      
+          class network_file_error : public network_error,
+          public file_error {
+          // ...
+          };
 
-				and
+        and
 
-					class interface { // abstract class
-					// pure virtual functions
-					}; 
-					class base_implementation { // useful functionality
-					// data, functions, virtual functions
-					};
+          class interface { // abstract class
+          // pure virtual functions
+          }; 
+          class base_implementation { // useful functionality
+          // data, functions, virtual functions
+          };
 
-					class my_implementation
-					: public interface,
-					protected base_implementation {
-					// data, functions
-					// override some base_implementation functions
-					// override all interface functions
-					}; 
+          class my_implementation
+          : public interface,
+          protected base_implementation {
+          // data, functions
+          // override some base_implementation functions
+          // override all interface functions
+          }; 
 
-				You then have the users of my_implementation access it exclusively through pointers or references 
-				to interface. That was user code is independent on the implementation class and the system doesn'
-				t suffer from the so-called "brittle base class" problem. The implementation class can be exchanged for 
-				an improved version without recompilation of user code (except my_implementation itself). 
+        You then have the users of my_implementation access it exclusively through pointers or references 
+        to interface. That was user code is independent on the implementation class and the system doesn'
+        t suffer from the so-called "brittle base class" problem. The implementation class can be exchanged for 
+        an improved version without recompilation of user code (except my_implementation itself). 
 
-				Following those two styles avoids most problems. Naturally, you can find a more extensive discussion 
-				in "The C++ Programming Language (3rd Edition)" and in the new "The C++ Programming Language 
-				(Special Edition)." (See my home pages for details, sample chapters, reviews, etc.). 
+        Following those two styles avoids most problems. Naturally, you can find a more extensive discussion 
+        in "The C++ Programming Language (3rd Edition)" and in the new "The C++ Programming Language 
+        (Special Edition)." (See my home pages for details, sample chapters, reviews, etc.). 
 
-			5)	If you focus on defining concrete classes to represent simple types and abstract classes to represent 
-				major interfaces, a good design is likely to emerge. Then, MI may or may not be needed to complete the 
-				program, but will be pretty obvious where it might be needed. 
+      5)  If you focus on defining concrete classes to represent simple types and abstract classes to represent 
+        major interfaces, a good design is likely to emerge. Then, MI may or may not be needed to complete the 
+        program, but will be pretty obvious where it might be needed. 
 
-			6) Reference counting can be very useful for less frequently used resources, but I'm not advocating it 
-				as a general mechanism for keeping track of memory. C++ has good mechanisms for keeping memory management 
-				under control (such as constructors and destructors and the standard library containers), but if you need 
-				something more automatics, plugging in one of the available garbage collectors is the right answer (see 
-				section C.9.1 of "The C++ Programming language", my C++ page, or my FAQ). 
+      6) Reference counting can be very useful for less frequently used resources, but I'm not advocating it 
+        as a general mechanism for keeping track of memory. C++ has good mechanisms for keeping memory management 
+        under control (such as constructors and destructors and the standard library containers), but if you need 
+        something more automatics, plugging in one of the available garbage collectors is the right answer (see 
+        section C.9.1 of "The C++ Programming language", my C++ page, or my FAQ). 
 
-			ALso an interview with A. Stepanov
-				http://www.stlport.org/resources/StepanovUSA.html
+      ALso an interview with A. Stepanov
+        http://www.stlport.org/resources/StepanovUSA.html
 
-				Question:
-				I find two hash table implementations in the D.Musser site, and they were both working and quite smart 
-				- much smarter than hash tables commonly found in class libraries. Why were hash tables not included 
-				into STL? 
+        Question:
+        I find two hash table implementations in the D.Musser site, and they were both working and quite smart 
+        - much smarter than hash tables commonly found in class libraries. Why were hash tables not included 
+        into STL? 
 
-				Answer:
-				Politics. They have to be in. Our new implementation of STL does contain them. In general, we need to 
-				develop a mechanism for adding things to STL. After all, STL is an extensible framework, it begs to 
-				be extended. There are many data structures that are missing, for example, singly linked lists, 
-				matrices, and graphs. SGI is willing to lead the way in extending STL. 
+        Answer:
+        Politics. They have to be in. Our new implementation of STL does contain them. In general, we need to 
+        develop a mechanism for adding things to STL. After all, STL is an extensible framework, it begs to 
+        be extended. There are many data structures that are missing, for example, singly linked lists, 
+        matrices, and graphs. SGI is willing to lead the way in extending STL. 
 
-			An older one with Al Stevens...
-				http://www.sgi.com/tech/stl/drdobbs-interview.html
+      An older one with Al Stevens...
+        http://www.sgi.com/tech/stl/drdobbs-interview.html
 
-				Q: Set, multiset, map, and multimap are implemented with a red-black tree data structure. Have you 
-				experimented with other structures such as B*trees? 
+        Q: Set, multiset, map, and multimap are implemented with a red-black tree data structure. Have you 
+        experimented with other structures such as B*trees? 
 
-				A: I don't think that would be quite right for in-memory data structures, but this is something that 
-				needs to be done. The same interfaces defined by STL need to be implemented with other data structures
-				---skip lists, splay trees, half-balanced trees, and so on. It's a major research activity that needs 
-				to be done because STL provides us with a framework where we can compare the performance of these 
-				structures. The interface is fixed. The basic complexity requirements are fixed. Now we can have 
-				meaningful experiments comparing different data structures to each other. There were a lot of people 
-				from the data structure community coming up with all kinds of data structures for that kind of 
-				interface. I hope that they would implement them as generic data structures within the STL framework. 
+        A: I don't think that would be quite right for in-memory data structures, but this is something that 
+        needs to be done. The same interfaces defined by STL need to be implemented with other data structures
+        ---skip lists, splay trees, half-balanced trees, and so on. It's a major research activity that needs 
+        to be done because STL provides us with a framework where we can compare the performance of these 
+        structures. The interface is fixed. The basic complexity requirements are fixed. Now we can have 
+        meaningful experiments comparing different data structures to each other. There were a lot of people 
+        from the data structure community coming up with all kinds of data structures for that kind of 
+        interface. I hope that they would implement them as generic data structures within the STL framework. 
 
-// MDM	9/20/01 12:09:14 AM
-			It's razor of Occam, in case you were wondering about the spelling...
+// MDM  9/20/01 12:09:14 AM
+      It's razor of Occam, in case you were wondering about the spelling...
 
-// MDM	1/2/2003 12:23:21 AM
-			Looking into PSI (Jabber IM) and Zinf (MP3 player) sources...
+// MDM  1/2/2003 12:23:21 AM
+      Looking into PSI (Jabber IM) and Zinf (MP3 player) sources...
 
 // OLD NOTES man this file is OLD...
 
@@ -367,21 +367,32 @@ search for [^ D] to jump to TODO
     here's a description:
         http://pages.cs.wisc.edu/~driscoll/typename.html
 
-2016/01/24 posted to github with MIT license; why not, life is short...
+* 2016/01/24 posted to github with MIT license; why not, life is short...
 
-2016/10/25 stupid mediawiki can't keep numbering going across code or breaks
+* 2016/10/25 stupid mediawiki can't keep numbering going across code or breaks
    you SUCK medaiwiki
    just use splat (*)
    and leading space for code
    fuck numbering at all
    assholes
 
+* 2024/11/15 github scans this whole repo mess, lol
+  github+copilot actually creates security PRs
+  f'in amazing
+
+  go ahead and fix the easy stuff here:
+  remote: remote: GitHub found 97 vulnerabilities on moodboom/Reusable's default branch (14 critical, 50 high, 27 moderate, 6 low). To find out more, visit:        
+  remote: remote:      https://github.com/moodboom/Reusable/security/dependabot 
+
+  WOW it was all due to some old copy of Create React App!
+    JavaScript/scrap/react/cra-bootstrap-jsonforms
+
+  fuck that, i purged it all
+
+  MOVE ON! :-)
+
 =======================================================================================================================
 ^ DONE
 v TO DO
 =======================================================================================================================
 
-- github scans this whole mess, lol
-	go ahead and fix the easy stuff here:
-	remote: remote: GitHub found 97 vulnerabilities on moodboom/Reusable's default branch (14 critical, 50 high, 27 moderate, 6 low). To find out more, visit:        
-	remote: remote:      https://github.com/moodboom/Reusable/security/dependabot 
