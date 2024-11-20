@@ -1,7 +1,7 @@
 Four ways (or more!) to run:
 
    vscode: 
-      open folder /home/m/development/Reusable/JavaScript/scrap/readme.txt
+      open this folder /home/m/development/Reusable/JavaScript/scrap
       use run/debug
       (see launch.json to add more scrap files)
 
