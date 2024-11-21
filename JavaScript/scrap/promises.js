@@ -54,9 +54,9 @@ const waitASec = async () => {
         }, timeout );
     });
 }
-const waitFiveSecs = async () => {
+const waitSomeRandomSeconds = async seconds => {
     return new Promise(resolve => {
-        const timeout = 2000 + Math.random() * 3000;
+        const timeout = 1000 + Math.random() * seconds;
         setTimeout(() => {
             resolve( `${localeTime()} waited ${(timeout/1000.0).toFixed(2)} secs`);
         }, timeout );
@@ -94,6 +94,14 @@ const chainParent = async () => {
 
         const c2 = await getSlowerData();
         console.log( `${localeTime()} Chain second batch: ${c2}` );
+
+        // NOTE LOOPS with await CANNOT use forEach.
+        // Simply use a normal for!  Subtle but important.
+        const loopTimes = [ 2000, 1000, 6000 ];
+        for (const time of loopTimes) {
+            const contents = await waitSomeRandomSeconds(  time );
+            console.log(contents);
+        }
 
         const w2 = await waitASec();
         console.log( `${localeTime()} Chain second wait: ${w2}` );
@@ -133,7 +141,7 @@ if ( runChain )
 // WaitFiveSecs is the slowest so it will return results last, even though it started first.
 // I chained two of them together as well, just for fun.  Use the others as simpler guides.
 if ( runParallel ) {
-    waitFiveSecs().then( response1 => waitFiveSecs().then(response2 => console.log(`${localeTime()} Parallel task 1 complete ${response1} ${response2}`)));
+    waitSomeRandomSeconds( 5000 ).then( response1 => waitSomeRandomSeconds( 3000 ).then(response2 => console.log(`${localeTime()} Parallel task 1 complete ${response1} ${response2}`)));
     getSlowData().then(response => console.log(`${localeTime()} Parallel task 2 complete ${response}`));
     getSlowerData().then(response => console.log(`${localeTime()} Parallel task 3 complete ${response}`));
     getSlowData().then(response => console.log(`${localeTime()} Parallel task 4 complete ${response}`));
@@ -150,7 +158,7 @@ const myBatch = async () => {
     // We are firing off all our jobs at once here!
     // Promise.all() takes a set of promises and makes a container Promise for them
     // that resolves when the sets all resolve, or rejects as soon as any in the set rejects.
-    const batch = await Promise.all([ waitFiveSecs(), getSlowData(), getSlowerData(), getSlowData(), waitASec(), fast() ]);
+    const batch = await Promise.all([ waitSomeRandomSeconds( 2000 ), getSlowData(), getSlowerData(), getSlowData(), waitASec(), fast() ]);
     console.log('-----------------------------');
     console.log('vvvvvvvvvvvvvvvvvvvvvvvvvvvvv');
     console.log('Batch all jobs done.');
