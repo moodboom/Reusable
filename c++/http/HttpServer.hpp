@@ -64,7 +64,7 @@ public:
     }
     virtual ~HttpServer() {}
 
-    std::shared_ptr<boost::asio::io_service>& get_io_service() { return io_service; }
+    std::shared_ptr<boost::asio::io_context>& get_io_service() { return io_service; }
 
     virtual void startServer() {
 
