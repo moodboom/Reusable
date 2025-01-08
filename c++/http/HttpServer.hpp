@@ -9,6 +9,7 @@
 //          set(ThirdParty "../../../")
 //          INCLUDE_DIRECTORIES(${ThirdParty})
 //
+#include <Simple-Web-Server/utility.hpp>
 #include <Simple-Web-Server/server_http.hpp>
 
 using namespace SimpleWeb;
