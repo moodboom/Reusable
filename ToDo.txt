@@ -396,3 +396,60 @@ search for [^ D] to jump to TODO
 v TO DO
 =======================================================================================================================
 
+- update silly C++ helper file hacks...
+  goals:
+    stay up to date
+    remove dupe-dll errors
+    fix warnings like this:
+      Building AbetterTrader develop in: /home/m/development/thedigitalage/AbetterTrader/server-prod
+      [2/6] Building CXX object CMakeFiles/at_server.dir/home/m/development/Reusable/c++/oauth/SHA1.cpp.o
+      /home/m/development/Reusable/c++/oauth/SHA1.cpp: In member function ‘bool CSHA1::HashFile(char*)’:
+      /home/m/development/Reusable/c++/oauth/SHA1.cpp:188:22: warning: ignoring return value of ‘size_t fread(void*, size_t, size_t, FILE*)’ declared with attribute ‘warn_unused_result’ [-Wunused-result]
+        188 |                 fread(uData, 1, SHA1_MAX_FILE_BUFFER, fIn);
+            |                 ~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      /home/m/development/Reusable/c++/oauth/SHA1.cpp:194:22: warning: ignoring return value of ‘size_t fread(void*, size_t, size_t, FILE*)’ declared with attribute ‘warn_unused_result’ [-Wunused-result]
+        194 |                 fread(uData, 1, ulRest, fIn);
+            |                 ~~~~~^~~~~~~~~~~~~~~~~~~~~~~
+
+  files are in Reusable
+  these nasty fellows!
+    ${Reusable}base64.cpp
+    ${Reusable}crypto/sha256/sha256.cpp
+    ${Reusable}miniz.c
+    ${Reusable}oauth/HMAC_SHA1.cpp
+    ${Reusable}oauth/oauthlib.cpp
+    ${Reusable}oauth/SHA1.cpp
+    ${Reusable}oauth/urlencode.cpp
+
+  can we replace with boost or something more official?  almost surely...
+  but it will take some time to shake it all out
+  AND NOTHING is actually BROKEN right now!
+  make sure you are ready to take this on before starting...
+
+  ---
+
+  it's been 9 years, i think i'm ready, lol
+  let's just take them OUT and see what breaks...
+  i'm moving this to the Reusable/ToDo.txt...
+
+  - purge all the bitrotted old c++ bits
+    ${Reusable}base64.cpp
+    ${Reusable}crypto/sha256/sha256.cpp
+    ${Reusable}miniz.c
+    ${Reusable}oauth/HMAC_SHA1.cpp
+    ${Reusable}oauth/oauthlib.cpp
+    ${Reusable}oauth/SHA1.cpp
+    ${Reusable}oauth/urlencode.cpp
+  
+    * replace miniz.c?  
+      no to this one, it is 8 years old! https://github.com/tfussell/miniz-cpp
+      just update miniz!  it was updated 2 weeks ago, lol
+      err, no, looks like i want an offical RELEASE
+      last one was 3.0.2 on jan 15, 2023, good enough for me
+      https://github.com/richgel999/miniz/releases
+      hrmph VERY little change, i guess that's good!
+
+  - remove oauth stuff, not used
+  - replace ${Reusable}oauth/urlencode.cpp > boost::urls::encode
+
+  (I got tired... come back tomorrow, Indiana Jones...)
