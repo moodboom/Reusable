@@ -411,6 +411,10 @@ v TO DO
         194 |                 fread(uData, 1, ulRest, fIn);
             |                 ~~~~~^~~~~~~~~~~~~~~~~~~~~~~
 
+    and this bullshit:
+      /usr/bin/ld: warning: libssl.so.1.1, needed by /usr/lib/x86_64-linux-gnu/libpq.so, may conflict with libssl.so.3
+      /usr/bin/ld: warning: libcrypto.so.1.1, needed by /usr/lib/x86_64-linux-gnu/libpq.so, may conflict with libcrypto.so.3
+
   files are in Reusable
   these nasty fellows!
     ${Reusable}base64.cpp
