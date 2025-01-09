@@ -454,6 +454,9 @@ v TO DO
       hrmph VERY little change, i guess that's good!
 
   - remove oauth stuff, not used
+      i don't think i even use this crap any more!
+      only the braindead urlencode() and that might be in twitcurl...
+
   - replace ${Reusable}oauth/urlencode.cpp > boost::urls::encode
 
   (I got tired... come back tomorrow, Indiana Jones...)
