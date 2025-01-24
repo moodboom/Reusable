@@ -1,11 +1,12 @@
-Four ways (or more!) to run:
+A ton of ways to run the scrap modules:
 
-   vscode: 
+   1 vscode: 
       open this folder /home/m/development/Reusable/JavaScript/scrap
-      use run/debug
+      select the scrap to run, from the Run and Debug page dropdown
+      Press the green arrow (or hit your Run key, mine is F6)
       (see launch.json to add more scrap files)
 
-   ./file.js         # it has a shebang and node will just run it
-   node file.js      # manual
-                     # paste code into browser console
-   # node [ENTER}    # to enter REPL, then paste code
+   2 ./file.js         # it has a shebang and node will just run it
+   3 node file.js      # manual
+   4 browser           # copy and paste scrap code into browser console
+   5 # node [ENTER}    # to enter REPL, then paste code
