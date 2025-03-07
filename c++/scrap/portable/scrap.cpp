@@ -22,6 +22,15 @@ int main(int argc, char *argv[])
 #endif
     std::cout << " defined\n\n";
 
+    std::cout << "ready to go" << std::endl;
+    goto run_from_here2;
+
+
+    run_from_here1:
+        std::cout << "jump here" << std::endl;
+    run_from_here2:
+        std::cout << "then jump here" << std::endl;
+
     // 1 ===================================================================================
     cout << endl << "== 1 === cast ==========" << endl;
     // 1 ===================================================================================
@@ -1268,6 +1277,26 @@ R"(
     cout << cjn.at("pi0") << endl;
     // cout << cjn["pi0"] << endl;  // FAILS TO COMPILE.  YOU SUCK BOOST.
 
+
+    // 23 ==================================================================================
+    cout << endl << "== 23 === std::chrono THE FUTURE =======" << endl;
+    // 23 ==================================================================================
+
+    run_from_here:
+
+    // start/stop a clock and capture the duration:
+    typedef std::chrono::milliseconds ms;
+    typedef std::chrono::duration<float> fsec;
+    auto t0 = std::chrono::steady_clock::now();
+    std::this_thread::sleep_for(2000ms);
+    auto t1 = std::chrono::steady_clock::now();
+    fsec fs = t1 - t0;
+    ms d = std::chrono::duration_cast<ms>(fs);
+    std::cout << fs.count() << "s\n";
+    std::cout << d.count() << "ms\n";      
+
+    // capture a timestamp:
+    // output a timestamp:
 
 
     // ========= end ========

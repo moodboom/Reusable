@@ -1,5 +1,6 @@
 # MDM 2017/08/04 3.8 is on ubuntu 17.10, 3.7 is on gentoo
-cmake_minimum_required(VERSION 3.7)
+# MDM 2025/03/07 updated to match ats
+cmake_minimum_required(VERSION 3.31)
 
 # MDM silently append relative paths to absolute paths without warnings
 cmake_policy(SET CMP0015 NEW)   
@@ -8,13 +9,20 @@ cmake_policy(SET CMP0015 NEW)
 project(scrap)
 
 # -------------------------------
-# MDM Set up relative paths to external folders
+# MDM Set up paths to external folders
 # sync with .vscode/c_cpp_properties.json
+# MDM 2025/03/07 NOTE that CMake removed relative path support (FUCK YOU),
+# so we have to use absolute paths.  Easy, via: CMAKE_CURRENT_SOURCE_DIR
 # -------------------------------
-set(Reusable "../../") # just step back to Reusable/c++
-set(ThirdParty "../../../../Libraries/c++/")
-set(ThirdPartyC "../../../../Libraries/c/")
+message("MDM CMake is building from: ${CMAKE_CURRENT_SOURCE_DIR}")
+set(Reusable "${CMAKE_CURRENT_SOURCE_DIR}/../../../c++/") # Stay within Reusable folder
+set(Libraries "${CMAKE_CURRENT_SOURCE_DIR}/../../../../Libraries/")
+set(ThirdParty "${Libraries}c++/")
+set(ThirdPartyC "${Libraries}c/")
 set(BOOST_ROOT "${ThirdParty}boost/")
+
+message("MDM Reusable: ${Reusable}")
+message("MDM Boost: ${BOOST_ROOT}")
 
 # MDM pqxx uses c++17 so here we go - why tf was this currently commented out above?
 # push to c++20
@@ -37,6 +45,7 @@ INCLUDE_DIRECTORIES(${ThirdParty}SQLiteCpp/include/)
 
 # MDM CMake handles boost like this...
 set(BOOST_INCLUDE_DIR ${BOOST_ROOT})
+set(Boost_DIR ${BOOST_ROOT})
 IF(CMAKE_BUILD_TYPE MATCHES DEBUG)
     message("Building with boost debug libraries...")
     set(BOOST_LIBRARYDIR ${BoostRoot}lib/debug)
