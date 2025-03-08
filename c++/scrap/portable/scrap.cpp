@@ -1254,25 +1254,28 @@ int main(int argc, char *argv[])
         cout << cjn.at("pi0") << endl;
         // cout << cjn["pi0"] << endl;  // FAILS TO COMPILE.  YOU SUCK BOOST.
     }
-    // 25 ==================================================================================
-    cout << endl << "== 25 === std::chrono THE FUTURE =======" << endl;
     run_from_here:
     // 25 ==================================================================================
+    cout << endl << "== 25 === std::chrono THE FUTURE =======" << endl;
+    // 25 ==================================================================================
     {
-        // start/stop a clock and capture the duration
+        using namespace std::chrono;
+
+        // ---------------------------------------------------------------
+        // start/stop a clock and capture the duration (use steady_clock)
+        // ---------------------------------------------------------------
 
         // ---------------
         // IN MILLISECONDS
         // ---------------
         // defs
-        // using duration_ms = std::chrono::duration<double, std::ratio<1, 1000>>;
-        typedef std::chrono::duration<double, std::ratio<1, 1000>> duration_ms;
-        typedef std::chrono::milliseconds ms;
+        // using duration_ms = duration<double, std::ratio<1, 1000>>;
+        typedef duration<double, std::ratio<1, 1000>> duration_ms;
 
         // bracket an event
-        auto t0 = std::chrono::steady_clock::now();
+        auto t0 = steady_clock::now();
         std::this_thread::sleep_for(50ms);
-        auto t1 = std::chrono::steady_clock::now();
+        auto t1 = steady_clock::now();
 
         // capture the duration
         duration_ms d = t1 - t0;
@@ -1282,19 +1285,31 @@ int main(int argc, char *argv[])
         // ---------------
         // IN SECONDS
         // ---------------
-        typedef std::chrono::duration<float> fsec;
-        t0 = std::chrono::steady_clock::now();
+        // defs
+        typedef duration<float> duration_seconds;
+
+        auto t2 = steady_clock::now();
         std::this_thread::sleep_for(1300ms);
-        t1 = std::chrono::steady_clock::now();
-        fsec fs = t1 - t0;
+        auto t3 = steady_clock::now();
+        duration_seconds fs = t3 - t2;
         std::cout << fs.count() << " seconds\n";
         // ---------------
 
-        // TODO NEXT
-        
-        // capture a timestamp:
-        // output a timestamp:
+        // ---------------------------------------------------------------
+        // capture and output a timestamp (use system_clock):
+        // ---------------------------------------------------------------
+        auto t4 = system_clock::now();
+        const std::time_t tt_t4 = std::chrono::system_clock::to_time_t(t4);
+        const string strLocalTime = std::ctime(&tt_t4);
+        std::cout << "time: " << tt_t4 << " " << strLocalTime << std::endl;
 
+        // TODO TIMEZONE support
+        // gcc 11.4.0 is supposed to have this, but it does NOT.  wtf.
+        // std::cout << std::chrono::zoned_time{"Asia/Singapore", system_clock::now()} << '\n';
+        // std::cout << std::chrono::zoned_time{"America/New_York", system_clock::now()} << '\n';
+        // std::cout << std::chrono::zoned_time{"Europe/London", system_clock::now()} << '\n';
+        // std::cout << std::chrono::zoned_time{"America/Los_Angeles", system_clock::now()} << '\n';
+        // std::cout << std::chrono::zoned_time{"America/Chicago", system_clock::now()} << '\n';
     }
     // ========= end ========
     // We can keep it running if needed to better see the output.
