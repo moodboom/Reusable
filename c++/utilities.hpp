@@ -100,6 +100,7 @@ using namespace std;
 //    static bool bEqual(const double& a, const double& b)
 //    static bool bZero(const double& a)
 //    static bool bLessThanOrEqual(const double& a, const double& b)
+//    static bool bLessThan(const double& a, const double& b)
 //    static double roundToHundredths(const double& value)
 //    static bool isPrime(int n)
 // MISC
