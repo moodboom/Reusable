@@ -852,7 +852,7 @@ static string logVerbosityName(const LOG_TO_FILE_VERBOSITY lv)
 // FILE
 //=========================================================
 // Don't mess around, let boost::filesystem do all the nasty work.
-#include <boost/filesystem.hpp>
+using namespace std::filesystem; // exists, rename, copy, create_directories
 //
 // Check out this gem:
 //
@@ -888,14 +888,17 @@ static bool archive_any_old_file(const string &filename, const string &prefix, c
 {
   try
   {
-    using namespace boost::filesystem; // rename, path
     path p(filename);
     if (exists(p))
     {
       // Make sure the target path exists.
       if (prefix.size())
-        if (!boost::filesystem::create_directories(prefix))
-          return false;
+        if (!create_directories(prefix))
+          if (!exists(path(prefix)))
+          {
+            log(LV_ERROR, std::format("Failed to create directory: {}", prefix));
+            return false;
+          }
 
       stringstream ss;
       ss << prefix << filename << (suffix.empty() ? string(".") + generate_uuid() : suffix);
@@ -917,7 +920,6 @@ static bool backup_any_old_file(const string &filename, const string &prefix, co
 {
   try
   {
-    using namespace boost::filesystem; // rename, path
     path p(filename);
     if (exists(p))
     {
@@ -926,7 +928,7 @@ static bool backup_any_old_file(const string &filename, const string &prefix, co
       {
         // NOTE that this silly function returns false if nothing needed to be created.
         // Just ignore the return value.
-        boost::filesystem::create_directories(prefix);
+        create_directories(prefix);
       }
 
       stringstream ss;
