@@ -34,39 +34,39 @@ class HttpAPIServer : public HttpServer
 public:
   HttpAPIServer(
 
-    // required params
-    const vector<string> &includes,
-    const vector<string> &static_files,
-    const string &title,
+      // required params
+      const vector<string> &includes,
+      const vector<string> &static_files,
+      const string &title,
 
-    // required base params
-    unsigned short port,
-    size_t num_threads,
+      // required base params
+      unsigned short port,
+      size_t num_threads,
 
-    // (no https params)
+      // (no https params)
 
-    // defaulted params
-    const vector<string> &wrappers = c_default_wrappers,
-    bool bServeRootOnError = false,
-    bool bServeAPIAtRoot = false,
-    int max_body_size = 100000,
+      // defaulted params
+      const vector<string> &wrappers = c_default_wrappers,
+      bool bServeRootOnError = false,
+      bool bServeAPIAtRoot = false,
+      int max_body_size = 100000,
 
-    // defaulted base params
-    long timeout_request = 5,
-    long timeout_content = 300,
-    const std::string &verify_file = std::string()
+      // defaulted base params
+      long timeout_request = 5,
+      long timeout_content = 300,
+      const std::string &verify_file = std::string()
 
-  ) :
-  
-    // Call base class
-    inherited(port, num_threads, timeout_request, timeout_content),
+          ) :
 
-    // Init vars
-    title_(title),
-    wrappers_(wrappers),
-    bServeRootOnError_(bServeRootOnError),
-    bServeAPIAtRoot_(bServeAPIAtRoot),
-    max_body_size_(max_body_size)
+              // Call base class
+              inherited(port, num_threads, timeout_request, timeout_content),
+
+              // Init vars
+              title_(title),
+              wrappers_(wrappers),
+              bServeRootOnError_(bServeRootOnError),
+              bServeAPIAtRoot_(bServeAPIAtRoot),
+              max_body_size_(max_body_size)
   {
     assert(wrappers_.size() == HW_COUNT);
     set_html_includes(includes);
@@ -104,15 +104,17 @@ public:
     if (bServeRootOnError_)
       createBadRequestHandler();
 
-    // DEBUG
-    // Write out the available web routes
-    log(LV_ALWAYS,string("=================="));
-    log(LV_ALWAYS,string("    ROUTES:"));
-    log(LV_ALWAYS,string("=================="));
-    log(LV_ALWAYS,routes());
-    log(LV_ALWAYS,string("=================="));
-
     inherited::startServer();
+  }
+
+  // Write out the available web routes
+  void logRoutes()
+  {
+    log(LV_ALWAYS, string("=================="));
+    log(LV_ALWAYS, string("    ROUTES:"));
+    log(LV_ALWAYS, string("=================="));
+    log(LV_ALWAYS, routes());
+    log(LV_ALWAYS, string("=================="));
   }
 
 protected:
