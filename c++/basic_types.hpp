@@ -18,6 +18,8 @@
 #include <chrono> // C++20; for me, arrived in Ubuntu 25.04
 #include <format> // C++20; arrived ~2023 i guess?
 #include <filesystem>
+#include <mutex>
+#include <shared_mutex> // C++17
 // ===========================================
 
 // My STL container extensions (ie sorted_vector)
