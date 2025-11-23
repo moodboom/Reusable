@@ -1303,13 +1303,14 @@ int main(int argc, char *argv[])
         const string strLocalTime = std::ctime(&tt_t4);
         std::cout << "time: " << tt_t4 << " " << strLocalTime << std::endl;
 
-        // TODO TIMEZONE support
-        // gcc 11.4.0 is supposed to have this, but it does NOT.  wtf.
-        // std::cout << std::chrono::zoned_time{"Asia/Singapore", system_clock::now()} << '\n';
-        // std::cout << std::chrono::zoned_time{"America/New_York", system_clock::now()} << '\n';
-        // std::cout << std::chrono::zoned_time{"Europe/London", system_clock::now()} << '\n';
-        // std::cout << std::chrono::zoned_time{"America/Los_Angeles", system_clock::now()} << '\n';
-        // std::cout << std::chrono::zoned_time{"America/Chicago", system_clock::now()} << '\n';
+        // TIMEZONE support is here!  Yay!  
+        // Arrived for me in gcc (Ubuntu 14.2.0-19ubuntu2) 14.2.0
+        // NOTE gcc 11.4.0 was supposed to have this, but no go.
+        std::cout << std::chrono::zoned_time{"Asia/Singapore", system_clock::now()} << '\n';
+        std::cout << std::chrono::zoned_time{"America/New_York", system_clock::now()} << '\n';
+        std::cout << std::chrono::zoned_time{"Europe/London", system_clock::now()} << '\n';
+        std::cout << std::chrono::zoned_time{"America/Los_Angeles", system_clock::now()} << '\n';
+        std::cout << std::chrono::zoned_time{"America/Chicago", system_clock::now()} << '\n';
     }
     // ========= end ========
     // We can keep it running if needed to better see the output.
