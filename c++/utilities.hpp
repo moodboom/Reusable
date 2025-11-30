@@ -59,6 +59,7 @@ using namespace std;
 //    static string ISOFormat(const date& d)
 //    static string ISOFormat(const ptime& pt)
 //    static string ISOFormat(const time_t& t)
+//    static string ISODateFormat(const time_t &t)
 //    static ptime  get_utc_current_time()
 //    static time_t get_utc_current_time_t()
 //    static time_t get_utc_today_midnight()
@@ -653,6 +654,10 @@ static string RFC3339Format(const time_t &tt)
 static string ISOFormat(const time_t &t)
 {
   return ptime_to_string(time_t_to_ptime(t), "%Y-%m-%dT%H:%M:%S");
+}
+static string ISODateFormat(const time_t &t)
+{
+  return ptime_to_string(time_t_to_ptime(t), "%Y-%m-%d");
 }
 static string americanFormat(const date &d)
 {
