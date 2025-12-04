@@ -8,6 +8,60 @@
 // 18 NLOHMANN JSON, can be used with boost JSON with the right namespaces
 #include <json.hpp>
 
+
+// ===============================
+// == 26 === lambda redux ========
+// ===============================
+// These must be outside another function's scope.
+void use_it(auto func) {
+    func();
+}
+class A {
+    public:
+    int a_;
+};
+class MyObject {
+    // ...
+    public:
+
+    // THIS is what we want, the rest is just futzing around.
+    // We want a lambda that defaults to a no-op, 
+    // but can be optionally provided by the caller to do extra work to A.
+    void applyFunctionToAWithDefault(A& a, std::function<void(A&)> func = [](A& a) -> void { })
+    {
+        func(a);
+    }
+
+    void applyFunctionToA(A& a, auto* func) {
+        (*func)(a);
+    }
+
+    void SetXGetter(auto func) {
+        mLambda = std::move(func);
+    }
+
+    void SetXGetterProperForwarding(std::function<int()> func) {
+        mLambda = std::move(func);
+    }
+
+    void call()
+    {
+        mLambda();
+    }
+
+    int callProperForwarding()
+    {
+        return mLambda();
+    }
+
+    int x_;
+
+    private:
+        std::function<int()> mLambda;
+};
+// ===============================
+
+
 int main(int argc, char *argv[])
 {
     // We have a VERY SMALL number of globals defined for us in utilities.cpp.
@@ -24,6 +78,7 @@ int main(int argc, char *argv[])
 
     std::cout << "Jumping to latest scrap..." << std::endl;
     goto run_from_here;
+    run_from_here:
 
     // 1 ===================================================================================
     cout << endl << "== 1 === cast ==========" << endl;
@@ -66,22 +121,6 @@ int main(int argc, char *argv[])
             ++err_count;
 
         std::cout << err_count << " errors detected\nTest " << (err_count == 0 ? "passed\n" : "failed\n");
-    }
-    // 2 ===================================================================================
-    cout << endl << "== 2 === lambda ========" << endl;
-    // 2 ===================================================================================
-    {
-        // lamba test.  simple and does not require build of boost, just access to headers.
-
-        using namespace boost::lambda;
-        typedef std::istream_iterator<int> in;
-
-        // MDM This works but I'm commenting out so other tests can run without need for input.
-        // Just uncomment to re-enable this scrap.
-        // std::cout << "type something..." << endl;
-        // std::for_each(
-        //           in(std::cin), in(), std::cout << " results " << (boost::lambda::_1 * 3) << " "
-        // );
     }
 
 
@@ -1254,7 +1293,6 @@ int main(int argc, char *argv[])
         cout << cjn.at("pi0") << endl;
         // cout << cjn["pi0"] << endl;  // FAILS TO COMPILE.  YOU SUCK BOOST.
     }
-    run_from_here:
     // 25 ==================================================================================
     cout << endl << "== 25 === std::chrono THE FUTURE =======" << endl;
     // 25 ==================================================================================
@@ -1312,6 +1350,44 @@ int main(int argc, char *argv[])
         std::cout << std::chrono::zoned_time{"America/Los_Angeles", system_clock::now()} << '\n';
         std::cout << std::chrono::zoned_time{"America/Chicago", system_clock::now()} << '\n';
     }
+
+
+    // 26 ===================================================================================
+    cout << endl << "== 26 === lambda redux ========" << endl;
+    // 26 ===================================================================================
+    {
+        // WHAT WE WANT
+        // Pass lambda by value
+        // That's the way the STL does it.
+        // It's pretty ideal as long as there is not a lot of data contained in the parameter(s).
+        // And we never pass a lot of data - we try to always use refs - so this is perfect.
+        // MyObject m;
+        // m.useLambdaToModifyOurselves( [&m](){ m.x_ = 555; } );
+        // std::cout << "m.x_ is " << m.x_ << std::endl;
+
+        // some other examples from stack overflow
+        use_it([](){std::cout << "HALLO" << std::endl;});
+
+        MyObject mo;
+        mo.SetXGetter([](){std::cout << "BEYE" << std::endl; return 0;});
+        mo.call();
+
+        mo.SetXGetterProperForwarding([n=42](){std::cout << "FORWARD BEYE " << n << std::endl; return n + 19;});
+        int v = mo.callProperForwarding();
+        std::cout << "v is " << v << std::endl;
+
+        A a;
+        a.a_ = 10;
+        auto func = [](A& a_ref){ a_ref.a_ += 123; };
+        mo.applyFunctionToA(a, &func);
+        std::cout << "a.a_ is " << a.a_ << std::endl;
+        mo.applyFunctionToAWithDefault(a, func);
+        std::cout << "a.a_ is " << a.a_ << std::endl;
+        mo.applyFunctionToAWithDefault(a);
+        std::cout << "a.a_ is " << a.a_ << std::endl;
+    }
+
+
     // ========= end ========
     // We can keep it running if needed to better see the output.
     // while (true)
