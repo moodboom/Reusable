@@ -78,7 +78,7 @@ int main(int argc, char *argv[])
 
     std::cout << "Jumping to latest scrap..." << std::endl;
     goto run_from_here;
-    run_from_here:
+    // run_from_here:
 
     // 1 ===================================================================================
     cout << endl << "== 1 === cast ==========" << endl;
@@ -832,8 +832,10 @@ int main(int argc, char *argv[])
         auto spy_json = json::parse(spy);
         for (auto& oneday:dia_json)
         {
-            ptime t = iso_string_to_ptime(oneday["Date"].get<string>());
-            if (t.date().day_of_week() == boost::date_time::Thursday)
+            attime t = iso_string_to_attime(oneday["Date"].get<string>());
+            auto dw = getDayOfWeek(t);
+            auto d = getDayOfWeekCount(dw);
+            if (d == 4) // Thursday
             {
                 double close = oneday["Close"].get<double>();
                 {
@@ -847,8 +849,10 @@ int main(int argc, char *argv[])
         }
         for (auto& oneday:spy_json)
         {
-            ptime t = iso_string_to_ptime(oneday["Date"].get<string>());
-            if (t.date().day_of_week() == boost::date_time::Thursday)
+            attime t = iso_string_to_attime(oneday["Date"].get<string>());
+            auto dw = getDayOfWeek(t);
+            auto d = getDayOfWeekCount(dw);
+            if (d == 4) // Thursday
             {
                 double close = oneday["Close"].get<double>();
                 if (isPrime((int)(close*1000)))
@@ -1203,16 +1207,23 @@ int main(int argc, char *argv[])
     cout << endl << "== 21 === Day of week =======" << endl;
     // 21 ==================================================================================
     {
-        ptime now = second_clock::universal_time();
+        attime now = get_utc_current_time();
         cout << now << endl;
-        auto day = now.date().day_of_week();
+        auto day = getDayOfWeek(now);
         cout << day << endl;
-        auto day06 = now.date().day_of_week().as_number();
-        cout << day06 << endl;
+
+        // Full name
+        std::string full_name = std::format(std::locale(""), "Today is {:%A}", day);  // e.g., "Thursday"
+
+        // Abbreviated name
+        std::string abbrev_name = std::format(std::locale(""), "aka {:%a}", day);  // e.g., "Thu"
+
+        auto dayCount = getDayOfWeekCount(day);
+        cout << dayCount << endl;
         int64_t mondayDay = 1;
-        int64_t subtract = day06 - mondayDay;
+        int64_t subtract = dayCount - mondayDay;
         if ( subtract < 0 ) subtract += 7;
-        auto most_recent_monday = ptime( now.date() - days(subtract));
+        auto most_recent_monday = attime( getDate( now )) - days(subtract);
         cout << "Last Monday: " << most_recent_monday << endl;
 
         cout << endl;
@@ -1350,8 +1361,6 @@ int main(int argc, char *argv[])
         std::cout << std::chrono::zoned_time{"America/Los_Angeles", system_clock::now()} << '\n';
         std::cout << std::chrono::zoned_time{"America/Chicago", system_clock::now()} << '\n';
     }
-
-
     // 26 ===================================================================================
     cout << endl << "== 26 === lambda redux ========" << endl;
     // 26 ===================================================================================
@@ -1386,7 +1395,28 @@ int main(int argc, char *argv[])
         mo.applyFunctionToAWithDefault(a);
         std::cout << "a.a_ is " << a.a_ << std::endl;
     }
+    run_from_here:
+    // it's "TIME" (ugg) to switch completely out of boost::posix to std::chrono
+    // We decided MICROSECONDS are the way to go
+    // They fit in 64 bits, and cover from 1970 to 2262
+    // I have a lot of code to rework... optimize the conversions here
+    // I'm looking at you, utilities.hpp...
+    // 27 ==================================================================================
+    cout << endl << "== 27 === boost::posix > std::chrono REFACTOR =======" << endl;
+    // 27 ==================================================================================
+    {
+        // Howard Hinnant in 2018
+        // https://stackoverflow.com/a/48707082/717274
+        using namespace std::chrono;
+        using days = duration<int, ratio<86400>>;
+        using years = duration<double, ratio_multiply<ratio<146097, 400>, days::period>>;
+        cout << years{steady_clock::time_point::max() - steady_clock::now()}.count() << " years to go\n";
 
+        // using duration_milliseconds = duration<double, std::ratio<1, 1000>>;
+        using duration_int_microseconds = duration<int64_t, std::micro>;
+        cout << duration_int_microseconds{steady_clock::time_point::max() - steady_clock::now()}.count() << " years to go\n";
+
+    }
 
     // ========= end ========
     // We can keep it running if needed to better see the output.

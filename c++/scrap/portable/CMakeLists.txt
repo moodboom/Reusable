@@ -52,7 +52,8 @@ IF(CMAKE_BUILD_TYPE MATCHES DEBUG)
 ELSE()
     set(BOOST_LIBRARYDIR ${BoostRoot}lib)
 ENDIF()
-find_package(Boost COMPONENTS system thread date_time filesystem regex stacktrace_addr2line REQUIRED)
+# MDM remove system (boost is all-header now) and date_time (replaced with std::chrono) for 1.89+
+find_package(Boost COMPONENTS thread filesystem regex stacktrace_addr2line REQUIRED)
 include_directories(${BOOST_INCLUDE_DIR})
 link_directories(${BOOST_LIBRARYDIR})
 

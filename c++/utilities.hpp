@@ -7,10 +7,12 @@
 #include "miniz.h"
 #include <oauth/urlencode.h> // For urlen/decode
 #include <boost/json.hpp>
+#include <chrono>
 
 // DEFAULT NAMESPACING
 // This saves a ton of useless namespace specifications downstream.
 using namespace std;
+using namespace std::chrono;
 
 //  INDEX
 // ~~~~~~~
@@ -57,23 +59,22 @@ using namespace std;
 //    static string getISOCurrentTime<chrono::milliseconds>();
 //    static string getISOCurrentTime<chrono::microseconds>();
 //    static string ISOFormat(const date& d)
-//    static string ISOFormat(const ptime& pt)
+//    static string ISOFormat(const attime& pt)
 //    static string ISOFormat(const time_t& t)
 //    static string ISODateFormat(const time_t &t)
-//    static ptime  get_utc_current_time()
+//    static attime  get_utc_current_time()
 //    static time_t get_utc_current_time_t()
 //    static time_t get_utc_today_midnight()
-//    static ptime  get_local_current_time()
+//    static attime  get_local_current_time()
 //    static time_t get_local_current_time_t()
 //    static time_t get_local_today_midnight()
-//    static ptime string_to_ptime(const string& str_time, const string& str_format)
-//    static ptime iso_string_to_ptime(const string& str_time)
-//    static ptime utc_string_to_ptime(const string &str_time)
+//    static attime string_to_attime(const string& str_time, const string& str_format)
+//    static attime iso_string_to_attime(const string& str_time)
+//    static attime utc_string_to_attime(const string &str_time)
 //    static time_t iso_string_to_time_t(const string &str_time)
 //    static time_t utc_string_to_time_t(const string &str_time)
-//    static string ptime_to_string(const ptime& pt, const string& str_format)
-//    static time_t ptime_to_time_t(const ptime& pt)
-//    static ptime time_t_to_ptime(const time_t& tt)
+//    static string ptime_to_string(const attime& pt, const string& str_format)
+//    static attime time_t_to_attime(const time_t& tt)
 //    static string time_t_to_string(const time_t& tt, const string& str_format)
 //    static string americanFormat(date d)
 //    static time_t convertNewYorkToUtc(time_t& t)
@@ -535,32 +536,35 @@ protected:
 //=========================================================
 // ALWAYS PREFER UTC TIME, especially when persisting.
 
-/*
-// Example usage:
-// cout << getISOCurrentTime<chrono::seconds>();
-// cout << getISOCurrentTime<chrono::milliseconds>();
-// cout << getISOCurrentTime<chrono::microseconds>();
-template <class Precision>
-string getISOCurrentTime()
-{
-    auto now = std::chrono::system_clock::now();
-    return date::format("%FT%TZ", date::floor<Precision>(now));
+// ------------------------------------------
+// HIGH-RESOLUTION-CLOCK TIME, DURATION, NOW
+// ------------------------------------------
+// Reasonable timestamp value precisions are milliseconds and microseconds.
+// Since we can store microseconds in 64 bits, we should prefer that for most uses.
+// microseconds aka 1/1000000 sec aka one millionth of a second.
+// Timing in trading etc. requires high resolution timepoints that
+// MAY (very rarely) fall below 1 millisecond resolution aka 1/1000 sec aka one thousandth of a second.
+// But again, might as well use microseconds everywhere as there is little downside.
+typedef std::chrono::microseconds atresolution;
+typedef std::chrono::time_point<system_clock, atresolution> attime;
+typedef std::chrono::duration<int64_t, std::micro> atduration;
+// ---------------
+
+static attime get_utc_current_time() { return std::chrono::time_point_cast<atresolution>(system_clock::now()); }
+static time_t get_utc_current_time_t() { return system_clock::to_time_t(get_utc_current_time()); }
+static attime get_local_current_time() { return std::chrono::zoned_time<atresolution>{"America/New_York", get_utc_current_time()}.get_sys_time(); }
+static time_t get_local_current_time_t() { return system_clock::to_time_t(get_local_current_time()); }
+static attime getDate( const attime &t) { return std::chrono::floor<std::chrono::days>(t); }
+static std::chrono::weekday getDayOfWeek(const attime &t) {
+  //  return weekday{ getDate(t) }; }
+  // auto daycount = getDate(t);
+  auto daycount = std::chrono::floor<std::chrono::days>(t);
+  return std::chrono::weekday{daycount};
 }
-*/
-
-static time_t ptime_to_time_t(const ptime &pt)
+static int64_t getDayOfWeekCount(const std::chrono::weekday &wd)
 {
-  // Wow this is a lot of work.
-  ptime epoch(boost::gregorian::date(1970, 1, 1));
-  time_duration::sec_type x = (pt - epoch).total_seconds();
-  return time_t(x);
+  return wd.iso_encoding(); // 1=Monday, 7=Sunday
 }
-static ptime get_utc_current_time() { return second_clock::universal_time(); }
-static time_t get_utc_current_time_t() { return ptime_to_time_t(get_utc_current_time()); }
-
-static ptime get_local_current_time() { return second_clock::local_time(); }
-static time_t get_local_current_time_t() { return ptime_to_time_t(get_local_current_time()); }
-
 static time_t getUTCLocalDifference() { return get_local_current_time_t() - get_utc_current_time_t(); }
 static time_t one_day() { return 86400; }
 static time_t get_midnight(const time_t t) { return t / one_day() * one_day(); }
@@ -575,38 +579,39 @@ static time_t get_local_today_midnight()
   return get_midnight(now);
 }
 
-static ptime string_to_ptime(const string &str_time, const string &str_format)
+static attime string_to_attime(const string &str_time, const string &str_format)
 {
-  std::istringstream is(str_time);
-  is.imbue(std::locale(std::locale::classic(), new boost::posix_time::time_input_facet(str_format)));
-  ptime result;
-  is >> result;
+  // TODO
+  // std::istringstream is(str_time);
+  // is.imbue(std::locale(std::locale::classic(), new boost::posix_time::time_input_facet(str_format)));
+  attime result;
+  // is >> result;
   return result;
 
   // NOTE that this doesn't know about the "T"...
   // createdOn_ = boost::posix_time::from_iso_string(createdOn);
 }
-static ptime iso_string_to_ptime(const string &str_time)
+static attime iso_string_to_attime(const string &str_time)
 {
   // Config for UTC format, eg: 2014-02-23T10:11:19
   // NO Z
-  return string_to_ptime(str_time, "%Y-%m-%dT%H:%M:%S");
+  return string_to_attime(str_time, "%Y-%m-%dT%H:%M:%S");
 }
-static ptime utc_string_to_ptime(const string &str_time)
+static attime utc_string_to_attime(const string &str_time)
 {
   // Config for UTC format, eg: 2014-02-23T10:11:19Z
   // WITH Z
-  return string_to_ptime(str_time, "%Y-%m-%dT%H:%M:%SZ");
+  return string_to_attime(str_time, "%Y-%m-%dT%H:%M:%SZ");
 }
 static time_t iso_string_to_time_t(const string &str_time)
 {
-  return ptime_to_time_t(iso_string_to_ptime(str_time));
+  return system_clock::to_time_t(iso_string_to_attime(str_time));
 }
 static time_t utc_string_to_time_t(const string &str_time)
 {
-  return ptime_to_time_t(utc_string_to_ptime(str_time));
+  return system_clock::to_time_t(utc_string_to_attime(str_time));
 }
-static string ptime_to_string(const ptime &pt, const string &str_format)
+static string ptime_to_string(const attime &pt, const string &str_format)
 {
   std::ostringstream is;
   is.imbue(std::locale(std::locale::classic(), new boost::posix_time::time_facet(str_format.c_str())));
@@ -620,15 +625,15 @@ static string date_to_string(const date &d, const string &str_format)
   is << d;
   return is.str();
 }
-static ptime time_t_to_ptime(const time_t &tt)
+static attime time_t_to_attime(const time_t &tt)
 {
-  return from_time_t(tt);
+  return std::chrono::time_point_cast<std::chrono::microseconds>(system_clock::from_time_t(tt));
 }
 static string time_t_to_string(const time_t &tt, const string &str_format)
 {
   if (tt > 5000000000)
     return "100+ years in the future";
-  return ptime_to_string(time_t_to_ptime(tt), str_format);
+  return ptime_to_string(time_t_to_attime(tt), str_format);
 }
 
 static string ISOFormat(const date &d)
@@ -639,25 +644,25 @@ static string ISOFormat(const date &d)
   // ss << boost::format("%4d-%02d-%02d") % d.year() % d.month() % d.day();
   // return ss.str();
 }
-static string ISOFormat(const ptime &pt)
+static string ISOFormat(const attime &pt)
 {
   return ptime_to_string(pt, "%Y-%m-%dT%H:%M:%S");
 }
-static string RFC3339Format(const ptime &pt)
+static string RFC3339Format(const attime &pt)
 {
   return ptime_to_string(pt, "%Y-%m-%dT%H:%M:%SZ");
 }
 static string RFC3339Format(const time_t &tt)
 {
-  return ptime_to_string(time_t_to_ptime(tt), "%Y-%m-%dT%H:%M:%SZ");
+  return ptime_to_string(time_t_to_attime(tt), "%Y-%m-%dT%H:%M:%SZ");
 }
 static string ISOFormat(const time_t &t)
 {
-  return ptime_to_string(time_t_to_ptime(t), "%Y-%m-%dT%H:%M:%S");
+  return ptime_to_string(time_t_to_attime(t), "%Y-%m-%dT%H:%M:%S");
 }
 static string ISODateFormat(const time_t &t)
 {
-  return ptime_to_string(time_t_to_ptime(t), "%Y-%m-%d");
+  return ptime_to_string(time_t_to_attime(t), "%Y-%m-%d");
 }
 static string americanFormat(const date &d)
 {
