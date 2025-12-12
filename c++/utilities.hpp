@@ -7,12 +7,6 @@
 #include "miniz.h"
 #include <oauth/urlencode.h> // For urlen/decode
 #include <boost/json.hpp>
-#include <chrono>
-
-// DEFAULT NAMESPACING
-// This saves a ton of useless namespace specifications downstream.
-using namespace std;
-using namespace std::chrono;
 
 //  INDEX
 // ~~~~~~~
@@ -73,7 +67,7 @@ using namespace std::chrono;
 //    static attime utc_string_to_attime(const string &str_time)
 //    static time_t iso_string_to_time_t(const string &str_time)
 //    static time_t utc_string_to_time_t(const string &str_time)
-//    static string ptime_to_string(const attime& pt, const string& str_format)
+//    static string attime_to_string(const attime& pt, const string& str_format)
 //    static attime time_t_to_attime(const time_t& tt)
 //    static string time_t_to_string(const time_t& tt, const string& str_format)
 //    static string americanFormat(date d)
@@ -347,6 +341,7 @@ static string url_encode(const string &value) {
 }
 */
 
+#include<boost/tokenizer.hpp>
 static std::map<const std::string, std::string> parse_html(
     const std::string &htmldata,
     const std::string &separator = "?&",
@@ -545,26 +540,19 @@ protected:
 // Timing in trading etc. requires high resolution timepoints that
 // MAY (very rarely) fall below 1 millisecond resolution aka 1/1000 sec aka one thousandth of a second.
 // But again, might as well use microseconds everywhere as there is little downside.
-typedef std::chrono::microseconds atresolution;
-typedef std::chrono::time_point<system_clock, atresolution> attime;
-typedef std::chrono::duration<int64_t, std::micro> atduration;
+typedef microseconds atresolution;
+typedef time_point<system_clock, atresolution> attime;
+typedef duration<int64_t, std::micro> atduration;
 // ---------------
 
-static attime get_utc_current_time() { return std::chrono::time_point_cast<atresolution>(system_clock::now()); }
+static attime get_utc_current_time() { return time_point_cast<atresolution>(system_clock::now()); }
 static time_t get_utc_current_time_t() { return system_clock::to_time_t(get_utc_current_time()); }
-static attime get_local_current_time() { return std::chrono::zoned_time<atresolution>{"America/New_York", get_utc_current_time()}.get_sys_time(); }
+static attime get_local_current_time() { return zoned_time<atresolution>{"America/New_York", get_utc_current_time()}.get_sys_time(); }
 static time_t get_local_current_time_t() { return system_clock::to_time_t(get_local_current_time()); }
-static attime getDate( const attime &t) { return std::chrono::floor<std::chrono::days>(t); }
-static std::chrono::weekday getDayOfWeek(const attime &t) {
-  //  return weekday{ getDate(t) }; }
-  // auto daycount = getDate(t);
-  auto daycount = std::chrono::floor<std::chrono::days>(t);
-  return std::chrono::weekday{daycount};
-}
-static int64_t getDayOfWeekCount(const std::chrono::weekday &wd)
-{
-  return wd.iso_encoding(); // 1=Monday, 7=Sunday
-}
+static auto getDate( const attime &t) { return floor<days>(t); }
+static weekday getDayOfWeek(const attime &t) { return weekday{getDate(t)}; }
+// 1=Monday, 7=Sunday
+static auto getDayOfWeekIso(const attime &t) { return getDayOfWeek(t).iso_encoding(); }
 static time_t getUTCLocalDifference() { return get_local_current_time_t() - get_utc_current_time_t(); }
 static time_t one_day() { return 86400; }
 static time_t get_midnight(const time_t t) { return t / one_day() * one_day(); }
@@ -611,20 +599,20 @@ static time_t utc_string_to_time_t(const string &str_time)
 {
   return system_clock::to_time_t(utc_string_to_attime(str_time));
 }
-static string ptime_to_string(const attime &pt, const string &str_format)
+static string attime_to_string(const attime &pt, const string &str_format)
 {
-  std::ostringstream is;
-  is.imbue(std::locale(std::locale::classic(), new boost::posix_time::time_facet(str_format.c_str())));
-  is << pt;
-  return is.str();
+  // THE C++23 HACK for building formats at runtime.
+  // Update this when we move to C++26.
+  const string_view fmt = std::format( "{{:{}}}", str_format );
+  return std::vformat(locale(""), fmt, std::make_format_args(pt));
 }
-static string date_to_string(const date &d, const string &str_format)
-{
-  std::ostringstream is;
-  is.imbue(std::locale(std::cout.getloc(), new boost::gregorian::date_facet(str_format.c_str())));
-  is << d;
-  return is.str();
-}
+// static string date_to_string(const date &d, const string &str_format)
+// {
+//   std::ostringstream is;
+//   is.imbue(std::locale(std::cout.getloc(), new boost::gregorian::date_facet(str_format.c_str())));
+//   is << d;
+//   return is.str();
+// }
 static attime time_t_to_attime(const time_t &tt)
 {
   return std::chrono::time_point_cast<std::chrono::microseconds>(system_clock::from_time_t(tt));
@@ -633,42 +621,37 @@ static string time_t_to_string(const time_t &tt, const string &str_format)
 {
   if (tt > 5000000000)
     return "100+ years in the future";
-  return ptime_to_string(time_t_to_attime(tt), str_format);
+  return attime_to_string(time_t_to_attime(tt), str_format);
 }
 
-static string ISOFormat(const date &d)
+static string ISODateFormat(const attime &t)
 {
-  return date_to_string(d, "%Y-%m-%d");
-
-  // stringstream ss;
-  // ss << boost::format("%4d-%02d-%02d") % d.year() % d.month() % d.day();
-  // return ss.str();
+  return attime_to_string(t, "%Y-%m-%d");
 }
 static string ISOFormat(const attime &pt)
 {
-  return ptime_to_string(pt, "%Y-%m-%dT%H:%M:%S");
+  return attime_to_string(pt, "%Y-%m-%dT%H:%M:%S");
 }
 static string RFC3339Format(const attime &pt)
 {
-  return ptime_to_string(pt, "%Y-%m-%dT%H:%M:%SZ");
+  return attime_to_string(pt, "%Y-%m-%dT%H:%M:%SZ");
 }
 static string RFC3339Format(const time_t &tt)
 {
-  return ptime_to_string(time_t_to_attime(tt), "%Y-%m-%dT%H:%M:%SZ");
+  return attime_to_string(time_t_to_attime(tt), "%Y-%m-%dT%H:%M:%SZ");
 }
 static string ISOFormat(const time_t &t)
 {
-  return ptime_to_string(time_t_to_attime(t), "%Y-%m-%dT%H:%M:%S");
+  return attime_to_string(time_t_to_attime(t), "%Y-%m-%dT%H:%M:%S");
 }
 static string ISODateFormat(const time_t &t)
 {
-  return ptime_to_string(time_t_to_attime(t), "%Y-%m-%d");
+  return attime_to_string(time_t_to_attime(t), "%Y-%m-%d");
 }
-static string americanFormat(const date &d)
+static string americanFormat(const attime &t)
 {
-  stringstream ss;
-  ss << boost::format("%02d-%02d-%4d") % d.month() % d.day() % d.year();
-  return ss.str();
+  // ss << boost::format("%02d-%02d-%4d") % d.month() % d.day() % d.year();
+  return attime_to_string(t, "%m-%d-%Y");
 }
 // We need to convert all our apps to use UTC unix epoch milliseconds.
 // For now, we need these hack conversions.

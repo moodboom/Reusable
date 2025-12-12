@@ -1,7 +1,7 @@
 #ifndef basic_types_hpp
 #define basic_types_hpp
 
-// I think this has to come before STL?
+// This may have to come before STL.
 #include <boost/config.hpp>
 
 // ===========================================
@@ -40,10 +40,6 @@
 
 // for checksum functions
 #include <boost/crc.hpp>
-
-#include <boost/date_time/posix_time/posix_time.hpp>
-using namespace boost::posix_time; // for ptime
-using namespace boost::gregorian;	 // for date
 
 // ranged for loops with an index:
 //      for (const auto& element : boost::adaptors::index(my_container))
@@ -96,8 +92,9 @@ using namespace boost::gregorian;	 // for date
 #endif
 #include <boost/asio.hpp>
 #include <boost/thread.hpp>
-#include <boost/chrono.hpp>
-#include <boost/date_time.hpp>
+// MDM 2025-12-12 Do we need this for asio?  I don't want it to collide with std::chrono.
+// #include <boost/chrono.hpp>
+// #include <boost/date_time.hpp>
 // ===========================================
 
 // ===========================================
@@ -150,7 +147,12 @@ typedef ssl::stream<tcp::socket> ssl_embedded_socket;
 #include <boost/filesystem/fstream.hpp>
 // ===========================================
 
+// DEFAULT NAMESPACING
+// Many devs advise against this bc it can lead to name collisions.  I disagree.
+// 1 This saves a ton of useless namespace specifications downstream.
+// 2 High-level name collisions SHOULD be caught, and you should then clean up your code to use one library.
 using namespace std;
+using namespace std::chrono;
 using namespace boost;
 
 // ===========================================
@@ -181,21 +183,5 @@ typedef enum
 
 	http_action_count
 } http_action;
-
-// NOTE that for many of our JSON objects, we don't need to permanently store all the data that is extracted.
-// Strategy:
-//      use a memory object inside a JSON object
-//      extract the JSON
-//      use the JSON data as needed
-//      discard the JSON object and just keep the in-memory object
-class JSONableObject
-{
-public:
-	virtual ~JSONableObject() {}
-
-	virtual bool from_JSON(const string &in) = 0;
-	virtual string to_JSON() const = 0;
-	virtual void log() const {}
-};
 
 #endif

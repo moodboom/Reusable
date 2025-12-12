@@ -78,7 +78,7 @@ int main(int argc, char *argv[])
 
     std::cout << "Jumping to latest scrap..." << std::endl;
     goto run_from_here;
-    // run_from_here:
+    run_from_here:
 
     // 1 ===================================================================================
     cout << endl << "== 1 === cast ==========" << endl;
@@ -833,26 +833,21 @@ int main(int argc, char *argv[])
         for (auto& oneday:dia_json)
         {
             attime t = iso_string_to_attime(oneday["Date"].get<string>());
-            auto dw = getDayOfWeek(t);
-            auto d = getDayOfWeekCount(dw);
-            if (d == 4) // Thursday
+            auto d = getDayOfWeek(t);
+            if (d == std::chrono::Thursday)
             {
                 double close = oneday["Close"].get<double>();
                 {
                 if (isPrime((int)(close*1000)))
-                    cout << close << " on " << ISOFormat(t) << endl;
-                    // stringstream ss;
-                    // ss << close << " on " << ISOFormat(t);
-                    // log(LV_ALWAYS,ss.str());
+                    cout << close << " on " << ISODateFormat(t) << endl;
                 }
             }
         }
         for (auto& oneday:spy_json)
         {
             attime t = iso_string_to_attime(oneday["Date"].get<string>());
-            auto dw = getDayOfWeek(t);
-            auto d = getDayOfWeekCount(dw);
-            if (d == 4) // Thursday
+            auto d = getDayOfWeek(t);
+            if (d == std::chrono::Thursday)
             {
                 double close = oneday["Close"].get<double>();
                 if (isPrime((int)(close*1000)))
@@ -1209,22 +1204,27 @@ int main(int argc, char *argv[])
     {
         attime now = get_utc_current_time();
         cout << now << endl;
-        auto day = getDayOfWeek(now);
-        cout << day << endl;
+        auto dow = getDayOfWeek(now);
+        cout 
+            << "Raw day of week: " << dow << endl
+            << std::format(std::locale(""), "Today is {:%A}", dow) << endl      // Full name, e.g., "Thursday"
+            << std::format(std::locale(""), "aka {:%a}", dow) << endl           // Abbreviated name, e.g., "Thu"
+            << endl;
 
-        // Full name
-        std::string full_name = std::format(std::locale(""), "Today is {:%A}", day);  // e.g., "Thursday"
+        // Find last monday.
+        // Calculate days since Monday (0 = Monday, 6 = Sunday)
+        auto days_since_monday = (dow - std::chrono::Monday).count();
+        if (days_since_monday < 0) days_since_monday += 7;
+        
+        // Subtract those days from today's date to get last Monday
+        auto last_monday = attime(getDate(now)) - std::chrono::days(days_since_monday);
+        cout << "Last Monday: " << last_monday << endl;
 
-        // Abbreviated name
-        std::string abbrev_name = std::format(std::locale(""), "aka {:%a}", day);  // e.g., "Thu"
-
-        auto dayCount = getDayOfWeekCount(day);
-        cout << dayCount << endl;
-        int64_t mondayDay = 1;
-        int64_t subtract = dayCount - mondayDay;
-        if ( subtract < 0 ) subtract += 7;
-        auto most_recent_monday = attime( getDate( now )) - days(subtract);
-        cout << "Last Monday: " << most_recent_monday << endl;
+        // int64_t mondayDay = 1;
+        // int64_t subtract = dow - mondayDay;
+        // if ( subtract < 0 ) subtract += 7;
+        // auto most_recent_monday = attime( getDate( now )) - std::chrono::days(subtract);
+        // cout << "Last Monday: " << most_recent_monday << endl;
 
         cout << endl;
     }
@@ -1395,7 +1395,6 @@ int main(int argc, char *argv[])
         mo.applyFunctionToAWithDefault(a);
         std::cout << "a.a_ is " << a.a_ << std::endl;
     }
-    run_from_here:
     // it's "TIME" (ugg) to switch completely out of boost::posix to std::chrono
     // We decided MICROSECONDS are the way to go
     // They fit in 64 bits, and cover from 1970 to 2262
@@ -1405,16 +1404,19 @@ int main(int argc, char *argv[])
     cout << endl << "== 27 === boost::posix > std::chrono REFACTOR =======" << endl;
     // 27 ==================================================================================
     {
-        // Howard Hinnant in 2018
-        // https://stackoverflow.com/a/48707082/717274
-        using namespace std::chrono;
-        using days = duration<int, ratio<86400>>;
-        using years = duration<double, ratio_multiply<ratio<146097, 400>, days::period>>;
-        cout << years{steady_clock::time_point::max() - steady_clock::now()}.count() << " years to go\n";
+        // How much time do we have left before our microsecond clock overflows?
+        cout << atduration{attime::max() - get_utc_current_time()}.count() << " microseconds to go until overflow\n";
 
-        // using duration_milliseconds = duration<double, std::ratio<1, 1000>>;
-        using duration_int_microseconds = duration<int64_t, std::micro>;
-        cout << duration_int_microseconds{steady_clock::time_point::max() - steady_clock::now()}.count() << " years to go\n";
+        auto dpn = floor<std::chrono::days>(get_utc_current_time());
+        year_month_day ymdn{dpn};
+        auto y = ymdn.year();
+        cout << "This year: " << y << endl;
+
+        attime atmax = std::chrono::time_point_cast<atresolution>(std::chrono::time_point<system_clock, atresolution>::max());
+        auto dpMax = floor<std::chrono::days>(atmax);
+        year_month_day ymdMax{dpMax};
+        auto yMax = ymdMax.year();
+        cout << "Max year: " << yMax << endl;
 
     }
 
