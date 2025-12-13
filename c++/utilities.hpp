@@ -48,30 +48,22 @@
 //    class JWT;
 //    string url_encode_JWT(const JWT& j_input);
 //    void url_decode_JWT(string input, JWT& jwt);
-// TIME Always prefer UTC
-//    static string getISOCurrentTime<chrono::seconds>();
-//    static string getISOCurrentTime<chrono::milliseconds>();
-//    static string getISOCurrentTime<chrono::microseconds>();
-//    static string ISOFormat(const attime& pt)
-//    static string ISODateFormat(const time_t &t)
+// TIME See typedef attime; Always prefer UTC
 //    static attime get_utc_current_time()
-//    static time_t get_utc_current_time_t()
-//    static time_t get_utc_today_midnight()
 //    static attime get_local_current_time()
-//    static time_t get_local_current_time_t()
-//    static time_t get_local_today_midnight()
-//    static attime string_to_attime(const string& str_time, const string& str_format)
-//    static attime iso_string_to_attime(const string& str_time)
+//    static auto getDate(const attime &t)
+//    static weekday getDayOfWeek(const attime &t)
+//    static auto getDayOfWeekIso(const attime &t) // 1=Monday, 7=Sunday
+//    static attime string_to_attime(const string &str_time, const string &str_format)
+//    static attime iso_string_to_attime(const string &str_time)
 //    static attime utc_string_to_attime(const string &str_time)
 //    static attime isoDateStringToAttime(const string &str_time)
 //    static attime usDateStringToAttime(const string &str_time)
-//    static time_t iso_string_to_time_t(const string &str_time)
-//    static time_t utc_string_to_time_t(const string &str_time)
-//    static string attime_to_string(const attime& pt, const string& str_format)
-//    static attime time_t_to_attime(const time_t& tt)
-//    static string time_t_to_string(const time_t& tt, const string& str_format)
+//    static string attime_to_string(const attime &t, const string &str_format)
+//    static string ISOFormat(const attime &t)
+//    static string ISODateFormat(const attime &t)
+//    static string RFC3339Format(const attime &t)
 //    static string americanFormat(const attime &t)
-//    static time_t convertNewYorkToUtc(time_t& t)
 // RANDOM
 //    static std::string generate_uuid()
 //    static std::string generate_random_hex(uint_fast32_t length)
@@ -535,38 +527,29 @@ protected:
 // HIGH-RESOLUTION-CLOCK TIME, DURATION, NOW
 // ------------------------------------------
 // Reasonable timestamp value precisions are milliseconds and microseconds.
-// Since we can store microseconds in 64 bits, we should prefer that for most uses.
-// microseconds aka 1/1000000 sec aka one millionth of a second.
-// Timing in trading etc. requires high resolution timepoints that
-// MAY (very rarely) fall below 1 millisecond resolution aka 1/1000 sec aka one thousandth of a second.
-// But again, might as well use microseconds everywhere as there is little downside.
+// We will use microseconds aka 1/1000000 sec aka one millionth of a second.
+// Here are justifications for this choice.
+//
+// RESOLUTION
+// Timing in trading etc. requires high resolution timepoints that MAY (very rarely)
+// fall below 1 millisecond resolution aka 1/1000 sec aka one thousandth of a second.
+// Microseconds give us all the precision we will likely ever need.  (Don't quote me tho, lol)
+//
+// STORAGE
+// If we store microseconds in 64 bits, we get optimal storage and performance on modern hardware.
+// Regarding overflow concerns, storing microseconds since epoch give us util the year 32103.
+// We be dead by then.  Let's get on living!
+// 
 typedef microseconds atresolution;
 typedef time_point<system_clock, atresolution> attime;
 typedef duration<int64_t, std::micro> atduration;
 // ---------------
 
 static attime get_utc_current_time() { return time_point_cast<atresolution>(system_clock::now()); }
-static time_t get_utc_current_time_t() { return system_clock::to_time_t(get_utc_current_time()); }
 static attime get_local_current_time() { return zoned_time<atresolution>{"America/New_York", get_utc_current_time()}.get_sys_time(); }
-static time_t get_local_current_time_t() { return system_clock::to_time_t(get_local_current_time()); }
 static auto getDate(const attime &t) { return floor<days>(t); }
 static weekday getDayOfWeek(const attime &t) { return weekday{getDate(t)}; }
-// 1=Monday, 7=Sunday
-static auto getDayOfWeekIso(const attime &t) { return getDayOfWeek(t).iso_encoding(); }
-static time_t getUTCLocalDifference() { return get_local_current_time_t() - get_utc_current_time_t(); }
-static time_t one_day() { return 86400; }
-static time_t get_midnight(const time_t t) { return t / one_day() * one_day(); }
-static time_t get_utc_today_midnight()
-{
-  time_t now = get_utc_current_time_t();
-  return get_midnight(now);
-}
-static time_t get_local_today_midnight()
-{
-  time_t now = get_local_current_time_t();
-  return get_midnight(now);
-}
-
+static auto getDayOfWeekIso(const attime &t) { return getDayOfWeek(t).iso_encoding(); } // 1=Monday, 7=Sunday
 static attime string_to_attime(const string &str_time, const string &str_format)
 {
   attime result;
@@ -603,14 +586,6 @@ static attime usDateStringToAttime(const string &str_time)
   // 02-23-2014
   return string_to_attime(str_time, "%m-%d-%Y");
 }
-static time_t iso_string_to_time_t(const string &str_time)
-{
-  return system_clock::to_time_t(iso_string_to_attime(str_time));
-}
-static time_t utc_string_to_time_t(const string &str_time)
-{
-  return system_clock::to_time_t(utc_string_to_attime(str_time));
-}
 static string attime_to_string(const attime &t, const string &str_format)
 {
   // THE C++23 HACK for building formats at runtime.
@@ -624,6 +599,36 @@ static string attime_to_string(const attime &t, const string &str_format)
   //   is << d;
   //   return is.str();
 }
+static string ISOFormat(const attime &t)
+{
+  return attime_to_string(t, "%Y-%m-%dT%H:%M:%S");
+}
+static string ISODateFormat(const attime &t)
+{
+  return attime_to_string(t, "%Y-%m-%d");
+}
+static string RFC3339Format(const attime &t)
+{
+  return attime_to_string(t, "%Y-%m-%dT%H:%M:%SZ");
+}
+static string americanFormat(const attime &t)
+{
+  // ss << boost::format("%02d-%02d-%4d") % d.month() % d.day() % d.year();
+  return attime_to_string(t, "%m-%d-%Y");
+}
+
+
+// vvv ALL THIS MUST DIE vvv
+
+
+static time_t iso_string_to_time_t(const string &str_time)
+{
+  return system_clock::to_time_t(iso_string_to_attime(str_time));
+}
+static time_t utc_string_to_time_t(const string &str_time)
+{
+  return system_clock::to_time_t(utc_string_to_attime(str_time));
+}
 static attime time_t_to_attime(const time_t &tt)
 {
   return std::chrono::time_point_cast<std::chrono::microseconds>(system_clock::from_time_t(tt));
@@ -633,19 +638,6 @@ static string time_t_to_string(const time_t &tt, const string &str_format)
   if (tt > 5000000000)
     return "100+ years in the future";
   return attime_to_string(time_t_to_attime(tt), str_format);
-}
-
-static string ISODateFormat(const attime &t)
-{
-  return attime_to_string(t, "%Y-%m-%d");
-}
-static string ISOFormat(const attime &t)
-{
-  return attime_to_string(t, "%Y-%m-%dT%H:%M:%S");
-}
-static string RFC3339Format(const attime &t)
-{
-  return attime_to_string(t, "%Y-%m-%dT%H:%M:%SZ");
 }
 static string RFC3339Format(const time_t &tt)
 {
@@ -659,10 +651,20 @@ static string ISODateFormat(const time_t &t)
 {
   return attime_to_string(time_t_to_attime(t), "%Y-%m-%d");
 }
-static string americanFormat(const attime &t)
+static time_t get_utc_current_time_t() { return system_clock::to_time_t(get_utc_current_time()); }
+static time_t get_local_current_time_t() { return system_clock::to_time_t(get_local_current_time()); }
+static time_t getUTCLocalDifference() { return get_local_current_time_t() - get_utc_current_time_t(); }
+static time_t one_day() { return 86400; }
+static time_t get_midnight(const time_t t) { return t / one_day() * one_day(); }
+static time_t get_utc_today_midnight()
 {
-  // ss << boost::format("%02d-%02d-%4d") % d.month() % d.day() % d.year();
-  return attime_to_string(t, "%m-%d-%Y");
+  time_t now = get_utc_current_time_t();
+  return get_midnight(now);
+}
+static time_t get_local_today_midnight()
+{
+  time_t now = get_local_current_time_t();
+  return get_midnight(now);
 }
 // We need to convert all our apps to use UTC unix epoch milliseconds.
 // For now, we need these hack conversions.
