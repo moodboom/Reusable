@@ -52,25 +52,24 @@
 //    static string getISOCurrentTime<chrono::seconds>();
 //    static string getISOCurrentTime<chrono::milliseconds>();
 //    static string getISOCurrentTime<chrono::microseconds>();
-//    static string ISOFormat(const date& d)
 //    static string ISOFormat(const attime& pt)
-//    static string ISOFormat(const time_t& t)
 //    static string ISODateFormat(const time_t &t)
-//    static attime  get_utc_current_time()
+//    static attime get_utc_current_time()
 //    static time_t get_utc_current_time_t()
 //    static time_t get_utc_today_midnight()
-//    static attime  get_local_current_time()
+//    static attime get_local_current_time()
 //    static time_t get_local_current_time_t()
 //    static time_t get_local_today_midnight()
 //    static attime string_to_attime(const string& str_time, const string& str_format)
 //    static attime iso_string_to_attime(const string& str_time)
 //    static attime utc_string_to_attime(const string &str_time)
+//    static attime us_string_to_attime(const string &str_time)
 //    static time_t iso_string_to_time_t(const string &str_time)
 //    static time_t utc_string_to_time_t(const string &str_time)
 //    static string attime_to_string(const attime& pt, const string& str_format)
 //    static attime time_t_to_attime(const time_t& tt)
 //    static string time_t_to_string(const time_t& tt, const string& str_format)
-//    static string americanFormat(date d)
+//    static string americanFormat(const attime &t)
 //    static time_t convertNewYorkToUtc(time_t& t)
 // RANDOM
 //    static std::string generate_uuid()
@@ -341,7 +340,7 @@ static string url_encode(const string &value) {
 }
 */
 
-#include<boost/tokenizer.hpp>
+#include <boost/tokenizer.hpp>
 static std::map<const std::string, std::string> parse_html(
     const std::string &htmldata,
     const std::string &separator = "?&",
@@ -549,7 +548,7 @@ static attime get_utc_current_time() { return time_point_cast<atresolution>(syst
 static time_t get_utc_current_time_t() { return system_clock::to_time_t(get_utc_current_time()); }
 static attime get_local_current_time() { return zoned_time<atresolution>{"America/New_York", get_utc_current_time()}.get_sys_time(); }
 static time_t get_local_current_time_t() { return system_clock::to_time_t(get_local_current_time()); }
-static auto getDate( const attime &t) { return floor<days>(t); }
+static auto getDate(const attime &t) { return floor<days>(t); }
 static weekday getDayOfWeek(const attime &t) { return weekday{getDate(t)}; }
 // 1=Monday, 7=Sunday
 static auto getDayOfWeekIso(const attime &t) { return getDayOfWeek(t).iso_encoding(); }
@@ -591,6 +590,11 @@ static attime utc_string_to_attime(const string &str_time)
   // WITH Z
   return string_to_attime(str_time, "%Y-%m-%dT%H:%M:%SZ");
 }
+static attime us_string_to_attime(const string &str_time)
+{
+  // 02-23-2014
+  return string_to_attime(str_time, "%m-%d-%Y");
+}
 static time_t iso_string_to_time_t(const string &str_time)
 {
   return system_clock::to_time_t(iso_string_to_attime(str_time));
@@ -599,20 +603,19 @@ static time_t utc_string_to_time_t(const string &str_time)
 {
   return system_clock::to_time_t(utc_string_to_attime(str_time));
 }
-static string attime_to_string(const attime &pt, const string &str_format)
+static string attime_to_string(const attime &t, const string &str_format)
 {
   // THE C++23 HACK for building formats at runtime.
   // Update this when we move to C++26.
-  const string_view fmt = std::format( "{{:{}}}", str_format );
-  return std::vformat(locale(""), fmt, std::make_format_args(pt));
+  const string_view fmt = std::format("{{:{}}}", str_format);
+  return std::vformat(locale(""), fmt, std::make_format_args(t));
+
+  // Old boost way
+  //   std::ostringstream is;
+  //   is.imbue(std::locale(std::cout.getloc(), new boost::gregorian::date_facet(str_format.c_str())));
+  //   is << d;
+  //   return is.str();
 }
-// static string date_to_string(const date &d, const string &str_format)
-// {
-//   std::ostringstream is;
-//   is.imbue(std::locale(std::cout.getloc(), new boost::gregorian::date_facet(str_format.c_str())));
-//   is << d;
-//   return is.str();
-// }
 static attime time_t_to_attime(const time_t &tt)
 {
   return std::chrono::time_point_cast<std::chrono::microseconds>(system_clock::from_time_t(tt));
@@ -628,13 +631,13 @@ static string ISODateFormat(const attime &t)
 {
   return attime_to_string(t, "%Y-%m-%d");
 }
-static string ISOFormat(const attime &pt)
+static string ISOFormat(const attime &t)
 {
-  return attime_to_string(pt, "%Y-%m-%dT%H:%M:%S");
+  return attime_to_string(t, "%Y-%m-%dT%H:%M:%S");
 }
-static string RFC3339Format(const attime &pt)
+static string RFC3339Format(const attime &t)
 {
-  return attime_to_string(pt, "%Y-%m-%dT%H:%M:%SZ");
+  return attime_to_string(t, "%Y-%m-%dT%H:%M:%SZ");
 }
 static string RFC3339Format(const time_t &tt)
 {
