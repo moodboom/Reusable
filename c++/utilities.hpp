@@ -63,7 +63,8 @@
 //    static attime string_to_attime(const string& str_time, const string& str_format)
 //    static attime iso_string_to_attime(const string& str_time)
 //    static attime utc_string_to_attime(const string &str_time)
-//    static attime us_string_to_attime(const string &str_time)
+//    static attime isoDateStringToAttime(const string &str_time)
+//    static attime usDateStringToAttime(const string &str_time)
 //    static time_t iso_string_to_time_t(const string &str_time)
 //    static time_t utc_string_to_time_t(const string &str_time)
 //    static string attime_to_string(const attime& pt, const string& str_format)
@@ -568,13 +569,16 @@ static time_t get_local_today_midnight()
 
 static attime string_to_attime(const string &str_time, const string &str_format)
 {
-  // TODO
-  // std::istringstream is(str_time);
-  // is.imbue(std::locale(std::locale::classic(), new boost::posix_time::time_input_facet(str_format)));
   attime result;
-  // is >> result;
+  std::istringstream is(str_time);
+  is >> std::chrono::parse(str_format, result);
+  if (is.fail())
+    result = attime{}; // Return epoch on parse failure
   return result;
 
+  // OLD boost way
+  // std::istringstream is(str_time);
+  // is.imbue(std::locale(std::locale::classic(), new boost::posix_time::time_input_facet(str_format)));
   // NOTE that this doesn't know about the "T"...
   // createdOn_ = boost::posix_time::from_iso_string(createdOn);
 }
@@ -590,7 +594,11 @@ static attime utc_string_to_attime(const string &str_time)
   // WITH Z
   return string_to_attime(str_time, "%Y-%m-%dT%H:%M:%SZ");
 }
-static attime us_string_to_attime(const string &str_time)
+static attime isoDateStringToAttime(const string &str_time)
+{
+  return string_to_attime(str_time, "%Y-%m-%d");
+}
+static attime usDateStringToAttime(const string &str_time)
 {
   // 02-23-2014
   return string_to_attime(str_time, "%m-%d-%Y");

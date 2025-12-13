@@ -832,7 +832,7 @@ int main(int argc, char *argv[])
         auto spy_json = json::parse(spy);
         for (auto& oneday:dia_json)
         {
-            attime t = iso_string_to_attime(oneday["Date"].get<string>());
+            attime t = isoDateStringToAttime(oneday["Date"].get<string>());
             auto d = getDayOfWeek(t);
             if (d == std::chrono::Thursday)
             {
@@ -845,14 +845,14 @@ int main(int argc, char *argv[])
         }
         for (auto& oneday:spy_json)
         {
-            attime t = iso_string_to_attime(oneday["Date"].get<string>());
+            attime t = isoDateStringToAttime(oneday["Date"].get<string>());
             auto d = getDayOfWeek(t);
             if (d == std::chrono::Thursday)
             {
                 double close = oneday["Close"].get<double>();
                 if (isPrime((int)(close*1000)))
                 {
-                    cout << close << " on " << ISOFormat(t) << endl;
+                    cout << close << " on " << ISODateFormat(t) << endl;
                 }
             }
         }
