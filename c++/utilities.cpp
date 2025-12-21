@@ -38,7 +38,7 @@ string JWT::url_encode()
 {
   bOK_ = false;
   
-  iat_ = get_utc_current_time_t();
+  iat_ = get_utc_current_time();
 
   string header   = R"({"alg":"HS256","typ":"JWT"})";
 
@@ -55,7 +55,7 @@ string JWT::url_encode()
     boost::json::object j;
     j["sub"] = sub_;
     j["role"] = role_;
-    j["iat"] = iat_;
+    j["iat"] = getSeconds( iat_ );
     payload = serialize( j );
   }
   catch(const std::exception& se)

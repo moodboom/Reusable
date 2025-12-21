@@ -78,7 +78,6 @@ int main(int argc, char *argv[])
 
     std::cout << "Jumping to latest scrap..." << std::endl;
     goto run_from_here;
-    run_from_here:
 
     // 1 ===================================================================================
     cout << endl << "== 1 === cast ==========" << endl;
@@ -732,7 +731,7 @@ int main(int argc, char *argv[])
         // Initially, externally, we check the job stage.
         // Meanwhile, we do a bunch of intense work inside the mutex.
         // Then we do smaller work with frequent mutexing, allowing interruption.
-        // Great patterns, use them brother!
+        // Great pnsterns, use them brother!
         // Hells to the yeah.
         // --------------------------------------------------------------------
         std::atomic<int32_t> job_stage(0);
@@ -832,7 +831,7 @@ int main(int argc, char *argv[])
         auto spy_json = json::parse(spy);
         for (auto& oneday:dia_json)
         {
-            attime t = isoDateStringToAttime(oneday["Date"].get<string>());
+            nstime t = isoDateStringToNstime(oneday["Date"].get<string>());
             auto d = getDayOfWeek(t);
             if (d == std::chrono::Thursday)
             {
@@ -845,7 +844,7 @@ int main(int argc, char *argv[])
         }
         for (auto& oneday:spy_json)
         {
-            attime t = isoDateStringToAttime(oneday["Date"].get<string>());
+            nstime t = isoDateStringToNstime(oneday["Date"].get<string>());
             auto d = getDayOfWeek(t);
             if (d == std::chrono::Thursday)
             {
@@ -1202,7 +1201,7 @@ int main(int argc, char *argv[])
     cout << endl << "== 21 === Day of week =======" << endl;
     // 21 ==================================================================================
     {
-        attime now = get_utc_current_time();
+        nstime now = get_utc_current_time();
         cout << now << endl;
         auto dow = getDayOfWeek(now);
         cout 
@@ -1217,14 +1216,8 @@ int main(int argc, char *argv[])
         if (days_since_monday < 0) days_since_monday += 7;
         
         // Subtract those days from today's date to get last Monday
-        auto last_monday = attime(getDate(now)) - std::chrono::days(days_since_monday);
+        auto last_monday = nstime(getDate(now)) - std::chrono::days(days_since_monday);
         cout << "Last Monday: " << last_monday << endl;
-
-        // int64_t mondayDay = 1;
-        // int64_t subtract = dow - mondayDay;
-        // if ( subtract < 0 ) subtract += 7;
-        // auto most_recent_monday = attime( getDate( now )) - std::chrono::days(subtract);
-        // cout << "Last Monday: " << most_recent_monday << endl;
 
         cout << endl;
     }
@@ -1401,22 +1394,133 @@ int main(int argc, char *argv[])
     // I have a lot of code to rework... optimize the conversions here
     // I'm looking at you, utilities.hpp...
     // 27 ==================================================================================
+    run_from_here:
     cout << endl << "== 27 === boost::posix > std::chrono REFACTOR =======" << endl;
     // 27 ==================================================================================
     {
-        // How much time do we have left before our microsecond clock overflows?
-        cout << atduration{attime::max() - get_utc_current_time()}.count() << " microseconds to go until overflow\n";
+        // Analyze std::chrono clocks, including precision, storage and year limits.
 
-        auto dpn = floor<std::chrono::days>(get_utc_current_time());
+        nstime start_time = get_utc_current_time();
+
+        cout << endl;
+        cout << "FIRST NOTE that nstime::max() is meaningless as a timestamp." << endl;
+        cout << nstime::max() << " nstime::max()" << endl;
+        cout << "  ^ 'max(): Returns a time_point with the largest possible duration'; streamed value is MEANINGLESS" << endl;
+        cout << nstime::max().time_since_epoch() << " nstime::max().time_since_epoch(), basically MAX - ZERO, same as std::numeric_limits<int64_t>::max()"<< endl;
+        cout << "  ^ this is basically MAX - ZERO, same as std::numeric_limits<int64_t>::max(); it has no meaning as a date" << endl;
+        cout << "    To get meaning, you have to use system_clock, which has a 1970 epoch, and convert to your clock's duration." << endl;
+        cout << endl;
+
+        // TODAY
+        auto dpn = floor<std::chrono::days>(system_clock::now());
         year_month_day ymdn{dpn};
-        auto y = ymdn.year();
-        cout << "This year: " << y << endl;
+        int64_t y = int(ymdn.year());
+        cout << endl << "Year " << y << endl;
+        cout << "Today is " << dpn << ", using year_month_day of system_clock" << endl << endl;
 
-        attime atmax = std::chrono::time_point_cast<atresolution>(std::chrono::time_point<system_clock, atresolution>::max());
-        auto dpMax = floor<std::chrono::days>(atmax);
-        year_month_day ymdMax{dpMax};
-        auto yMax = ymdMax.year();
-        cout << "Max year: " << yMax << endl;
+        // Vet 64-bit limits, signed vs unsigned
+        cout << "FIRST: RAW 64-bit signed and unsigned limits:\n";
+        cout << std::pow(2,63) << " 2^63\n";
+        int64_t max_int64_t = std::numeric_limits<int64_t>::max();
+        cout << max_int64_t << " max int64_t\n";
+        cout << std::numeric_limits<uint64_t>::max() << " max uint64_t\n";
+        cout << "Note: we will use int64_t, to support negative time in calculations." << endl;
+        cout << endl;
+
+        // --- YEAR ---
+        cout << "NEXT: YEAR RANGE in ms and us clocks, stored in int64_t" << endl;
+        cout << std::numeric_limits<int64_t>::max() / 1e6 << " seconds can fit, in microseconds\n";
+        int64_t us_in_a_year = 365 * 24 * 60 * 60 * 1e6;
+        cout << us_in_a_year << " microseconds in a year\n";
+        int64_t year_range_us = max_int64_t / us_in_a_year;
+        cout << year_range_us << " theoretical year range in microseconds" << endl;
+        cout << endl;
+
+        cout << std::numeric_limits<int64_t>::max() / 1e9 << " seconds can fit, in nanoseconds\n";
+        int64_t ns_in_a_year = 365 * 24 * 60 * 60 * 1e9;
+        cout << ns_in_a_year << " nanoseconds in a year\n";
+        int64_t year_range_ns = max_int64_t / ns_in_a_year;
+        cout << year_range_ns << " theoretical year range in nanoseconds" << endl;
+        cout << endl;
+
+        // --- ATTIME ---
+        cout << endl;
+        cout << "FINALLY: the ATTIME clock and usage";
+        cout << endl;
+        cout << endl;
+
+        auto dpnat = floor<std::chrono::days>(get_utc_current_time());
+        year_month_day ymdnat{dpnat};
+        int64_t yat = int(ymdnat.year());
+        cout << endl << "Year " << yat << endl;
+        cout << "Today is " << getDayOfWeek(dpnat) << ", " << dpnat << ", using year_month_day of our clock" << endl << endl;
+
+        {
+            const string iso_date = "2025-12-17";
+            nstime t = isoDateStringToNstime( iso_date );
+            auto d = getDayOfWeek(t);
+            auto idf = ISODateFormat(t);
+            cout << "Parsing ISO date string " << iso_date << "..." << endl;
+            cout << "getDayOfWeek: " << d << endl;
+            cout << "ISODateFormat: " << idf << endl;
+
+            auto days_since_monday = (d - Monday).count();
+            if (days_since_monday < 0) days_since_monday += 7;
+            
+            // Subtract those days from today's date to get last Monday
+            auto last_monday = nstime(getDate(t)) - days(days_since_monday);
+            cout << "Previous Monday: " << last_monday << endl;
+
+            cout << endl;
+        }
+
+        // hour, minute, second
+        // Worth a read, thanks Howard Hinnant:
+        // https://stackoverflow.com/a/15958113/717274
+
+        const string iso_timestamps[] = {
+            "2025-12-17T15:45:30.123456789Z",
+            "2025-12-17T15:45:30Z",
+            "2025-2-7T15:5:1Z"
+        };
+        for ( const auto& iso_timestamp : iso_timestamps )
+        {
+            nstime t = utc_string_to_nstime( iso_timestamp );
+            year_month_day ymd = getYMD(t);
+            hh_mm_ss time = getHMS(t);
+            auto y = ymd.year();
+            auto m = ymd.month();
+            auto d = ymd.day();
+            auto h = time.hours();
+            auto M = time.minutes();
+            auto s = time.seconds();
+            auto ns = time.subseconds();
+            cout << "Parsing ISO timestamp string " << iso_timestamp << "..." << endl;
+            cout << "Year: " << y << endl;
+            cout << "Month: " << m << endl;
+            cout << "Day: " << d << endl;
+            cout << "Hour: " << h.count() << endl;
+            cout << "Minute: " << M.count() << endl;
+            cout << "Second: " << s.count() << endl;
+            cout << "Nanosecond: " << ns.count() << endl;
+
+            nsduration diff = t.time_since_epoch();
+            cout << "Elapsed time since epoch: " << endl;
+            cout << diff << endl;
+            cout << getElapsedTime(diff) << " (getElapsedTime)" << endl;
+            cout << getSeconds( diff ) << " seconds (getSeconds(d))" << endl;
+            cout << getSeconds( t ) << " seconds (getSeconds(t))" << endl;
+
+            cout << endl;
+        }
+
+        nstime end_time = get_utc_current_time();
+        nsduration diff = end_time - start_time;
+        cout << "Elapsed time since this scrap step started:" << endl;
+        cout << diff << endl;
+        cout << getElapsedTime(diff) << " (getElapsedTime)" << endl;
+        cout << getSeconds( diff ) << " seconds (getSeconds)" << endl;
+        cout << endl;
 
     }
 

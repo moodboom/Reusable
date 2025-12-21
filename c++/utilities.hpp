@@ -44,26 +44,37 @@
 //    static int64_t extractJSONToInt(const object &jObject, const string &field)
 //   VERSIONING
 //    // class SemVer
-//   JWT
+// TIME See typedef nstime; Always prefer UTC
+//    static nstime get_utc_current_time()
+//    static nstime get_local_current_time()
+//    static auto getDate(const nstime &t)
+//    static weekday getDayOfWeek(const nstime &t)
+//    static auto getDayOfWeekIso(const nstime &t) // 1=Monday, 7=Sunday
+//    static year_month_day getYMD(const nstime &t)
+//    static auto getHMS(const nstime &t)
+//    static int64_t getSeconds( const nsduration& d )
+//    static int64_t getMilliseconds( const nsduration& d )
+//    static int64_t getMicroseconds( const nsduration& d )
+//    static int64_t getNanoseconds( const nsduration& d )
+//    static int64_t getSeconds( const nstime& t )
+//    static int64_t getMilliseconds( const nstime& t )
+//    static int64_t getMicroseconds( const nstime& t )
+//    static int64_t getNanoseconds( const nstime& t )
+//  TIME STRING CONVERSIONS
+//    static nstime string_to_nstime(const string &str_time, const string &str_format)
+//    static nstime iso_string_to_nstime(const string &str_time)
+//    static nstime utc_string_to_nstime(const string &str_time)
+//    static nstime isoDateStringToNstime(const string &str_time)
+//    static nstime usDateStringToNstime(const string &str_time)
+//    static string nstime_to_string(const nstime &t, const string &str_format)
+//    static string ISOFormat(const nstime &t)
+//    static string ISODateFormat(const nstime &t)
+//    static string RFC3339Format(const nstime &t)
+//    static string americanFormat(const nstime &t)
+// JWT
 //    class JWT;
 //    string url_encode_JWT(const JWT& j_input);
 //    void url_decode_JWT(string input, JWT& jwt);
-// TIME See typedef attime; Always prefer UTC
-//    static attime get_utc_current_time()
-//    static attime get_local_current_time()
-//    static auto getDate(const attime &t)
-//    static weekday getDayOfWeek(const attime &t)
-//    static auto getDayOfWeekIso(const attime &t) // 1=Monday, 7=Sunday
-//    static attime string_to_attime(const string &str_time, const string &str_format)
-//    static attime iso_string_to_attime(const string &str_time)
-//    static attime utc_string_to_attime(const string &str_time)
-//    static attime isoDateStringToAttime(const string &str_time)
-//    static attime usDateStringToAttime(const string &str_time)
-//    static string attime_to_string(const attime &t, const string &str_format)
-//    static string ISOFormat(const attime &t)
-//    static string ISODateFormat(const attime &t)
-//    static string RFC3339Format(const attime &t)
-//    static string americanFormat(const attime &t)
 // RANDOM
 //    static std::string generate_uuid()
 //    static std::string generate_random_hex(uint_fast32_t length)
@@ -491,6 +502,136 @@ public:
 //=========================================================
 
 //=========================================================
+// TIME
+//=========================================================
+// ALWAYS PREFER UTC TIME, especially when persisting.
+
+// ------------------------------------------
+// HIGH-RESOLUTION-CLOCK TIME, DURATION, NOW
+// ------------------------------------------
+// Reasonable timestamp value precisions are milliseconds, microseconds and nanoseconds.
+// ms = 1/1e3 sec, us = 1/1e6 sec, ns = 1/1e9 sec
+// We will use nanoeconds aka one billionth of a second,
+// specified in nsresolution (as well as a few values of 9 in format strings).
+//
+// Here are justifications for this choice.
+//
+// HARDWARE
+// C++23 std::chrono::system_clock on modern hardware (Linux, Windows, Mac)
+// already typically provides nanosecond resolution timepoints.
+//
+// RESOLUTION
+// Timing in trading etc. requires high resolution timepoints 
+// that MAY fall below 1 ms resolution if we have performant access to exchanges.
+// Nanoseconds give us a million times that resolution, very future-proofed.
+//
+// STORAGE
+// If we store nanoseconds in 64 bits, we get optimal storage and performance on modern hardware.
+// Regarding overflow concerns, storing nanoseconds since epoch give us util the year 2262.
+// We be dead by then.  Let's get on living!
+//
+typedef nanoseconds nsresolution;
+typedef time_point<system_clock, nsresolution> nstime;
+typedef duration<int64_t, std::nano> nsduration;
+// ---------------
+
+static nstime get_utc_current_time() { return time_point_cast<nsresolution>(system_clock::now()); }
+static nstime get_local_current_time() { return zoned_time<nsresolution>{"America/New_York", get_utc_current_time()}.get_sys_time(); }
+static nstime convert_to_local_time(const nstime &t) { return zoned_time<nsresolution>{"America/New_York", t}.get_sys_time(); }
+static auto getDate(const nstime &t) { return floor<days>(t); }
+static weekday getDayOfWeek(const nstime &t) { return weekday{getDate(t)}; }
+static auto getDayOfWeekIso(const nstime &t) { return getDayOfWeek(t).iso_encoding(); } // 1=Monday, 7=Sunday
+static year_month_day getYMD(const nstime &t) { return year_month_day{floor<days>(t)}; }
+static auto getHMS(const nstime &t) { return hh_mm_ss{floor<nsduration>(t - floor<days>(t))}; }
+
+static int64_t getSeconds( const nsduration& d ) { return duration_cast<seconds>(d).count(); }
+static int64_t getMilliseconds( const nsduration& d ) { return duration_cast<milliseconds>(d).count(); }
+static int64_t getMicroseconds( const nsduration& d ) { return duration_cast<microseconds>(d).count(); }
+static int64_t getNanoseconds( const nsduration& d ) { return duration_cast<nanoseconds>(d).count(); }
+
+static int64_t getSeconds( const nstime& t ) { return getSeconds(t.time_since_epoch()); }
+static int64_t getMilliseconds( const nstime& t ) { return getMilliseconds(t.time_since_epoch()); }
+static int64_t getMicroseconds( const nstime& t ) { return getMicroseconds(t.time_since_epoch()); }
+static int64_t getNanoseconds( const nstime& t ) { return getNanoseconds(t.time_since_epoch()); }
+
+// -----------------------
+// TIME STRING CONVERSIONS
+// -----------------------
+static nstime string_to_nstime(const string &str_time, const string &str_format)
+{
+  nstime result;
+  std::istringstream is(str_time);
+  is >> std::chrono::parse(str_format, result);
+  if (is.fail())
+    result = nstime{}; // Return epoch on parse failure
+  return result;
+}
+static nstime iso_string_to_nstime(const string &str_time)
+{
+  // Config for UTC format, eg: 2014-02-23T10:11:19.123456789
+  // NO Z
+  return string_to_nstime(str_time, "%Y-%m-%dT%H:%M:%9S");
+}
+static nstime utc_string_to_nstime(const string &str_time)
+{
+  // Config for UTC format, eg: 2014-02-23T10:11:19.123456789Z
+  // WITH Z
+  return string_to_nstime(str_time, "%Y-%m-%dT%H:%M:%9SZ");
+}
+static nstime isoDateStringToNstime(const string &str_time)
+{
+  // 2014-02-23
+  return string_to_nstime(str_time, "%Y-%m-%d");
+}
+static nstime usDateStringToNstime(const string &str_time)
+{
+  // 02-23-2014
+  return string_to_nstime(str_time, "%m-%d-%Y");
+}
+static string nstime_to_string(const nstime &t, const string &str_format)
+{
+  // THE C++23 HACK for building formats at runtime.
+  // Update this when we move to C++26.
+  const string_view fmt = std::format("{{:{}}}", str_format);
+  return std::vformat(locale(""), fmt, std::make_format_args(t));
+}
+static string ISOFormat(const nstime &t)
+{
+  return nstime_to_string(t, "%Y-%m-%dT%H:%M:%9S");
+}
+static string ISODateFormat(const nstime &t)
+{
+  return nstime_to_string(t, "%Y-%m-%d");
+}
+static string RFC3339Format(const nstime &t)
+{
+  return nstime_to_string(t, "%Y-%m-%dT%H:%M:%9SZ");
+}
+static string americanFormat(const nstime &t)
+{
+  return nstime_to_string(t, "%2m-%2d-%Y");
+}
+static string getElapsedTime( const nsduration& d )
+{
+  // These are a bit suss... what precisely IS a "year duation"?
+  // A non-leap year or leap year?  Include leap seconds?
+  // What is a month, 28,29,30,31 days?
+  // Don't take these as hard mathematical definitions.
+  auto years = duration_cast<std::chrono::years>(d);
+  auto months = duration_cast<std::chrono::months>(d - years);
+  auto days = duration_cast<std::chrono::days>(d - years - months);
+
+  // We use format to extract the H:M:S portion.
+  // An alternative is to pull them out like we did with years/months/days.
+  // auto hours = duration_cast<std::chrono::hours>(d - years - months - days);
+  // auto minutes = duration_cast<std::chrono::minutes>(d - years - months - days - hours);
+  // auto seconds = duration_cast<std::chrono::seconds>(d - years - months - days - hours - minutes);
+  // auto subseconds = d - years - months - days - hours - minutes - seconds;
+
+  return std::format( "{} years {} months {} days {:%H:%M:%S} seconds", years.count(), months.count(), days.count(), d );
+}
+
+//=========================================================
 // JWT
 //=========================================================
 class JWT
@@ -513,172 +654,10 @@ public:
   bool bOK() const { return bOK_; }
 
 protected:
-  time_t iat_; // "issued-at"
+  nstime iat_; // "issued-at"
   string shared_secret_;
   bool bOK_;
 };
-
-//=========================================================
-// TIME
-//=========================================================
-// ALWAYS PREFER UTC TIME, especially when persisting.
-
-// ------------------------------------------
-// HIGH-RESOLUTION-CLOCK TIME, DURATION, NOW
-// ------------------------------------------
-// Reasonable timestamp value precisions are milliseconds and microseconds.
-// We will use microseconds aka 1/1000000 sec aka one millionth of a second.
-// Here are justifications for this choice.
-//
-// RESOLUTION
-// Timing in trading etc. requires high resolution timepoints that MAY (very rarely)
-// fall below 1 millisecond resolution aka 1/1000 sec aka one thousandth of a second.
-// Microseconds give us all the precision we will likely ever need.  (Don't quote me tho, lol)
-//
-// STORAGE
-// If we store microseconds in 64 bits, we get optimal storage and performance on modern hardware.
-// Regarding overflow concerns, storing microseconds since epoch give us util the year 32103.
-// We be dead by then.  Let's get on living!
-// 
-typedef microseconds atresolution;
-typedef time_point<system_clock, atresolution> attime;
-typedef duration<int64_t, std::micro> atduration;
-// ---------------
-
-static attime get_utc_current_time() { return time_point_cast<atresolution>(system_clock::now()); }
-static attime get_local_current_time() { return zoned_time<atresolution>{"America/New_York", get_utc_current_time()}.get_sys_time(); }
-static auto getDate(const attime &t) { return floor<days>(t); }
-static weekday getDayOfWeek(const attime &t) { return weekday{getDate(t)}; }
-static auto getDayOfWeekIso(const attime &t) { return getDayOfWeek(t).iso_encoding(); } // 1=Monday, 7=Sunday
-static attime string_to_attime(const string &str_time, const string &str_format)
-{
-  attime result;
-  std::istringstream is(str_time);
-  is >> std::chrono::parse(str_format, result);
-  if (is.fail())
-    result = attime{}; // Return epoch on parse failure
-  return result;
-
-  // OLD boost way
-  // std::istringstream is(str_time);
-  // is.imbue(std::locale(std::locale::classic(), new boost::posix_time::time_input_facet(str_format)));
-  // NOTE that this doesn't know about the "T"...
-  // createdOn_ = boost::posix_time::from_iso_string(createdOn);
-}
-static attime iso_string_to_attime(const string &str_time)
-{
-  // Config for UTC format, eg: 2014-02-23T10:11:19
-  // NO Z
-  return string_to_attime(str_time, "%Y-%m-%dT%H:%M:%S");
-}
-static attime utc_string_to_attime(const string &str_time)
-{
-  // Config for UTC format, eg: 2014-02-23T10:11:19Z
-  // WITH Z
-  return string_to_attime(str_time, "%Y-%m-%dT%H:%M:%SZ");
-}
-static attime isoDateStringToAttime(const string &str_time)
-{
-  return string_to_attime(str_time, "%Y-%m-%d");
-}
-static attime usDateStringToAttime(const string &str_time)
-{
-  // 02-23-2014
-  return string_to_attime(str_time, "%m-%d-%Y");
-}
-static string attime_to_string(const attime &t, const string &str_format)
-{
-  // THE C++23 HACK for building formats at runtime.
-  // Update this when we move to C++26.
-  const string_view fmt = std::format("{{:{}}}", str_format);
-  return std::vformat(locale(""), fmt, std::make_format_args(t));
-
-  // Old boost way
-  //   std::ostringstream is;
-  //   is.imbue(std::locale(std::cout.getloc(), new boost::gregorian::date_facet(str_format.c_str())));
-  //   is << d;
-  //   return is.str();
-}
-static string ISOFormat(const attime &t)
-{
-  return attime_to_string(t, "%Y-%m-%dT%H:%M:%S");
-}
-static string ISODateFormat(const attime &t)
-{
-  return attime_to_string(t, "%Y-%m-%d");
-}
-static string RFC3339Format(const attime &t)
-{
-  return attime_to_string(t, "%Y-%m-%dT%H:%M:%SZ");
-}
-static string americanFormat(const attime &t)
-{
-  // ss << boost::format("%02d-%02d-%4d") % d.month() % d.day() % d.year();
-  return attime_to_string(t, "%m-%d-%Y");
-}
-
-
-// vvv ALL THIS MUST DIE vvv
-
-
-static time_t iso_string_to_time_t(const string &str_time)
-{
-  return system_clock::to_time_t(iso_string_to_attime(str_time));
-}
-static time_t utc_string_to_time_t(const string &str_time)
-{
-  return system_clock::to_time_t(utc_string_to_attime(str_time));
-}
-static attime time_t_to_attime(const time_t &tt)
-{
-  return std::chrono::time_point_cast<std::chrono::microseconds>(system_clock::from_time_t(tt));
-}
-static string time_t_to_string(const time_t &tt, const string &str_format)
-{
-  if (tt > 5000000000)
-    return "100+ years in the future";
-  return attime_to_string(time_t_to_attime(tt), str_format);
-}
-static string RFC3339Format(const time_t &tt)
-{
-  return attime_to_string(time_t_to_attime(tt), "%Y-%m-%dT%H:%M:%SZ");
-}
-static string ISOFormat(const time_t &t)
-{
-  return attime_to_string(time_t_to_attime(t), "%Y-%m-%dT%H:%M:%S");
-}
-static string ISODateFormat(const time_t &t)
-{
-  return attime_to_string(time_t_to_attime(t), "%Y-%m-%d");
-}
-static time_t get_utc_current_time_t() { return system_clock::to_time_t(get_utc_current_time()); }
-static time_t get_local_current_time_t() { return system_clock::to_time_t(get_local_current_time()); }
-static time_t getUTCLocalDifference() { return get_local_current_time_t() - get_utc_current_time_t(); }
-static time_t one_day() { return 86400; }
-static time_t get_midnight(const time_t t) { return t / one_day() * one_day(); }
-static time_t get_utc_today_midnight()
-{
-  time_t now = get_utc_current_time_t();
-  return get_midnight(now);
-}
-static time_t get_local_today_midnight()
-{
-  time_t now = get_local_current_time_t();
-  return get_midnight(now);
-}
-// We need to convert all our apps to use UTC unix epoch milliseconds.
-// For now, we need these hack conversions.
-// NOT CORRECT but in a rush and will fix later during refactoring
-// TODO:
-// PROPER TIME EXPORT REFACTOR
-static time_t convertNewYorkToUtc(const time_t &t)
-{
-  return t - 4 * 60 * 60;
-}
-static time_t convertUtcToNewYork(const time_t &t)
-{
-  return t + 4 * 60 * 60;
-}
 
 //=========================================================
 // RANDOM
@@ -773,7 +752,7 @@ static void log(LOG_TO_FILE_VERBOSITY v, string str, bool b_suppress_console = f
 
     if (!b_suppress_timestamp)
     {
-      string now = time_t_to_string(get_local_current_time_t(), "%H:%M:%S ");
+      string now = nstime_to_string(get_local_current_time(), "%H:%M:%S ");
       if (!b_suppress_file)
         ofs_log << now;
       if (!b_suppress_console)
