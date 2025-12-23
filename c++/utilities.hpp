@@ -538,6 +538,7 @@ typedef duration<int64_t, std::nano> nsduration;
 static nstime get_utc_current_time() { return time_point_cast<nsresolution>(system_clock::now()); }
 static nstime get_local_current_time() { return zoned_time<nsresolution>{"America/New_York", get_utc_current_time()}.get_sys_time(); }
 static nstime convert_to_local_time(const nstime &t) { return zoned_time<nsresolution>{"America/New_York", t}.get_sys_time(); }
+
 static auto getDate(const nstime &t) { return floor<days>(t); }
 static weekday getDayOfWeek(const nstime &t) { return weekday{getDate(t)}; }
 static auto getDayOfWeekIso(const nstime &t) { return getDayOfWeek(t).iso_encoding(); } // 1=Monday, 7=Sunday
@@ -553,6 +554,8 @@ static int64_t getSeconds( const nstime& t ) { return getSeconds(t.time_since_ep
 static int64_t getMilliseconds( const nstime& t ) { return getMilliseconds(t.time_since_epoch()); }
 static int64_t getMicroseconds( const nstime& t ) { return getMicroseconds(t.time_since_epoch()); }
 static int64_t getNanoseconds( const nstime& t ) { return getNanoseconds(t.time_since_epoch()); }
+
+static nsduration multiplyBy( const nsduration &d, const double& factor ) { return nsresolution( int64_t( getNanoseconds( d ) * factor )); }
 
 // -----------------------
 // TIME STRING CONVERSIONS
