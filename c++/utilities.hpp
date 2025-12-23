@@ -535,6 +535,8 @@ typedef time_point<system_clock, nsresolution> nstime;
 typedef duration<int64_t, std::nano> nsduration;
 // ---------------
 
+const int64_t cNsPerDay = 24 * 60 * 60 * 1E9;
+
 static nstime get_utc_current_time() { return time_point_cast<nsresolution>(system_clock::now()); }
 static nstime get_local_current_time() { return zoned_time<nsresolution>{"America/New_York", get_utc_current_time()}.get_sys_time(); }
 static nstime convert_to_local_time(const nstime &t) { return zoned_time<nsresolution>{"America/New_York", t}.get_sys_time(); }
