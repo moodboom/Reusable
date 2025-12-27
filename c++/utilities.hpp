@@ -45,12 +45,15 @@
 //   VERSIONING
 //    // class SemVer
 // TIME See typedef nstime; Always prefer UTC
-//    static nstime get_utc_current_time()
-//    static nstime get_local_current_time()
+//    static nstime getCurrentTimeUtc()
+//    static nstime getCurrentTimeNYC()
+//    static nstime convertUtcToNyc(const nstime &t)
+//    static nstime nstimeFromDate( const int64_t y, const int64_t m, const int64_t d )
 //    static auto getDate(const nstime &t)
 //    static weekday getDayOfWeek(const nstime &t)
 //    static auto getDayOfWeekIso(const nstime &t) // 1=Monday, 7=Sunday
 //    static year_month_day getYMD(const nstime &t)
+//    static int getWeekNumber(const nstime &t)
 //    static auto getHMS(const nstime &t)
 //    static int64_t getSeconds( const nsduration& d )
 //    static int64_t getMilliseconds( const nsduration& d )
@@ -521,7 +524,7 @@ public:
 // already typically provides nanosecond resolution timepoints.
 //
 // RESOLUTION
-// Timing in trading etc. requires high resolution timepoints 
+// Timing in trading etc. requires high resolution timepoints
 // that MAY fall below 1 ms resolution if we have performant access to exchanges.
 // Nanoseconds give us a million times that resolution, very future-proofed.
 //
@@ -535,29 +538,41 @@ typedef time_point<system_clock, nsresolution> nstime;
 typedef duration<int64_t, std::nano> nsduration;
 // ---------------
 
-const int64_t cNsPerDay = 24 * 60 * 60 * 1E9;
+const int64_t cSecondsPerDay = 60 * 60 * 24;
+const int64_t cNanosecondsPerDay = cSecondsPerDay * 1E9;
 
-static nstime get_utc_current_time() { return time_point_cast<nsresolution>(system_clock::now()); }
-static nstime get_local_current_time() { return zoned_time<nsresolution>{"America/New_York", get_utc_current_time()}.get_sys_time(); }
-static nstime convert_to_local_time(const nstime &t) { return zoned_time<nsresolution>{"America/New_York", t}.get_sys_time(); }
+static nstime getCurrentTimeUtc() { return time_point_cast<nsresolution>(system_clock::now()); }
+static nstime getCurrentTimeNYC() { return zoned_time<nsresolution>{"America/New_York", getCurrentTimeUtc()}.get_sys_time(); }
+static nstime convertUtcToNyc(const nstime &t) { return zoned_time<nsresolution>{"America/New_York", t}.get_sys_time(); }
+static nstime nstimeFromDate(const int y, const int m, const int d) { return sys_days{year{y} / m / d}; }
+static nstime nstimeFromDate(const year y, const month m, const day d) { return sys_days{y / m / d}; }
+static nstime nstimeFromNanoseconds(const int64_t ns) { return nstime{nsduration{ns}}; }
 
 static auto getDate(const nstime &t) { return floor<days>(t); }
 static weekday getDayOfWeek(const nstime &t) { return weekday{getDate(t)}; }
 static auto getDayOfWeekIso(const nstime &t) { return getDayOfWeek(t).iso_encoding(); } // 1=Monday, 7=Sunday
 static year_month_day getYMD(const nstime &t) { return year_month_day{floor<days>(t)}; }
+static int getWeekNumber(const nstime &t)
+{
+  year_month_day ymd = getYMD(t);
+  auto first_day_of_month = year_month_day{ymd.year(), ymd.month(), day{1}};
+  auto days_since_first = (sys_days{ymd} - sys_days{first_day_of_month}).count();
+  return (days_since_first / 7) + 1;
+}
 static auto getHMS(const nstime &t) { return hh_mm_ss{floor<nsduration>(t - floor<days>(t))}; }
 
-static int64_t getSeconds( const nsduration& d ) { return duration_cast<seconds>(d).count(); }
-static int64_t getMilliseconds( const nsduration& d ) { return duration_cast<milliseconds>(d).count(); }
-static int64_t getMicroseconds( const nsduration& d ) { return duration_cast<microseconds>(d).count(); }
-static int64_t getNanoseconds( const nsduration& d ) { return duration_cast<nanoseconds>(d).count(); }
+static int64_t getSeconds(const nsduration &d) { return duration_cast<seconds>(d).count(); }
+static int64_t getMilliseconds(const nsduration &d) { return duration_cast<milliseconds>(d).count(); }
+static int64_t getMicroseconds(const nsduration &d) { return duration_cast<microseconds>(d).count(); }
+static int64_t getNanoseconds(const nsduration &d) { return duration_cast<nanoseconds>(d).count(); }
 
-static int64_t getSeconds( const nstime& t ) { return getSeconds(t.time_since_epoch()); }
-static int64_t getMilliseconds( const nstime& t ) { return getMilliseconds(t.time_since_epoch()); }
-static int64_t getMicroseconds( const nstime& t ) { return getMicroseconds(t.time_since_epoch()); }
-static int64_t getNanoseconds( const nstime& t ) { return getNanoseconds(t.time_since_epoch()); }
+static int64_t getSeconds(const nstime &t) { return getSeconds(t.time_since_epoch()); }
+static int64_t getMilliseconds(const nstime &t) { return getMilliseconds(t.time_since_epoch()); }
+static int64_t getMicroseconds(const nstime &t) { return getMicroseconds(t.time_since_epoch()); }
+static int64_t getNanoseconds(const nstime &t) { return getNanoseconds(t.time_since_epoch()); }
 
-static nsduration multiplyBy( const nsduration &d, const double& factor ) { return nsresolution( int64_t( getNanoseconds( d ) * factor )); }
+static nsduration multiplyBy(const nsduration &d, const double &factor) { return nsresolution(int64_t(getNanoseconds(d) * factor)); }
+static nsduration getDaysDuration(const int64_t days) { return nsresolution(days * cNanosecondsPerDay); }
 
 // -----------------------
 // TIME STRING CONVERSIONS
@@ -616,7 +631,7 @@ static string americanFormat(const nstime &t)
 {
   return nstime_to_string(t, "%2m-%2d-%Y");
 }
-static string getElapsedTime( const nsduration& d )
+static string getElapsedTime(const nsduration &d)
 {
   // These are a bit suss... what precisely IS a "year duation"?
   // A non-leap year or leap year?  Include leap seconds?
@@ -633,7 +648,7 @@ static string getElapsedTime( const nsduration& d )
   // auto seconds = duration_cast<std::chrono::seconds>(d - years - months - days - hours - minutes);
   // auto subseconds = d - years - months - days - hours - minutes - seconds;
 
-  return std::format( "{} years {} months {} days {:%H:%M:%S} seconds", years.count(), months.count(), days.count(), d );
+  return std::format("{} years {} months {} days {:%H:%M:%S} seconds", years.count(), months.count(), days.count(), d);
 }
 
 //=========================================================
@@ -757,7 +772,7 @@ static void log(LOG_TO_FILE_VERBOSITY v, string str, bool b_suppress_console = f
 
     if (!b_suppress_timestamp)
     {
-      string now = nstime_to_string(get_local_current_time(), "%H:%M:%S ");
+      string now = nstime_to_string(getCurrentTimeNYC(), "%H:%M:%S ");
       if (!b_suppress_file)
         ofs_log << now;
       if (!b_suppress_console)

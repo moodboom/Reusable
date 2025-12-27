@@ -1197,11 +1197,12 @@ int main(int argc, char *argv[])
             cout << "Successful serialize" << endl << endl;
         }
     }
+    run_from_here:
     // 21 ==================================================================================
     cout << endl << "== 21 === Day of week =======" << endl;
     // 21 ==================================================================================
     {
-        nstime now = get_utc_current_time();
+        nstime now = getCurrentTimeUtc();
         cout << now << endl;
         auto dow = getDayOfWeek(now);
         cout 
@@ -1212,11 +1213,11 @@ int main(int argc, char *argv[])
 
         // Find last monday.
         // Calculate days since Monday (0 = Monday, 6 = Sunday)
-        auto days_since_monday = (dow - std::chrono::Monday).count();
+        auto days_since_monday = (dow - Monday).count();
         if (days_since_monday < 0) days_since_monday += 7;
         
         // Subtract those days from today's date to get last Monday
-        auto last_monday = nstime(getDate(now)) - std::chrono::days(days_since_monday);
+        auto last_monday = nstime(getDate(now)) - days(days_since_monday);
         cout << "Last Monday: " << last_monday << endl;
 
         cout << endl;
@@ -1394,13 +1395,12 @@ int main(int argc, char *argv[])
     // I have a lot of code to rework... optimize the conversions here
     // I'm looking at you, utilities.hpp...
     // 27 ==================================================================================
-    run_from_here:
     cout << endl << "== 27 === boost::posix > std::chrono REFACTOR =======" << endl;
     // 27 ==================================================================================
     {
         // Analyze std::chrono clocks, including precision, storage and year limits.
 
-        nstime start_time = get_utc_current_time();
+        nstime start_time = getCurrentTimeUtc();
 
         cout << endl;
         cout << "FIRST NOTE that nstime::max() is meaningless as a timestamp." << endl;
@@ -1449,7 +1449,7 @@ int main(int argc, char *argv[])
         cout << endl;
         cout << endl;
 
-        auto dpnat = floor<std::chrono::days>(get_utc_current_time());
+        auto dpnat = floor<std::chrono::days>(getCurrentTimeUtc());
         year_month_day ymdnat{dpnat};
         int64_t yat = int(ymdnat.year());
         cout << endl << "Year " << yat << endl;
@@ -1514,7 +1514,7 @@ int main(int argc, char *argv[])
             cout << endl;
         }
 
-        nstime end_time = get_utc_current_time();
+        nstime end_time = getCurrentTimeUtc();
         nsduration diff = end_time - start_time;
         cout << "Elapsed time since this scrap step started:" << endl;
         cout << diff << endl;
