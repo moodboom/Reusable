@@ -38,7 +38,7 @@ string JWT::url_encode()
 {
   bOK_ = false;
   
-  iat_ = getCurrentTimeUtc();
+  iat_ = getCurrentTimeUTC();
 
   string header   = R"({"alg":"HS256","typ":"JWT"})";
 

@@ -1201,7 +1201,7 @@ int main(int argc, char *argv[])
     cout << endl << "== 21 === Day of week =======" << endl;
     // 21 ==================================================================================
     {
-        nstime now = getCurrentTimeUtc();
+        nstime now = getCurrentTimeUTC();
         cout << now << endl;
         auto dow = getDayOfWeek(now);
         cout 
@@ -1398,7 +1398,7 @@ int main(int argc, char *argv[])
         // They fit in 64 bits, and cover from 1970 to 2262.
         // utilities.hpp completely sets up our nstime clock (where ns = nanoseconds).
 
-        nstime start_time = getCurrentTimeUtc();
+        nstime start_time = getCurrentTimeUTC();
 
         // Analyze std::chrono clocks, including precision, storage and year limits.
         cout << endl;
@@ -1452,7 +1452,7 @@ int main(int argc, char *argv[])
         cout << "nstime::max() " << nstime::max() << " aka " << getNanoseconds(nstime::max()) << endl;
         cout << endl;
 
-        auto dpnat = floor<std::chrono::days>(getCurrentTimeUtc());
+        auto dpnat = floor<std::chrono::days>(getCurrentTimeUTC());
         year_month_day ymdnat{dpnat};
         int64_t yat = int(ymdnat.year());
         cout << endl << "Year " << yat << endl;
@@ -1517,7 +1517,7 @@ int main(int argc, char *argv[])
             cout << endl;
         }
 
-        nstime end_time = getCurrentTimeUtc();
+        nstime end_time = getCurrentTimeUTC();
         nsduration diff = end_time - start_time;
         cout << "Elapsed time since this scrap step started:" << endl;
         cout << diff << endl;
@@ -1584,11 +1584,11 @@ int main(int argc, char *argv[])
         auto nycTime4 = getCurrentTimeLocal();
         cout << "getCurrentTimeLocal(): " << nycTime4 << endl;
 
-        nstime nycTime = convertUtcToNyc( end_time );
-        cout << "end_time in NYC via convertUtcToNyc(): " << nycTime << endl;
+        nstime nycTime = convertUTCToNYC( end_time );
+        cout << "end_time in NYC via convertUTCToNYC(): " << nycTime << endl;
 
-        nstime utcFromNycTime = convertNycToUtc( nycTime );
-        cout << "end_time once again in UTC via convertNycToUtc(): " << utcFromNycTime << endl;
+        nstime utcFromNycTime = convertNYCToUTC( nycTime );
+        cout << "end_time once again in UTC via convertNYCToUTC(): " << utcFromNycTime << endl;
 
         cout << endl;
     }
