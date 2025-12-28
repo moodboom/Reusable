@@ -1448,6 +1448,10 @@ int main(int argc, char *argv[])
         cout << endl;
         cout << endl;
 
+        cout << "nstime::min() " << nstime::min() << " aka " << getNanoseconds(nstime::min()) << endl;
+        cout << "nstime::max() " << nstime::max() << " aka " << getNanoseconds(nstime::max()) << endl;
+        cout << endl;
+
         auto dpnat = floor<std::chrono::days>(getCurrentTimeUtc());
         year_month_day ymdnat{dpnat};
         int64_t yat = int(ymdnat.year());
@@ -1484,7 +1488,7 @@ int main(int argc, char *argv[])
         };
         for ( const auto& iso_timestamp : iso_timestamps )
         {
-            nstime t = utc_string_to_nstime( iso_timestamp );
+            nstime t = utcStringToNstime( iso_timestamp );
             year_month_day ymd = getYMD(t);
             hh_mm_ss time = getHMS(t);
             auto y = ymd.year();
@@ -1526,25 +1530,22 @@ int main(int argc, char *argv[])
 
         cout << "OUR FORMATTERS:" << endl;
         cout << "ISODateFormat: " << ISODateFormat( end_time ) << endl;
-        cout << "nstime_to_string(%Y): " << nstime_to_string( end_time, "%Y" ) << endl;
-        cout << "nstime_to_string(%Y-%m-%d %T): " << nstime_to_string( end_time, "%Y-%m-%d %T" ) << endl;
-        cout << "nstime_to_string(%Y-%m-%d %H): " << nstime_to_string( end_time, "%Y-%m-%d %H" ) << endl;
-        cout << "nstime_to_string(%Y-%m-%d %M): " << nstime_to_string( end_time, "%Y-%m-%d %M" ) << endl;
-        cout << "nstime_to_string(%Y-%m-%d %S): " << nstime_to_string( end_time, "%Y-%m-%d %S" ) << endl;
-        cout << "nstime_to_string(%Y-%m-%d %h): " << nstime_to_string( end_time, "%Y-%m-%d %h" ) << endl;
-        cout << "nstime_to_string(%H%M%S): " << nstime_to_string( end_time, "%H%M%S" ) << endl;
-        cout << "nstime_to_string(%Y-%m-%d %T): " << nstime_to_string( end_time, "%Y-%m-%d %T" ) << endl;
         cout << "ISOFormat: " << ISOFormat( end_time ) << endl;
         cout << "RFC3339Format: " << RFC3339Format( end_time ) << endl;
         cout << "americanFormat: " << americanFormat( end_time ) << endl;
+        cout << "Year + nstimeToString(%Y  Month of %h): " << "Year " <<nstimeToString( end_time, "%Y  Month of %h" ) << endl;
+        cout << "nstimeToString(%Y): " << nstimeToString( end_time, "%Y" ) << endl;
+        cout << "nstimeToString(%Y-%m-%d %H:%M:%S): " << nstimeToString( end_time, "%Y-%m-%d %H:%M:%S" ) << endl;
+        cout << "nstimeToString(%Y-%m-%d %H %M %S): " << nstimeToString( end_time, "%Y-%m-%d %Hh %Mm %Ss" ) << endl;
+        cout << "nstimeToString(%Y-%m-%d %T): " << nstimeToString( end_time, "%Y-%m-%d %T" ) << endl;
+        cout << "nstimeToString(%Y-%m-%d %H): " << nstimeToString( end_time, "%Y-%m-%d %H" ) << endl;
+        cout << "nstimeToString(%Y-%m-%d %M): " << nstimeToString( end_time, "%Y-%m-%d %M" ) << endl;
+        cout << "nstimeToString(%Y-%m-%d %S): " << nstimeToString( end_time, "%Y-%m-%d %S" ) << endl;
+        cout << "nstimeToString(%Y-%m-%d %T): " << nstimeToString( end_time, "%Y-%m-%d %T" ) << endl;
         cout << endl;
-        cout << "These did not work until we ensured the contents of the string_view format" << endl;
-        cout << "persisted for the life of the string_view:" << endl;
-        cout << "nstime_to_string(%Y-%m-%d %H:%M:%S): " << nstime_to_string( end_time, "%Y-%m-%d %H:%M:%S" ) << endl;
-        cout << "nstime_to_string(%Y-%m-%d %H %M %S): " << nstime_to_string( end_time, "%Y-%m-%d %H %M %S" ) << endl;
-        cout << endl;
-        cout << "NOTE C++23 STILL can't specify precision, tho C++26 may bring improvements; eg this fails:" << endl;
-        cout << "nstime_to_string(%Y-%m-%d %H:%M:%2S)" << endl;
+        cout << "NOTE C++23 can't yet specify precision, eg this fails:" << endl;
+        cout << "nstimeToString(%Y-%m-%d %H:%M:%2S)" << endl;
+        cout << "Check back, C++26 may bring improvements" << endl;
         cout << endl;
     }
 

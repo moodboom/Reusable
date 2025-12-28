@@ -48,12 +48,13 @@
 //    static nstime getCurrentTimeUtc()
 //    static nstime getCurrentTimeNYC()
 //    static nstime convertUtcToNyc(const nstime &t)
-//    static nstime nstimeFromDate( const int64_t y, const int64_t m, const int64_t d )
+//    static nstime nstimeFromDate(const int y, const int m, const int d)
+//    static nstime nstimeFromDate(const year y, const month m, const day d)
+//    static nstime nstimeFromNanoseconds(const int64_t ns)
 //    static auto getDate(const nstime &t)
 //    static weekday getDayOfWeek(const nstime &t)
 //    static auto getDayOfWeekIso(const nstime &t) // 1=Monday, 7=Sunday
 //    static year_month_day getYMD(const nstime &t)
-//    static int getWeekNumber(const nstime &t)
 //    static auto getHMS(const nstime &t)
 //    static int64_t getSeconds( const nsduration& d )
 //    static int64_t getMilliseconds( const nsduration& d )
@@ -63,13 +64,16 @@
 //    static int64_t getMilliseconds( const nstime& t )
 //    static int64_t getMicroseconds( const nstime& t )
 //    static int64_t getNanoseconds( const nstime& t )
+//    static nsduration multiplyBy(const nsduration &d, const double &factor)
+//    static nsduration getDaysDuration(const int64_t days)
+//    static int getWeekNumber(const nstime &t)
 //  TIME STRING CONVERSIONS
-//    static nstime string_to_nstime(const string &str_time, const string &str_format)
-//    static nstime iso_string_to_nstime(const string &str_time)
-//    static nstime utc_string_to_nstime(const string &str_time)
+//    static nstime stringToNstime(const string &str_time, const string &str_format)
+//    static nstime isoStringToNstime(const string &str_time)
+//    static nstime utcStringToNstime(const string &str_time)
 //    static nstime isoDateStringToNstime(const string &str_time)
 //    static nstime usDateStringToNstime(const string &str_time)
-//    static string nstime_to_string(const nstime &t, const string &str_format)
+//    static string nstimeToString(const nstime &t, const string &str_format)
 //    static string ISOFormat(const nstime &t)
 //    static string ISODateFormat(const nstime &t)
 //    static string RFC3339Format(const nstime &t)
@@ -552,13 +556,6 @@ static auto getDate(const nstime &t) { return floor<days>(t); }
 static weekday getDayOfWeek(const nstime &t) { return weekday{getDate(t)}; }
 static auto getDayOfWeekIso(const nstime &t) { return getDayOfWeek(t).iso_encoding(); } // 1=Monday, 7=Sunday
 static year_month_day getYMD(const nstime &t) { return year_month_day{floor<days>(t)}; }
-static int getWeekNumber(const nstime &t)
-{
-  year_month_day ymd = getYMD(t);
-  auto first_day_of_month = year_month_day{ymd.year(), ymd.month(), day{1}};
-  auto days_since_first = (sys_days{ymd} - sys_days{first_day_of_month}).count();
-  return (days_since_first / 7) + 1;
-}
 static auto getHMS(const nstime &t) { return hh_mm_ss{floor<nsduration>(t - floor<days>(t))}; }
 
 static int64_t getSeconds(const nsduration &d) { return duration_cast<seconds>(d).count(); }
@@ -574,10 +571,20 @@ static int64_t getNanoseconds(const nstime &t) { return getNanoseconds(t.time_si
 static nsduration multiplyBy(const nsduration &d, const double &factor) { return nsresolution(int64_t(getNanoseconds(d) * factor)); }
 static nsduration getDaysDuration(const int64_t days) { return nsresolution(days * cNanosecondsPerDay); }
 
+// WARNING This isn't too useful, as it does not determine weeks based on Monday-Sunday,
+// but rather just counts the number of 7-day periods since the start of the month.
+static int getWeekNumber(const nstime &t)
+{
+  year_month_day ymd = getYMD(t);
+  auto first_day_of_month = year_month_day{ymd.year(), ymd.month(), day{1}};
+  auto days_since_first = (sys_days{ymd} - sys_days{first_day_of_month}).count();
+  return (days_since_first / 7) + 1;
+}
+
 // -----------------------
 // TIME STRING CONVERSIONS
 // -----------------------
-static nstime string_to_nstime(const string &str_time, const string &str_format)
+static nstime stringToNstime(const string &str_time, const string &str_format)
 {
   nstime result;
   std::istringstream is(str_time);
@@ -586,55 +593,50 @@ static nstime string_to_nstime(const string &str_time, const string &str_format)
     result = nstime{}; // Return epoch on parse failure
   return result;
 }
-static nstime iso_string_to_nstime(const string &str_time)
+static nstime isoStringToNstime(const string &str_time)
 {
   // Config for UTC format, eg: 2014-02-23T10:11:19.123456789
   // NO Z
-  return string_to_nstime(str_time, "%Y-%m-%dT%H:%M:%9S");
+  return stringToNstime(str_time, "%Y-%m-%dT%H:%M:%9S");
 }
-static nstime utc_string_to_nstime(const string &str_time)
+static nstime utcStringToNstime(const string &str_time)
 {
   // Config for UTC format, eg: 2014-02-23T10:11:19.123456789Z
   // WITH Z
-  return string_to_nstime(str_time, "%Y-%m-%dT%H:%M:%9SZ");
+  return stringToNstime(str_time, "%Y-%m-%dT%H:%M:%9SZ");
 }
 static nstime isoDateStringToNstime(const string &str_time)
 {
   // 2014-02-23
-  return string_to_nstime(str_time, "%Y-%m-%d");
+  return stringToNstime(str_time, "%Y-%m-%d");
 }
 static nstime usDateStringToNstime(const string &str_time)
 {
   // 02-23-2014
-  return string_to_nstime(str_time, "%m-%d-%Y");
+  return stringToNstime(str_time, "%m-%d-%Y");
 }
-static string nstime_to_string(const nstime &t, const string &str_format)
+static string nstimeToString(const nstime &t, const string &str_format)
 {
-  // THE C++23 HACK for building formats at runtime.
+  // THE C++23 vformat HACK for building formats at runtime.
   // Update this when we move to C++26.
-  // NOTE that you cannot build the string_view with a temporary string of any kind,
-  // that does not persist for the lifetime of the string_view, 
-  // or the string_view will likely point to invalid memory.
-  // Do not use std::format to build it, do not use a temp string, etc.
-  // Annoying, tbh.
-  const string str_format_wrapped = "{:" + str_format + "}";
-  return std::vformat(locale(""), string_view( str_format_wrapped ), std::make_format_args(t));
+  const string str_format_wrapped = std::format("{{:{}}}", str_format);
+  return std::vformat(locale(""), str_format_wrapped, std::make_format_args(t));
 }
 static string ISOFormat(const nstime &t)
 {
-  return nstime_to_string(t, "%Y-%m-%dT%T");
+  return nstimeToString(t, "%Y-%m-%dT%T");
 }
 static string ISODateFormat(const nstime &t)
 {
-  return nstime_to_string(t, "%Y-%m-%d");
+  return nstimeToString(t, "%Y-%m-%d");
 }
 static string RFC3339Format(const nstime &t)
 {
-  return nstime_to_string(t, "%Y-%m-%dT%TZ");
+  return nstimeToString(t, "%Y-%m-%dT%TZ");
 }
 static string americanFormat(const nstime &t)
 {
-  return nstime_to_string(t, "%m-%d-%Y");
+  return nstimeToString(t, "%m-%d-%Y");
 }
 static string getElapsedTime(const nsduration &d)
 {
@@ -777,7 +779,7 @@ static void log(LOG_TO_FILE_VERBOSITY v, string str, bool b_suppress_console = f
 
     if (!b_suppress_timestamp)
     {
-      string now = nstime_to_string(getCurrentTimeNYC(), "%H:%M:%S ");
+      string now = nstimeToString(getCurrentTimeNYC(), "%H:%M:%S ");
       if (!b_suppress_file)
         ofs_log << now;
       if (!b_suppress_console)
