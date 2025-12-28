@@ -1547,6 +1547,50 @@ int main(int argc, char *argv[])
         cout << "nstimeToString(%Y-%m-%d %H:%M:%2S)" << endl;
         cout << "Check back, C++26 may bring improvements" << endl;
         cout << endl;
+
+        // ------------------------------------------------------
+        // Playing around to get the best conversion approach...
+        // NOTE These all work.
+        // ------------------------------------------------------
+        // zoned_time<nsresolution> nycTime2{"America/New_York", end_time};
+        // cout << "America/New_York zoned_time: " << nycTime2 << endl;
+
+        // auto localTime = nycTime2.get_local_time();
+        // cout << "local_time from zoned_time: " << localTime << endl;
+
+        // nstime nsLocalTime = nstimeFromNanoseconds(
+        //     duration_cast<nanoseconds>(
+        //         zoned_time<nsresolution>("America/New_York", end_time).get_local_time().time_since_epoch()
+        //     ).count()
+        // );
+        // cout << "nstime from zoned_time nanoseconds: " << nsLocalTime << endl;
+
+        // nstime nsLocalTime2 = nstimeFromNanoseconds(
+        //     zoned_time<nsresolution>("America/New_York", end_time).get_local_time().time_since_epoch().count()
+        // );
+        // cout << "nstime from zoned_time nanoseconds: " << nsLocalTime2 << endl;
+        // cout << endl;
+
+        // const auto* zone = std::chrono::locate_zone("America/New_York");
+        // auto local_tp = std::chrono::local_time<nsresolution>{nycTime.time_since_epoch()};
+        // nstime utcTimeFromNycTime = zone->to_sys(local_tp);
+        // cout << "zoned_time from nycTime: " << utcTimeFromNycTime << endl;
+        // ------------------------------------------------------
+
+        cout << "TIME ZONES" << endl;
+        auto nycTime3 = getCurrentTimeNYC();
+        cout << "getCurrentTimeNYC(): " << nycTime3 << endl;
+
+        auto nycTime4 = getCurrentTimeLocal();
+        cout << "getCurrentTimeLocal(): " << nycTime4 << endl;
+
+        nstime nycTime = convertUtcToNyc( end_time );
+        cout << "end_time in NYC via convertUtcToNyc(): " << nycTime << endl;
+
+        nstime utcFromNycTime = convertNycToUtc( nycTime );
+        cout << "end_time once again in UTC via convertNycToUtc(): " << utcFromNycTime << endl;
+
+        cout << endl;
     }
 
     // ========= end ========
