@@ -612,12 +612,17 @@ static string nstime_to_string(const nstime &t, const string &str_format)
 {
   // THE C++23 HACK for building formats at runtime.
   // Update this when we move to C++26.
-  const string_view fmt = std::format("{{:{}}}", str_format);
-  return std::vformat(locale(""), fmt, std::make_format_args(t));
+  // NOTE that you cannot build the string_view with a temporary string of any kind,
+  // that does not persist for the lifetime of the string_view, 
+  // or the string_view will likely point to invalid memory.
+  // Do not use std::format to build it, do not use a temp string, etc.
+  // Annoying, tbh.
+  const string str_format_wrapped = "{:" + str_format + "}";
+  return std::vformat(locale(""), string_view( str_format_wrapped ), std::make_format_args(t));
 }
 static string ISOFormat(const nstime &t)
 {
-  return nstime_to_string(t, "%Y-%m-%dT%H:%M:%9S");
+  return nstime_to_string(t, "%Y-%m-%dT%T");
 }
 static string ISODateFormat(const nstime &t)
 {
@@ -625,11 +630,11 @@ static string ISODateFormat(const nstime &t)
 }
 static string RFC3339Format(const nstime &t)
 {
-  return nstime_to_string(t, "%Y-%m-%dT%H:%M:%9SZ");
+  return nstime_to_string(t, "%Y-%m-%dT%TZ");
 }
 static string americanFormat(const nstime &t)
 {
-  return nstime_to_string(t, "%2m-%2d-%Y");
+  return nstime_to_string(t, "%m-%d-%Y");
 }
 static string getElapsedTime(const nsduration &d)
 {
@@ -648,7 +653,7 @@ static string getElapsedTime(const nsduration &d)
   // auto seconds = duration_cast<std::chrono::seconds>(d - years - months - days - hours - minutes);
   // auto subseconds = d - years - months - days - hours - minutes - seconds;
 
-  return std::format("{} years {} months {} days {:%H:%M:%S} seconds", years.count(), months.count(), days.count(), d);
+  return std::format("{} years {} months {} days {:%T} seconds", years.count(), months.count(), days.count(), d);
 }
 
 //=========================================================

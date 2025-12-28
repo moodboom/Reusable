@@ -1197,7 +1197,6 @@ int main(int argc, char *argv[])
             cout << "Successful serialize" << endl << endl;
         }
     }
-    run_from_here:
     // 21 ==================================================================================
     cout << endl << "== 21 === Day of week =======" << endl;
     // 21 ==================================================================================
@@ -1389,19 +1388,19 @@ int main(int argc, char *argv[])
         mo.applyFunctionToAWithDefault(a);
         std::cout << "a.a_ is " << a.a_ << std::endl;
     }
-    // it's "TIME" (ugg) to switch completely out of boost::posix to std::chrono
-    // We decided MICROSECONDS are the way to go
-    // They fit in 64 bits, and cover from 1970 to 2262
-    // I have a lot of code to rework... optimize the conversions here
-    // I'm looking at you, utilities.hpp...
     // 27 ==================================================================================
+    run_from_here:
     cout << endl << "== 27 === boost::posix > std::chrono REFACTOR =======" << endl;
     // 27 ==================================================================================
     {
-        // Analyze std::chrono clocks, including precision, storage and year limits.
+        // it's "TIME" (ugg) to switch completely out of boost::posix to std::chrono
+        // We decided NANOSECONDS are the way to go.
+        // They fit in 64 bits, and cover from 1970 to 2262.
+        // utilities.hpp completely sets up our nstime clock (where ns = nanoseconds).
 
         nstime start_time = getCurrentTimeUtc();
 
+        // Analyze std::chrono clocks, including precision, storage and year limits.
         cout << endl;
         cout << "FIRST NOTE that nstime::max() is meaningless as a timestamp." << endl;
         cout << nstime::max() << " nstime::max()" << endl;
@@ -1443,9 +1442,9 @@ int main(int argc, char *argv[])
         cout << year_range_ns << " theoretical year range in nanoseconds" << endl;
         cout << endl;
 
-        // --- ATTIME ---
+        // --- NSTIME ---
         cout << endl;
-        cout << "FINALLY: the ATTIME clock and usage";
+        cout << "FINALLY: the NSTIME clock and usage";
         cout << endl;
         cout << endl;
 
@@ -1508,8 +1507,8 @@ int main(int argc, char *argv[])
             cout << "Elapsed time since epoch: " << endl;
             cout << diff << endl;
             cout << getElapsedTime(diff) << " (getElapsedTime)" << endl;
-            cout << getSeconds( diff ) << " seconds (getSeconds(d))" << endl;
-            cout << getSeconds( t ) << " seconds (getSeconds(t))" << endl;
+            cout << getSeconds( diff ) << " seconds (getSeconds(nsduration))" << endl;
+            cout << getSeconds( t ) << " seconds (getSeconds(nstime))" << endl;
 
             cout << endl;
         }
@@ -1522,6 +1521,31 @@ int main(int argc, char *argv[])
         cout << getSeconds( diff ) << " seconds (getSeconds)" << endl;
         cout << endl;
 
+        cout << "Ended std::chrono scrap at " << end_time << endl;
+        cout << endl;
+
+        cout << "OUR FORMATTERS:" << endl;
+        cout << "ISODateFormat: " << ISODateFormat( end_time ) << endl;
+        cout << "nstime_to_string(%Y): " << nstime_to_string( end_time, "%Y" ) << endl;
+        cout << "nstime_to_string(%Y-%m-%d %T): " << nstime_to_string( end_time, "%Y-%m-%d %T" ) << endl;
+        cout << "nstime_to_string(%Y-%m-%d %H): " << nstime_to_string( end_time, "%Y-%m-%d %H" ) << endl;
+        cout << "nstime_to_string(%Y-%m-%d %M): " << nstime_to_string( end_time, "%Y-%m-%d %M" ) << endl;
+        cout << "nstime_to_string(%Y-%m-%d %S): " << nstime_to_string( end_time, "%Y-%m-%d %S" ) << endl;
+        cout << "nstime_to_string(%Y-%m-%d %h): " << nstime_to_string( end_time, "%Y-%m-%d %h" ) << endl;
+        cout << "nstime_to_string(%H%M%S): " << nstime_to_string( end_time, "%H%M%S" ) << endl;
+        cout << "nstime_to_string(%Y-%m-%d %T): " << nstime_to_string( end_time, "%Y-%m-%d %T" ) << endl;
+        cout << "ISOFormat: " << ISOFormat( end_time ) << endl;
+        cout << "RFC3339Format: " << RFC3339Format( end_time ) << endl;
+        cout << "americanFormat: " << americanFormat( end_time ) << endl;
+        cout << endl;
+        cout << "These did not work until we ensured the contents of the string_view format" << endl;
+        cout << "persisted for the life of the string_view:" << endl;
+        cout << "nstime_to_string(%Y-%m-%d %H:%M:%S): " << nstime_to_string( end_time, "%Y-%m-%d %H:%M:%S" ) << endl;
+        cout << "nstime_to_string(%Y-%m-%d %H %M %S): " << nstime_to_string( end_time, "%Y-%m-%d %H %M %S" ) << endl;
+        cout << endl;
+        cout << "NOTE C++23 STILL can't specify precision, tho C++26 may bring improvements; eg this fails:" << endl;
+        cout << "nstime_to_string(%Y-%m-%d %H:%M:%2S)" << endl;
+        cout << endl;
     }
 
     // ========= end ========
