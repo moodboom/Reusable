@@ -46,14 +46,12 @@
 //    // class SemVer
 // TIME See typedef nstime; Always prefer UTC
 //    static nstime getCurrentTimeUTC()
-//    static nstime getCurrentTimeNYC()
-//    static nstime convertUTCToNYC(const nstime &t)
 //    static nstime nstimeFromDate(const int y, const int m, const int d)
 //    static nstime nstimeFromDate(const year y, const month m, const day d)
 //    static nstime nstimeFromNanoseconds(const int64_t ns)
 //    static auto getDate(const nstime &t)
-//    static weekday getDayOfWeek(const nstime &t)
-//    static auto getDayOfWeekIso(const nstime &t) // 1=Monday, 7=Sunday
+//    static weekday getDayOfWeek(const nstime &t)  // 0=Sunday, 6=Saturday
+//    static auto getDayOfWeekIso(const nstime &t)  // 1=Monday, 7=Sunday
 //    static year_month_day getYMD(const nstime &t)
 //    static auto getHMS(const nstime &t)
 //    static int64_t getSeconds( const nsduration& d )
@@ -67,6 +65,14 @@
 //    static nsduration multiplyBy(const nsduration &d, const double &factor)
 //    static nsduration getDaysDuration(const int64_t days)
 //    static int getWeekNumber(const nstime &t)
+//    static zoned_time<nsresolution> getTimezoneLocal( const nstime &t )
+//    static nstime convertUTCToLocal(const nstime &t)
+//    static nstime convertLocalToUTC(const nstime &localTime)
+//    static nstime getCurrentTimeLocal()
+//    static zoned_time<nsresolution> getTimezoneNYC( const nstime &t )
+//    static nstime convertUTCToNYC(const nstime &t)
+//    static nstime convertNYCToUTC(const nstime &nycTime)
+//    static nstime getCurrentTimeNYC()
 //  TIME STRING CONVERSIONS
 //    static nstime stringToNstime(const string &str_time, const string &str_format)
 //    static nstime isoStringToNstime(const string &str_time)
@@ -545,24 +551,11 @@ typedef duration<int64_t, std::nano> nsduration;
 const int64_t cSecondsPerDay = 60 * 60 * 24;
 const int64_t cNanosecondsPerDay = cSecondsPerDay * 1E9;
 
+// UTC, always preferred
 static nstime getCurrentTimeUTC() { return time_point_cast<nsresolution>(system_clock::now()); }
-static zoned_time<nsresolution> getCurrentTimeLocal() { return zoned_time<nsresolution>{current_zone(), getCurrentTimeUTC()}; }
-static zoned_time<nsresolution> getCurrentTimeNYC() { return zoned_time<nsresolution>{"America/New_York", getCurrentTimeUTC()}; }
 static nstime nstimeFromDate(const int y, const int m, const int d) { return sys_days{year{y} / m / d}; }
 static nstime nstimeFromDate(const year y, const month m, const day d) { return sys_days{y / m / d}; }
 static nstime nstimeFromNanoseconds(const int64_t ns) { return nstime{nsduration{ns}}; }
-
-static nstime convertUTCToNYC(const nstime &t)
-{
-  return nstimeFromNanoseconds(
-      zoned_time<nsresolution>("America/New_York", t).get_local_time().time_since_epoch().count());
-}
-static nstime convertNYCToUTC(const nstime &nycTime)
-{
-  const auto *zone = std::chrono::locate_zone("America/New_York");
-  auto local_tp = std::chrono::local_time<nsresolution>{nycTime.time_since_epoch()};
-  return zone->to_sys(local_tp);
-}
 
 static auto getDate(const nstime &t) { return floor<days>(t); }
 static weekday getDayOfWeek(const nstime &t) { return weekday{getDate(t)}; }
@@ -592,6 +585,36 @@ static int getWeekNumber(const nstime &t)
   auto days_since_first = (sys_days{ymd} - sys_days{first_day_of_month}).count();
   return (days_since_first / 7) + 1;
 }
+
+// Local
+static zoned_time<nsresolution> getTimezoneLocal(const nstime &t) { return zoned_time<nsresolution>{current_zone(), t}; }
+static nstime convertUTCToLocal(const nstime &t)
+{
+  return nstimeFromNanoseconds(
+      getTimezoneLocal(t).get_local_time().time_since_epoch().count());
+}
+static nstime convertLocalToUTC(const nstime &localTime)
+{
+  const auto *zone = current_zone();
+  auto local_tp = std::chrono::local_time<nsresolution>{localTime.time_since_epoch()};
+  return zone->to_sys(local_tp);
+}
+static nstime getCurrentTimeLocal() { return convertUTCToLocal(getCurrentTimeUTC()); }
+
+// NYC
+static zoned_time<nsresolution> getTimezoneNYC(const nstime &t) { return zoned_time<nsresolution>{"America/New_York", t}; }
+static nstime convertUTCToNYC(const nstime &t)
+{
+  return nstimeFromNanoseconds(
+      getTimezoneNYC(t).get_local_time().time_since_epoch().count());
+}
+static nstime convertNYCToUTC(const nstime &nycTime)
+{
+  const auto *zone = std::chrono::locate_zone("America/New_York");
+  auto local_tp = std::chrono::local_time<nsresolution>{nycTime.time_since_epoch()};
+  return zone->to_sys(local_tp);
+}
+static nstime getCurrentTimeNYC() { return convertUTCToNYC(getCurrentTimeUTC()); }
 
 // -----------------------
 // TIME STRING CONVERSIONS
