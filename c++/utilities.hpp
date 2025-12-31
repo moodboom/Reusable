@@ -682,15 +682,38 @@ static string getElapsedTime(const nsduration &d)
   auto years = duration_cast<std::chrono::years>(d);
   auto months = duration_cast<std::chrono::months>(d - years);
   auto days = duration_cast<std::chrono::days>(d - years - months);
+  auto hours = duration_cast<std::chrono::hours>(d - years - months - days);
+  auto minutes = duration_cast<std::chrono::minutes>(d - years - months - days - hours);
+  auto seconds = duration_cast<std::chrono::seconds>(d - years - months - days - hours - minutes);
 
-  // We use format to extract the H:M:S portion.
-  // An alternative is to pull them out like we did with years/months/days.
-  // auto hours = duration_cast<std::chrono::hours>(d - years - months - days);
-  // auto minutes = duration_cast<std::chrono::minutes>(d - years - months - days - hours);
-  // auto seconds = duration_cast<std::chrono::seconds>(d - years - months - days - hours - minutes);
-  // auto subseconds = d - years - months - days - hours - minutes - seconds;
+  bool showYears = years.count() != 0;
+  bool showMonths = months.count() != 0;
+  bool showDays = days.count() != 0;
+  bool showHours = hours.count() != 0;
+  bool showMinutes = minutes.count() != 0;
+  bool showSubseconds = duration_cast<std::chrono::seconds>(d).count() < 60;
+  bool showSeconds = showSubseconds || seconds.count() != 0;
 
-  return std::format("{} years {} months {} days {:%T} seconds", years.count(), months.count(), days.count(), d);
+  ostringstream ss;
+  if (showYears)
+    ss << years.count() << "y ";
+  if (showMonths)
+    ss << months.count() << "mo ";
+  if (showDays)
+    ss << days.count() << "d ";
+  if (showHours)
+    ss << hours.count() << "h ";
+  if (showMinutes)
+    ss << minutes.count() << "m ";
+  if (showSeconds)
+    ss << seconds.count() << "s";
+  if (showSubseconds)
+  {
+    auto subseconds = d - years - months - days - hours - minutes - seconds;
+    ss << " " << subseconds;
+  }
+
+  return ss.str();
 }
 
 //=========================================================
