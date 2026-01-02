@@ -1542,6 +1542,10 @@ int main(int argc, char *argv[])
         cout << "nstimeToString(%Y-%m-%d %M): " << nstimeToString( end_time, "%Y-%m-%d %M" ) << endl;
         cout << "nstimeToString(%Y-%m-%d %S): " << nstimeToString( end_time, "%Y-%m-%d %S" ) << endl;
         cout << "nstimeToString(%Y-%m-%d %T): " << nstimeToString( end_time, "%Y-%m-%d %T" ) << endl;
+        cout << "getTimeOfDayDuration: " << getTimeOfDayDuration( end_time ) << endl;
+        cout << "getElapsedTime(getTimeOfDayDuration): " << getElapsedTime(getTimeOfDayDuration( end_time )) << endl;
+        cout << "getDaysAfter(Friday): " << getDaysAfter( end_time, Friday) << endl;
+        cout << "getDaysUntil(Monday): " << getDaysUntil( end_time, Monday) << endl;
         cout << endl;
         cout << "NOTE C++23 can't yet specify precision, eg this fails:" << endl;
         cout << "nstimeToString(%Y-%m-%d %H:%M:%2S)" << endl;

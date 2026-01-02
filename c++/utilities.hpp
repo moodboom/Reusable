@@ -64,7 +64,8 @@
 //    static int64_t getNanoseconds( const nstime& t )
 //    static nsduration multiplyBy(const nsduration &d, const double &factor)
 //    static nsduration getDaysDuration(const int64_t days)
-//    static int getWeekNumber(const nstime &t)
+//    static days getDaysAfter(const nstime &t, const weekday past)
+//    static days getDaysUntil(const nstime &t, const weekday future)
 //    static zoned_time<nsresolution> getTimezoneLocal( const nstime &t )
 //    static nstime convertUTCToLocal(const nstime &t)
 //    static nstime convertLocalToUTC(const nstime &localTime)
@@ -562,6 +563,7 @@ static weekday getDayOfWeek(const nstime &t) { return weekday{getDate(t)}; }
 static auto getDayOfWeekIso(const nstime &t) { return getDayOfWeek(t).iso_encoding(); } // 1=Monday, 7=Sunday
 static year_month_day getYMD(const nstime &t) { return year_month_day{floor<days>(t)}; }
 static auto getHMS(const nstime &t) { return hh_mm_ss{floor<nsduration>(t - floor<days>(t))}; }
+static nsduration getTimeOfDayDuration(const nstime &t) { return t - floor<days>(t); }
 
 static int64_t getSeconds(const nsduration &d) { return duration_cast<seconds>(d).count(); }
 static int64_t getMilliseconds(const nsduration &d) { return duration_cast<milliseconds>(d).count(); }
@@ -575,6 +577,20 @@ static int64_t getNanoseconds(const nstime &t) { return getNanoseconds(t.time_si
 
 static nsduration multiplyBy(const nsduration &d, const double &factor) { return nsresolution(int64_t(getNanoseconds(d) * factor)); }
 static nsduration getDaysDuration(const int64_t days) { return nsresolution(days * cNanosecondsPerDay); }
+static days getDaysUntil(const nstime &t, const weekday future) {
+  auto dow = getDayOfWeek( t );
+  days daysUntilFuture = future - dow;
+  if ( daysUntilFuture < days( 0 ))
+    daysUntilFuture += weeks( 1 );
+  return daysUntilFuture;
+}
+static days getDaysAfter(const nstime &t, const weekday past) {
+  auto dow = getDayOfWeek( t );
+  days daysAfterPast = dow - past;
+  if ( daysAfterPast < days( 0 ))
+    daysAfterPast += weeks( 1 );
+  return daysAfterPast;
+}
 
 // WARNING This isn't too useful, as it does not determine weeks based on Monday-Sunday,
 // but rather just counts the number of 7-day periods since the start of the month.
