@@ -46,6 +46,7 @@
 //    // class SemVer
 // TIME See typedef nstime; Always prefer UTC
 //    static nstime getCurrentTimeUTC()
+
 //    static nstime nstimeFromDate(const int y, const int m, const int d)
 //    static nstime nstimeFromDate(const year y, const month m, const day d)
 //    static nstime nstimeFromNanoseconds(const int64_t ns)
@@ -54,6 +55,7 @@
 //    static auto getDayOfWeekIso(const nstime &t)  // 1=Monday, 7=Sunday
 //    static year_month_day getYMD(const nstime &t)
 //    static auto getHMS(const nstime &t)
+
 //    static int64_t getSeconds( const nsduration& d )
 //    static int64_t getMilliseconds( const nsduration& d )
 //    static int64_t getMicroseconds( const nsduration& d )
@@ -62,18 +64,24 @@
 //    static int64_t getMilliseconds( const nstime& t )
 //    static int64_t getMicroseconds( const nstime& t )
 //    static int64_t getNanoseconds( const nstime& t )
+
 //    static nsduration multiplyBy(const nsduration &d, const double &factor)
 //    static nsduration getDaysDuration(const int64_t days)
-//    static days getDaysAfter(const nstime &t, const weekday past)
-//    static days getDaysUntil(const nstime &t, const weekday future)
+//    static days getDaysUntil(const weekday &future, const nstime &t)
+//    static nstime getNext(const weekday &future, const nstime &t)
+//    static days getDaysSince(const weekday &past, const nstime &t)
+//    static nstime getLast(const weekday &past, const nstime &t)
+
 //    static zoned_time<nsresolution> getTimezoneLocal( const nstime &t )
 //    static nstime convertUTCToLocal(const nstime &t)
 //    static nstime convertLocalToUTC(const nstime &localTime)
 //    static nstime getCurrentTimeLocal()
+
 //    static zoned_time<nsresolution> getTimezoneNYC( const nstime &t )
 //    static nstime convertUTCToNYC(const nstime &t)
 //    static nstime convertNYCToUTC(const nstime &nycTime)
 //    static nstime getCurrentTimeNYC()
+
 //  TIME STRING CONVERSIONS
 //    static nstime stringToNstime(const string &str_time, const string &str_format)
 //    static nstime isoStringToNstime(const string &str_time)
@@ -577,29 +585,29 @@ static int64_t getNanoseconds(const nstime &t) { return getNanoseconds(t.time_si
 
 static nsduration multiplyBy(const nsduration &d, const double &factor) { return nsresolution(int64_t(getNanoseconds(d) * factor)); }
 static nsduration getDaysDuration(const int64_t days) { return nsresolution(days * cNanosecondsPerDay); }
-static days getDaysUntil(const nstime &t, const weekday future) {
-  auto dow = getDayOfWeek( t );
+static days getDaysUntil(const weekday &future, const nstime &t)
+{
+  auto dow = getDayOfWeek(t);
   days daysUntilFuture = future - dow;
-  if ( daysUntilFuture < days( 0 ))
-    daysUntilFuture += weeks( 1 );
+  if (daysUntilFuture < days(0))
+    daysUntilFuture += weeks(1);
   return daysUntilFuture;
 }
-static days getDaysAfter(const nstime &t, const weekday past) {
-  auto dow = getDayOfWeek( t );
+static nstime getNext(const weekday &future, const nstime &t)
+{
+  return getDate(t) + getDaysUntil(future, t);
+}
+static days getDaysSince(const weekday &past, const nstime &t)
+{
+  auto dow = getDayOfWeek(t);
   days daysAfterPast = dow - past;
-  if ( daysAfterPast < days( 0 ))
-    daysAfterPast += weeks( 1 );
+  if (daysAfterPast < days(0))
+    daysAfterPast += weeks(1);
   return daysAfterPast;
 }
-
-// WARNING This isn't too useful, as it does not determine weeks based on Monday-Sunday,
-// but rather just counts the number of 7-day periods since the start of the month.
-static int getWeekNumber(const nstime &t)
+static nstime getLast(const weekday &past, const nstime &t)
 {
-  year_month_day ymd = getYMD(t);
-  auto first_day_of_month = year_month_day{ymd.year(), ymd.month(), day{1}};
-  auto days_since_first = (sys_days{ymd} - sys_days{first_day_of_month}).count();
-  return (days_since_first / 7) + 1;
+  return getDate(t) - getDaysSince(past, t);
 }
 
 // Local
