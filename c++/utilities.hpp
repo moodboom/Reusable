@@ -589,7 +589,7 @@ static days getDaysUntil(const weekday &future, const nstime &t)
 {
   auto dow = getDayOfWeek(t);
   days daysUntilFuture = future - dow;
-  if (daysUntilFuture < days(0))
+  if (daysUntilFuture < days(1))
     daysUntilFuture += weeks(1);
   return daysUntilFuture;
 }
@@ -601,7 +601,7 @@ static days getDaysSince(const weekday &past, const nstime &t)
 {
   auto dow = getDayOfWeek(t);
   days daysAfterPast = dow - past;
-  if (daysAfterPast < days(0))
+  if (daysAfterPast < days(1))
     daysAfterPast += weeks(1);
   return daysAfterPast;
 }
