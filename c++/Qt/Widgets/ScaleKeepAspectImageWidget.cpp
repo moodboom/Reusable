@@ -43,9 +43,11 @@
  **
  ****************************************************************************/
 
-#include <QtGui>
 #include <QLabel>
 #include <QVBoxLayout>
+#include <QPixmap>
+#include <QPainter>
+#include <QResizeEvent>
 
 #include "Qt/Widgets/ScaleKeepAspectImageWidget.h"
 
@@ -63,7 +65,7 @@ ScaleKeepAspectImageWidget::ScaleKeepAspectImageWidget(QWidget * parent)
     mainLayout = new QVBoxLayout;
 
     // This tightens things up - do we need a constructor param?
-    mainLayout->setMargin(0);
+    mainLayout->setContentsMargins(0, 0, 0, 0);
 
     mainLayout->addWidget(m_imageLabel);
     setLayout(mainLayout);
@@ -97,18 +99,18 @@ void ScaleKeepAspectImageWidget::resizeEvent(QResizeEvent* event)
     QSize scaledSize = originalPixmap.size();
     scaledSize.scale(m_imageLabel->size(), Qt::KeepAspectRatio);
 
-    if (
-            !m_imageLabel->pixmap()
-        ||  scaledSize != m_imageLabel->pixmap()->size()
-    ) {
+    // Qt 6: QLabel::pixmap() returns QPixmap by value, not pointer
+    QPixmap currentPixmap = m_imageLabel->pixmap();
+    if (currentPixmap.isNull() || scaledSize != currentPixmap.size()) {
 
         // DEBUG
         // We were recursing here over and over at one point on the Mac!
         // Then it stopped, wtf.
         /*
-        if (m_imageLabel->pixmap())
+        QPixmap debugPixmap = m_imageLabel->pixmap();
+        if (!debugPixmap.isNull())
         {
-            QSize current_size = m_imageLabel->pixmap()->size();
+            QSize current_size = debugPixmap.size();
             int macdebuggersucks = 234;
         }
         */
