@@ -4,7 +4,6 @@
 #define utilities_hpp
 
 #include "basic_types.hpp"
-#include "miniz.h"
 #include <oauth/urlencode.h> // For urlen/decode
 #include <boost/json.hpp>
 
@@ -1170,66 +1169,6 @@ static void sleep(int n_secs)
   boost::this_thread::sleep(boost::posix_time::seconds(n_secs));
 }
 
-static bool unzip_first_file(string &str_zip, string &str_unzipped)
-{
-  // Using miniz release 2.0.6 beta:
-  //    https://github.com/richgel999/miniz/releases/tag/2.0.6
-  //    NOTE!! YOU MUST USE .zip RELEASE DOWNLOAD "do not use github files directly, they are packaged into one file on release"
-  //    https://github.com/richgel999/miniz
-  //    Originally from http://code.google.com/p/miniz/
-  //
-
-  mz_zip_archive zip_archive;
-  mz_bool status;
-
-  // Now try to open the archive.
-  memset(&zip_archive, 0, sizeof(zip_archive));
-
-  status = mz_zip_reader_init_mem(&zip_archive, str_zip.c_str(), str_zip.size(), 0);
-
-  // NOTE that miniz can also handle a file directly...
-  // status = mz_zip_reader_init_file("myfile.zip", str_zip.c_str(), 0);
-
-  if (!status)
-  {
-    cout << "zip file appears invalid..." << endl;
-    return false;
-  }
-
-  // Get the first file in the archive.
-  // By definition, this is our object model.
-  if (mz_zip_reader_get_num_files(&zip_archive) != 1)
-  {
-    cout << "zip file does not contain 1 file..." << endl;
-    return false;
-  }
-
-  mz_zip_archive_file_stat file_stat;
-  if (!mz_zip_reader_file_stat(&zip_archive, 0, &file_stat))
-  {
-    cout << "zip file read error..." << endl;
-    mz_zip_reader_end(&zip_archive);
-    return false;
-  }
-
-  // Unzip the file to heap.
-  size_t uncompressed_size = (size_t)file_stat.m_uncomp_size;
-  void *p = mz_zip_reader_extract_file_to_heap(&zip_archive, file_stat.m_filename, &uncompressed_size, 0);
-  if (!p)
-  {
-    cout << "mz_zip_reader_extract_file_to_heap() failed..." << endl;
-    mz_zip_reader_end(&zip_archive);
-    return false;
-  }
-
-  str_unzipped.assign((const char *)p, uncompressed_size);
-
-  // Close the archive, freeing any resources it was using
-  mz_free(p);
-  mz_zip_reader_end(&zip_archive);
-
-  return true;
-}
 
 // ----------------
 // BOOST STACKTRACE
