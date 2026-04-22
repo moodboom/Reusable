@@ -247,8 +247,15 @@ inline void HttpAPIServer::add_static_file_handlers(const vector<string> &static
     }
 
     // Fix version string in url.  v1 is used as our placeholder.
+    // Only replace when v1 appears as a path segment (between slashes) or
+    // at a URL boundary — otherwise a bundle hash that happens to contain
+    // the substring "v1" (e.g. vite's "index-qdv1eGlN.js") gets mangled
+    // into "index-qd1.299eGlN.js" and the asset handler is registered
+    // under the wrong name, causing 302 redirects on asset requests and
+    // a blank app page. Restrict to "/v1/" and "/v1." forms.
     string newfile = file;
-    replace(newfile, "v1", semanticVersion());
+    replace(newfile, "/v1/", "/" + semanticVersion() + "/");
+    replace(newfile, "/v1.", "/" + semanticVersion() + ".");
 
     // We keep them all in memory and serve them up like lightning.
     static_files_.insert(make_pair(newfile, body));
