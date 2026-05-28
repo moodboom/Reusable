@@ -828,6 +828,10 @@ typedef enum
   LOG_TO_FILE_VERBOSITY_COUNT
 } LOG_TO_FILE_VERBOSITY;
 
+// boost::json >= 1.88 no longer auto-converts unscoped enums; provide a
+// tag_invoke overload so call sites like `{"severity", LV_ERROR}` work.
+inline void tag_invoke( boost::json::value_from_tag, boost::json::value &jv, LOG_TO_FILE_VERBOSITY v ) noexcept { jv = static_cast<int>( v ); }
+
 // ----------------------------------------------------------
 // A courtesy global current lv.
 // This usage is DISCOURAGED.
