@@ -329,7 +329,9 @@ inline void HttpAPIServer::badCall(HRes &response, const string msg, int delay_s
   // http://stackoverflow.com/questions/2839585/what-is-correct-http-status-code-when-redirecting-to-a-login-page
   // Avoid this OLD way using spam-abused redirection method:
   //  "<meta http-equiv=\"refresh\" content=\"1; URL='" + redirect + "'\" />";
-  *response << cstr_HTML_302_HEADER1 << "/" << cstr_HTML_HEADER2;
+  // Content-Length: 0 — without it the client has no body framing and waits the
+  // full content timeout (~5s) before this bodyless 302 is considered complete.
+  *response << cstr_HTML_302_HEADER1 << "/" << "\r\nContent-Length: 0" << cstr_HTML_HEADER2;
 }
 
 inline void HttpAPIServer::load_index()
