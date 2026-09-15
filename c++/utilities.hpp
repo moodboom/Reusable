@@ -1179,11 +1179,14 @@ static void sleep(int n_secs)
 // ----------------
 // We are using boost::stacktrace (similar to google's backward-cpp).
 // There are two flavors, libbacktrace and addr2line.
-// We use the second, since it was the only one available by default on gentoo.
+// We USED the second (the only one available by default on gentoo) until
+// 2026-09-14: addr2line forks one process PER FRAME, each mapping the whole
+// debug binary (1.2-1.7 GB each on a 1 GB binary — dev2 was OOM-killed mid
+// crash report). libbacktrace symbolizes in-process from the same -g DWARF
+// data; gcc ships it (backtrace.h + libbacktrace.a in gcc's private dirs).
 //
-// TO USE IN CODE:
-// Turn it on like this:
-//  #define BOOST_STACKTRACE_USE_ADDR2LINE
+// TO USE IN CODE (select the backend in ONE shared header so every TU agrees):
+//  #define BOOST_STACKTRACE_USE_BACKTRACE   // or ..._ADDR2LINE, the old way
 //  #include <boost/stacktrace.hpp>
 // Use it like this:
 //  std::cout << boost::stacktrace::stacktrace();
@@ -1193,10 +1196,10 @@ static void sleep(int n_secs)
 //  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -g")
 // No worries, it will NOT fluff up the code, it only adds a debug glob in the binary but outside the code.
 // Include the static lib, eg:
-//  find_package(Boost COMPONENTS system thread date_time filesystem regex stacktrace_addr2line REQUIRED)
-// For it to convert addresses to actual lines of code, we also need libdl, eg:
-//  TARGET_LINK_LIBRARIES(${PROJECT_NAME} pthread ssl crypto dl ${Boost_LIBRARIES})
-// And finally, it uses the addr2line cmd, which should be in /usr/bin (probably already is).
+//  find_package(Boost COMPONENTS system thread date_time filesystem regex stacktrace_backtrace REQUIRED)
+// For it to convert addresses to actual lines of code, we also need libdl and libbacktrace, eg:
+//  TARGET_LINK_LIBRARIES(${PROJECT_NAME} pthread ssl crypto dl backtrace ${Boost_LIBRARIES})
+// (The addr2line flavor instead needs stacktrace_addr2line + the addr2line cmd in /usr/bin.)
 // ----------------
 
 //=========================================================
